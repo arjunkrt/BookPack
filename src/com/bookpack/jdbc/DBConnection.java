@@ -12,8 +12,9 @@ public class DBConnection {
 
             Class.forName("oracle.jdbc.driver.OracleDriver");
 
-	    String user = "akarat";	
-	    String passwd = "200109405";
+            //Add your oracle user name and pwd
+	    String user = "";	
+	    String passwd = "";
 
             Connection conn = null;
             Statement stmt = null;
