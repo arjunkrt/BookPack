@@ -2,5 +2,5 @@
 Library Management System
 
 
-This is part of DBMS 540!
+This is part of DBMS 540
 
