@@ -66,6 +66,7 @@ public class DBConnection {
         } catch(Throwable oops) {
             oops.printStackTrace();
         }
+        
     }
 
     static void close(Connection conn) {
