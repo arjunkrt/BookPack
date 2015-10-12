@@ -4,8 +4,7 @@ import java.sql.*;
 
 public class DBConnection {
 
-    static final String jdbcURL 
-	= "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
+    static final String jdbcURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
 
     public static void main(String[] args) {
         try {
