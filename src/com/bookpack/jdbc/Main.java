@@ -22,7 +22,8 @@ public class Main {
 			stdin.nextLine();
 			switch (func) {
 			case 1:
-				Login.login_screen();
+				Login l1 = new Login();
+				l1.login_screen();
 				break;
 			case 2:
 				
