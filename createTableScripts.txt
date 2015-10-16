@@ -1,26 +1,32 @@
 --Create TABLE Commands
 
-create table athoma12.students
-(student_id NUMBER(20) NOT NULL,
+create table athoma12.patrons
+(patron_id NUMBER(20) NOT NULL,
  first_name VARCHAR2(50) NOT NULL,
  last_name VARCHAR2(50) NOT NULL,
  date_of_birth DATE NOT NULL,
  sex VARCHAR2(1) NOT NULL,
- program_id NUMBER(20),
  nationality VARCHAR2(50) NOT NULL,
- department VARCHAR2(50),
+ department VARCHAR2(50) NOT NULL,
+ username VARCHAR2(50) NOT NULL,
+ password_hash VARCHAR2(100),
+ patron_type VARCHAR2(20) NOT NULL,
+);
+
+create table athoma12.students
+(student_id NUMBER(20) NOT NULL,
+ patron_id NUMBER(20) NOT NULL,
+ program_id NUMBER(20),
  phone_id NUMBER(20),
  alt_phone_id NUMBER(20),
  address_id NUMBER(20)
-)
-;
+);
 
-create table athoma12.student_program
+create table athoma12.student_programs
 (program_id NUMBER(20) NOT NULL,
  degree_program VARCHAR2(20) NOT NULL,
  st_classification VARCHAR2(50) NOT NULL,
- st_category VARCHAR2(50) NOT NULL,
- CONSTRAINT programs_pk PRIMARY KEY(program_id)
+ st_category VARCHAR2(50) NOT NULL
 );
 
 create table athoma12.addresses
@@ -30,43 +36,34 @@ create table athoma12.addresses
  address_line_3 VARCHAR2(100),
  city VARCHAR2(50) NOT NULL,
  state VARCHAR2(50) NOT NULL,
- country VARCHAR2(50) NOT NULL,
- CONSTRAINT addresses_pk PRIMARY KEY(address_id)
+ country VARCHAR2(50) NOT NULL
 );
 
 create table athoma12.phones
 (phone_id NUMBER(20) NOT NULL,
- phone_number VARCHAR2(20) NOT NULL,
- CONSTRAINT phones_pk PRIMARY KEY(phone_id)
+ phone_number VARCHAR2(20) NOT NULL
 );
 
 create table athoma12.courses
 (course_id NUMBER(20) NOT NULL,
- course_name VARCHAR2(50) NOT NULL,
- CONSTRAINT courses_pk PRIMARY KEY(course_id)
+ course_name VARCHAR2(50) NOT NULL
 );
 
 create table athoma12.courses_taken
 (student_id NUMBER(20),
- course_id NUMBER(20),
- CONSTRAINT coursestaken_pk PRIMARY KEY(student_id, course_id)
+ course_id NUMBER(20)
 );
+
 
 create table athoma12.faculty
 (faculty_id NUMBER(20) NOT NULL,
- fac_category VARCHAR2(50) NOT NULL,
- nationality VARCHAR2(50) NOT NULL,
- department VARCHAR2(50) NOT NULL,
- first_name VARCHAR2(50) NOT NULL,
- last_name VARCHAR2(50) NOT NULL,
- CONSTRAINT faculty_pk PRIMARY KEY(faculty_id)
+ patron_id NUMBER(20) NOT NULL,
+ fac_category VARCHAR2(50) NOT NULL
 );
-
 
 create table athoma12.faculty_teaches
 (faculty_id NUMBER(20),
- course_id NUMBER(20),
- CONSTRAINT facultyteaches_pk PRIMARY KEY(faculty_id, course_id)
+ course_id NUMBER(20)
 );
 
 
@@ -74,21 +71,41 @@ create table athoma12.faculty_teaches
 
 --Alter Table Commands
 
+--PATRONS
+ALTER TABLE PATRONS ADD CONSTRAINT patrons_pk PRIMARY KEY(patron_id);
+
 --STUDENTS
 ALTER TABLE STUDENTS ADD CONSTRAINT students_pk PRIMARY KEY(student_id);
-ALTER TABLE STUDENTS ADD CONSTRAINT program_fk FOREIGN KEY(program_id) REFERENCES ATHOMA12.STUDENT_PROGRAM(program_id) ON DELETE SET NULL;
+ALTER TABLE PATRONS ADD CONSTRAINT st_patron_fk FOREIGN KEY(patron_id) REFERENCES ATHOMA12.patrons(patron_id) ON DELETE CASCADE;
+ALTER TABLE STUDENTS ADD CONSTRAINT st_patron_fk FOREIGN KEY(patron_id) REFERENCES ATHOMA12.patrons(patron_id) ON DELETE CASCADE;
+ALTER TABLE STUDENT_PROGRAMS ADD CONSTRAINT programs_pk PRIMARY KEY(program_id);
+ALTER TABLE STUDENTS ADD CONSTRAINT program_fk FOREIGN KEY(program_id) REFERENCES ATHOMA12.STUDENT_PROGRAMS(program_id) ON DELETE SET NULL;
 ALTER TABLE STUDENTS ADD CONSTRAINT phone_fk FOREIGN KEY(phone_id) REFERENCES ATHOMA12.PHONES(phone_id) ON DELETE SET NULL;
 ALTER TABLE STUDENTS ADD CONSTRAINT alt_phone_fk FOREIGN KEY(alt_phone_id) REFERENCES ATHOMA12.PHONES(phone_id) ON DELETE SET NULL;
 ALTER TABLE STUDENTS ADD CONSTRAINT address_fk FOREIGN KEY(address_id) REFERENCES ATHOMA12.ADDRESSES(address_id) ON DELETE SET NULL;
 
 
---courses taken
-ALTER TABLE COURSES_TAKEN ADD CONSTRAINT REFERENCES ATHOMA12.students(student_id) ON DELETE CASCADE
-ALTER TABLE COURSES_TAKEN ADD CONSTRAINT REFERENCES ATHOMA12.PHONES(course_id) ON DELETE SET NULL
+--Phones
+ALTER TABLE PHONES ADD CONSTRAINT phones_pk PRIMARY KEY(phone_id)
 
+--Addresses
+ALTER TABLE ADDRESSES ADD CONSTRAINT addresses_pk PRIMARY KEY(address_id);
+
+--Courses
+ALTER TABLE COURSES ADD CONSTRAINT courses_pk PRIMARY KEY(course_id);
+
+--courses taken
+ALTER TABLE COURSES_TAKEN ADD CONSTRAINT coursestaken_pk PRIMARY KEY(student_id, course_id);
+ALTER TABLE COURSES_TAKEN ADD CONSTRAINT REFERENCES ATHOMA12.students(student_id) ON DELETE CASCADE;
+ALTER TABLE COURSES_TAKEN ADD CONSTRAINT REFERENCES ATHOMA12.PHONES(course_id) ON DELETE SET NULL;
+
+--faculty
+ALTER TABLE FACULTY ADD CONSTRAINT faculty_pk PRIMARY_KEY(faculty_id);
+ALTER TABLE FACULTY ADD CONSTRAINT fac_patron_fk FOREIGN KEY(patron_id) REFERENCES ATHOMA12.patrons(patron_id) ON DELETE CASCADE;
 
 --faculty_teaches
-ALTER TABLE FACULTY_TEACHES ADD CONSTRAINT REFERENCES ATHOMA12.faculty(faculty_id) ON DELETE CASCADE,
-ALTER TABLE FACULTY_TEACHES ADD CONSTRAINT REFERENCES ATHOMA12.courses(course_id) ON DELETE SET NULL
+ALTER TABLE FACULTY_TEACHES ADD CONSTRAINT facultyteaches_pk PRIMARY KEY(faculty_id, course_id);
+ALTER TABLE FACULTY_TEACHES ADD CONSTRAINT REFERENCES ATHOMA12.faculty(faculty_id) ON DELETE CASCADE;
+ALTER TABLE FACULTY_TEACHES ADD CONSTRAINT REFERENCES ATHOMA12.courses(course_id) ON DELETE SET NULL;
 
-
+*

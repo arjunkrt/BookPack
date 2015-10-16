@@ -13,11 +13,12 @@ CREATE OR REPLACE PACKAGE BODY PATRONS_MGMT AS
 						p_nationality	IN 		athoma12.patrons.nationality%type,
 						p_department	IN 		athoma12.patrons.department%type,
 						p_username		IN 		athoma12.patrons.username%type,
-						p_password		IN 		athoma12.patrons.password_hash%type) IS
+						p_password		IN 		athoma12.patrons.password_hash%type,
+						p_patron_type   IN 		athoma12.patrons.patron_type%type) IS
 	BEGIN
 		p_patron_id := patrons_seq.nextval;
-		INSERT INTO ATHOMA12.PATRONS(patron_id, first_name, last_name, date_of_birth, sex, nationality, department, username, password_hash)
-		VALUES (p_patron_id, p_fName,p_lName,p_dob,p_sex,p_nationality,p_department,p_username,p_password);
+		INSERT INTO ATHOMA12.PATRONS(patron_id, first_name, last_name, date_of_birth, sex, nationality, department, username, password_hash, patron_type)
+		VALUES (p_patron_id, p_fName,p_lName,p_dob,p_sex,p_nationality,p_department,p_username,p_password, p_patron_type);
 		
 	END addPatron;
 
