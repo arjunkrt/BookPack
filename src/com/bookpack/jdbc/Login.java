@@ -49,7 +49,8 @@ public class Login {
 				if (id > 0) {
 					System.out.println("Success");
 				} else {
-					System.out.println("Login Failed");
+					System.out.println("Login Failed, Please login again");
+					Login.login_screen();
 				}
 
 			} finally {

@@ -25,7 +25,7 @@ public class Main {
 				Login.login_screen();
 				break;
 			case 2:
-				//function2_search_by_author_JDBC_API();
+				
 				break;
 			default:
 				System.out.println("Wrong input. Try again!");
