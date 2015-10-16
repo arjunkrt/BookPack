@@ -14,8 +14,8 @@ public class Login {
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			String user = "akarat";	
-			String passwd = "200109405";
+			String user = "";	
+			String passwd = "";
 
 			Connection conn = null;
 			Statement stmt = null;
@@ -35,15 +35,17 @@ public class Login {
 				System.out.println("Enter the password");
 				user_pwd = stdin.nextLine();
 
-				String sql = "{ ? = call USER_AUTH.VALIDATELOGIN(?,?) }";
+				String sql = "{ ? = call athoma12.USER_AUTH.VALIDATELOGIN(?,?) }";
 				CallableStatement cstmt = conn.prepareCall(sql);
+				cstmt.registerOutParameter(1, java.sql.Types.INTEGER);  
 				cstmt.setString(2,email_id);
 				cstmt.setString(3,user_pwd);
-				cstmt.registerOutParameter(1, java.sql.Types.INTEGER);  
-
+				
+				//System.out.println("Before execution");
 				cstmt.execute();
+				//System.out.println("After execution");
 
-				long id = cstmt.getLong(1);
+				int id = cstmt.getInt(1);
 				if (id > 0) {
 					System.out.println("Success");
 				} else {
