@@ -23,8 +23,8 @@ public class Login {
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			String user = "";	
-			String passwd = "";
+			String user = "akarat";	
+			String passwd = "200109405";
 
 			Connection conn = null;
 			Statement stmt = null;
@@ -44,7 +44,7 @@ public class Login {
 				System.out.println("Enter the password");
 				user_pwd = stdin.nextLine();
 
-				String sql = "{ call athoma12.USER_AUTH.VALIDATELOGIN(?,?,?,?,?) }";
+				String sql = "{call athoma12.user_auth.validateLogin(?,?,?,?,?)}";
 				CallableStatement cstmt = conn.prepareCall(sql);
 			
 				cstmt.setString(1,email_id);
@@ -57,19 +57,17 @@ public class Login {
 				
 				patron_id = cstmt.getDouble(3);
 				user_type = cstmt.getString(4);			
-				int id = cstmt.getInt(1);
-				
-				//System.out.println("Before execution");
-				
-				//System.out.println("After execution");
+				int id = cstmt.getInt(5);
 				
 				if (id > 0) {
 					System.out.println("Success");
+					System.out.println(id);
 				} else {
 					System.out.println("Login Failed, Please login again");
-					//Login.login_screen();
+					Login l1 = new Login();
+					l1.login_screen();
 				}
-
+				
 			} finally {
 				close(rs);
 				close(stmt);
