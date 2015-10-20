@@ -66,7 +66,30 @@ create table athoma12.faculty_teaches
  course_id NUMBER(20)
 );
 
+create table athoma12.notification_templates
+(template_name VARCHAR2(20) NOT NULL,
+ template_body VARCHAR2(700) NOT NULL,
+ CONSTRAINT notif_temp_pk PRIMARY KEY(template_name)
+);
 
+create table athoma12.notification_patrons
+(notification_id NUMBER(20) NOT NULL,
+ template_name VARCHAR2(20) NOT NULL,
+ patron_id NUMBER(20) NOT NULL,
+ attribute1 VARCHAR2(20),
+ attribute2 VARCHAR2(20),
+ attribute3 VARCHAR2(20),
+ attribute4 VARCHAR2(20),
+ attribute5 VARCHAR2(20),
+ attribute6 VARCHAR2(20),
+ attribute7 VARCHAR2(20),
+ attribute8 VARCHAR2(20),
+ attribute9 VARCHAR2(20),
+ attribute10 VARCHAR2(20),
+ CONSTRAINT notif_patrons_pk PRIMARY KEY(notification_id),
+ CONSTRAINT notif_template_fk FOREIGN KEY(template_name) REFERENCES ATHOMA12.notification_templates(template_name) ON DELETE CASCADE,
+ CONSTRAINT notif_patron_fk FOREIGN KEY(patron_id) REFERENCES ATHOMA12.patrons(patron_id) ON DELETE CASCADE
+);
 
 
 --Alter Table Commands
