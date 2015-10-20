@@ -44,7 +44,8 @@ create table pkattep.Books
  ISBN VARCHAR2(20) NOT NULL,
  edition NUMBER(10),
  reserved BOOLEAN NOT NULL,
- publishers VARCHAR2(20)
+ publishers VARCHAR2(20),
+ status VARCHAR2(10)
 );
 
 create table pkattep.journals
@@ -61,7 +62,8 @@ create table pkattep.Conf_Proceedings
 ------------------------------------------------
 create table pkattep.Resource_types
 (Rid NUMBER(20) NOT NULL,
- Rtype_id NUMBER(20) NOT NULL
+ Rtype_id NUMBER(20) NOT NULL,
+ status VARCHAR(10) NOT NULL
 );
 
 create table pkattep.location
