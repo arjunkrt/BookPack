@@ -1,0 +1,132 @@
+----Insert into Table Commands
+
+--RESOURCES
+INSERT INTO pkattep.RESOURCES VALUES (1,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (2,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (3,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (4,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (5,'Checked out',2);
+
+INSERT INTO pkattep.RESOURCES VALUES (6,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (7,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (8,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (9,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (10,'Checked out',2);
+
+INSERT INTO pkattep.RESOURCES VALUES (11,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (12,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (13,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (14,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (15,'Checked out',2);
+
+INSERT INTO pkattep.RESOURCES VALUES (16,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (17,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (18,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (19,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (20,'Checked out',2);
+
+INSERT INTO pkattep.RESOURCES VALUES (21,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (22,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (23,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (24,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (25,'Checked out',2);
+
+INSERT INTO pkattep.RESOURCES VALUES (26,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (27,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (28,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (29,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (30,'Checked out',2);
+
+INSERT INTO pkattep.RESOURCES VALUES (31,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (32,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (33,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (34,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (35,'Checked out',2);
+
+INSERT INTO pkattep.RESOURCES VALUES (36,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (37,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (38,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (39,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (40,'Checked out',2);
+
+INSERT INTO pkattep.RESOURCES VALUES (41,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (42,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (43,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (44,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (45,'Checked out',2);
+
+INSERT INTO pkattep.RESOURCES VALUES (46,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (47,'Available',2);
+INSERT INTO pkattep.RESOURCES VALUES (48,'Available',1);
+INSERT INTO pkattep.RESOURCES VALUES (49,'Checked out',1);
+INSERT INTO pkattep.RESOURCES VALUES (50,'Checked out',2);
+
+--LIBRARY
+INSERT INTO pkattep.LIBRARY VALUES (1,'James D Hunt Library');
+INSERT INTO pkattep.LIBRARY VALUES (2,'D H Hill Library');
+
+-----------------------------------------------------------------------------
+--ROOMS
+INSERT INTO pkattep.ROOMS VALUES (1,1,4, 'study','Available',1);
+INSERT INTO pkattep.ROOMS VALUES (2,1,10,'study','Available',1);
+INSERT INTO pkattep.ROOMS VALUES (3,2,4, 'study','Available',1);
+INSERT INTO pkattep.ROOMS VALUES (4,2,10,'study','Checked out',1);
+INSERT INTO pkattep.ROOMS VALUES (5,3,4, 'study','Available',1);
+INSERT INTO pkattep.ROOMS VALUES (6,3,10,'study','Checked out',1);
+INSERT INTO pkattep.ROOMS VALUES (7,2,4, 'conf', 'Available',1);
+INSERT INTO pkattep.ROOMS VALUES (8,2,10,'conf', 'Available',1);
+INSERT INTO pkattep.ROOMS VALUES (9,3,4, 'conf', 'Checked out',1);
+INSERT INTO pkattep.ROOMS VALUES (10,3,10,'conf','Available',1);
+
+INSERT INTO pkattep.ROOMS VALUES (11,1,4, 'study','Available',2);
+INSERT INTO pkattep.ROOMS VALUES (12,1,10,'study','Available',2);
+INSERT INTO pkattep.ROOMS VALUES (13,2,4, 'study','Available',2);
+INSERT INTO pkattep.ROOMS VALUES (14,2,10,'study','Checked out',2);
+INSERT INTO pkattep.ROOMS VALUES (15,3,4, 'study','Available',2);
+INSERT INTO pkattep.ROOMS VALUES (16,3,10,'study','Checked out',2);
+INSERT INTO pkattep.ROOMS VALUES (17,2,4, 'conf', 'Available',2);
+INSERT INTO pkattep.ROOMS VALUES (18,2,10,'conf', 'Available',2);
+INSERT INTO pkattep.ROOMS VALUES (19,3,4, 'conf', 'Checked out',2);
+INSERT INTO pkattep.ROOMS VALUES (20,3,10,'conf','Available',2);
+
+-----------------------------------------------------------------------------
+--CAMERAS
+INSERT INTO pkattep.CAMERAS VALUES (1,'Available',1);
+INSERT INTO pkattep.CAMERAS VALUES (2,'Available',2);
+INSERT INTO pkattep.CAMERAS VALUES (3,'Available',1);
+INSERT INTO pkattep.CAMERAS VALUES (4,'Checked out',1);
+INSERT INTO pkattep.CAMERAS VALUES (5,'Checked out',2);
+
+INSERT INTO pkattep.CAMERAS VALUES (6,'Available',1);
+INSERT INTO pkattep.CAMERAS VALUES (7,'Available',2);
+INSERT INTO pkattep.CAMERAS VALUES (8,'Available',1);
+INSERT INTO pkattep.CAMERAS VALUES (9,'Checked out',1);
+INSERT INTO pkattep.CAMERAS VALUES (10,'Checked out',2);
+
+-----------------------------------------------------------------------------
+--PUBLICATIONS
+ALTER TABLE PUBLICATIONS ADD CONSTRAINT pub_pk PRIMARY KEY(Pid);
+ALTER TABLE PUBLICATIONS ADD CONSTRAINT rid_pub_fk FOREIGN KEY(Rid) REFERENCES pkattep.Resource_types(Rid) ON DELETE CASCADE;
+ALTER TABLE PUBLICATIONS ADD CONSTRAINT rtype_pub_fk FOREIGN KEY(Rtype_id) REFERENCES pkattep.Resource_types(Rtype_id) ON DELETE CASCADE;
+ALTER TABLE PUBLICATIONS ADD CONSTRAINT status_pub_fk FOREIGN KEY(status) REFERENCES pkattep.Resource_types(Rtype_id) ON DELETE CASCADE;
+
+-----------------------------------------------------------------------------
+--PUBLICATIONS_AUTHORS
+ALTER TABLE PUBLICATIONS_AUTHORS ADD CONSTRAINT pub_auth_pk PRIMARY KEY(Pid,Aid);
+ALTER TABLE PUBLICATIONS_AUTHORS ADD CONSTRAINT Pid_pub_auth_fk FOREIGN KEY(Pid) REFERENCES pkattep.Publications(Pid) ON DELETE CASCADE;
+ALTER TABLE PUBLICATIONS_AUTHORS ADD CONSTRAINT Aid_pub_auth_fk FOREIGN KEY(Aid) REFERENCES pkattep.Authors(Aid) ON DELETE CASCADE;
+
+--AUTHORS
+ALTER TABLE AUTHORS ADD CONSTRAINT auth_pk PRIMARY KEY(Aid);
+
+--BOOKS
+ALTER TABLE BOOKS ADD CONSTRAINT book_pk PRIMARY KEY(ISBN);
+ALTER TABLE BOOKS ADD CONSTRAINT Pid_book_fk FOREIGN KEY(Pid) REFERENCES pkattep.Publications(Pid) ON DELETE CASCADE;
+
+--JOURNALS
+ALTER TABLE JOURNALS ADD CONSTRAINT journals_pk PRIMARY KEY(ISSN);
+ALTER TABLE JOURNALS ADD CONSTRAINT Pid_journals_fk FOREIGN KEY(Pid) REFERENCES pkattep.Publications(Pid) ON DELETE CASCADE;
+
+--CONF_PROCEEDINGS
+ALTER TABLE CONF_PROCEEDINGS ADD CONSTRAINT conf_proceedings_pk PRIMARY KEY(conf_no);
+ALTER TABLE CONF_PROCEEDINGS ADD CONSTRAINT Pid_conf_proceedings_fk FOREIGN KEY(Pid) REFERENCES pkattep.Publications(Pid) ON DELETE CASCADE;
