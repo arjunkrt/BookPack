@@ -25,7 +25,7 @@ CREATE OR REPLACE PACKAGE BODY USER_AUTH AS
 			p_success:= 1;
 		EXCEPTION
 			WHEN OTHERS THEN
-				p_success := 1;
+				p_success := 0;
 		END;
 
 	END validateLogin;
