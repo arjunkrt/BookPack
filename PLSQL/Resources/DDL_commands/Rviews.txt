@@ -3,17 +3,17 @@
 --VIEWS FOR PUBLICATIONS
 
 CREATE VIEW BOOK_VIEW AS
-SELECT B.Pid, P.title, B.edition, P.type, B.ISBN, P.year, (CASE WHEN B.reserved=0 THEN 'NO' ELSE 'YES' END) AS Reserved, B.publishers
+SELECT B.Pid AS Publication_ID, P.title, B.edition, P.type, B.ISBN, P.year, (CASE WHEN B.reserved=0 THEN 'NO' ELSE 'YES' END) AS Reserved, B.publishers
 FROM pkattep.Books B, pkattep.publications P
 WHERE B.Pid = P.Pid;
 
 CREATE VIEW JOURNALS_VIEW AS
-SELECT J.Pid, P.title, J.type, J.ISSN, P.year
+SELECT J.Pid AS Publication_ID, P.title, J.type, J.ISSN, P.year
 FROM pkattep.Journals J, pkattep.publications P
 WHERE J.Pid = P.Pid;
 
 CREATE VIEW CONF_VIEW AS
-SELECT C.Pid, P.title, C.type, C.conf_no, P.year
+SELECT C.Pid AS Publication_ID, P.title, C.type, C.conf_no, P.year
 FROM pkattep.Conf_Proceedings C, pkattep.publications P
 WHERE C.Pid = P.Pid;
 

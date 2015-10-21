@@ -41,16 +41,19 @@ PROCEDURE viewSpecRoom(room_ka_id IN pkattep.ROOMS.room_id%TYPE) IS
 END viewSpecRoom;
 
 
-PROCEDURE viewSpecPub(P_ka_id IN pkattep.PUBLICATIONS.Pid%TYPE) IS
+PROCEDURE viewSpecPub(P_ka_id IN pkattep.PUBLICATIONS.Pid%TYPE,
+                    P_ka_type IN NUMBER) IS
+    p_identifier NUMBER
     p_title VARCHAR2
     p_year NUMBER
     p_type VARCHAR2
     
     BEGIN
     
-    p_title = pk
+    SELECT title INTO p_title FROM PUBLICATIONS WHERE pkattep.PUBLICATIONS.title = p_ka_id;
     
-    IF(P_ka_id = ANY (SELECT Pid FROM pkattep.BOOKS)) THEN
-        DBMS_OUTPUT.PUTLINE('The book you requested is -');
-        DBMS_OUTPUT.PUTLINE('TITLE');
+    IF p_ka_type = 0 THEN
+    
+        DBMS_OUTPUT.PUTLINE('The book you selected is --');
+        DBMS_OUTPUT.PUTLINE('
     
