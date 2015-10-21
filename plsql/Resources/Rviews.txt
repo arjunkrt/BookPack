@@ -15,3 +15,7 @@ SELECT C.Pid, P.title, C.type, C.conf_no, P.year
 FROM Conf_Proceedings C, publications P
 WHERE C.Pid = P.Pid;
 
+--VIEWS FOR CAMERAS
+
+
+--
