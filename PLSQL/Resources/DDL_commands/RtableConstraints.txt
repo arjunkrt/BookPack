@@ -1,0 +1,7 @@
+--Alter Table Commands for values
+
+--PUBLICATIONS
+ALTER TABLE pkattep.PUBLICATIONS ADD CONSTRAINT Pub_type CHECK type IN ('hard copy','ebook');
+
+--RESOURCES
+ALTER TABLE pkattep.RESOURCES ADD CONSTRAINT R_status CHECK status IN ('Available','Checked out');

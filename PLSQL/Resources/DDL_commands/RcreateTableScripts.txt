@@ -2,10 +2,10 @@
 
 create table pkattep.Rooms
 ( room_id NUMBER(20) NOT NULL,
- Floor NUMBER(50) NOT NULL,
- Capacity NUMBER(50) NOT NULL,
+ floor NUMBER(50) NOT NULL,
+ capacity NUMBER(50) NOT NULL,
  --as of now only 2 capacities are assumed - 4 and 10
- Type VARCHAR2(10) NOT NULL
+ type VARCHAR2(10) NOT NULL
  --Type should be one among conf or study
  status VARCHAR(10) NOT NULL
  --status should contain only values in Available, Checked out, Requested
