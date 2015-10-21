@@ -27,7 +27,7 @@ create table pkattep.publications
  Pid NUMBER(20) NOT NULL,
  year VARCHAR2(20) NOT NULL,
  type NUMBER(20) NOT NULL,
- title VARCHAR2(20) NOT NULL
+ title VARCHAR2(40) NOT NULL
 );
 
 ------------------------------------------------
@@ -46,8 +46,7 @@ create table pkattep.Books
  ISBN VARCHAR2(20) NOT NULL,
  edition NUMBER(10),
  reserved BOOLEAN NOT NULL,
- publishers VARCHAR2(20),
- status VARCHAR2(10)
+ publishers VARCHAR2(20)
 );
 
 create table pkattep.journals
@@ -58,7 +57,6 @@ create table pkattep.journals
 create table pkattep.Conf_Proceedings
 (Pid NUMBER(20) NOT NULL,
  conf_no NUMBER(20) NOT NULL,
- conf_name VARCHAR2(50) NOT NULL
 );
 
 ------------------------------------------------
@@ -69,7 +67,6 @@ create table pkattep.Resources
  Libid NUMBER(10)
  --Libid can be NULL coz there are some online resources
 );
-
 
 create table pkattep.library
 (Libid NUMBER(10),
