@@ -38,3 +38,6 @@ WHERE type = 'study';
 CREATE VIEW ROOM_VIEW_FACULTY AS
 SELECT room_id, floor, capacity, type, status, Libid
 FROM pkattep.Rooms;
+
+--Following views are for the second layer of request to view each of the resources
+
