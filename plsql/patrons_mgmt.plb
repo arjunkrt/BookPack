@@ -108,7 +108,8 @@ CREATE OR REPLACE PACKAGE BODY PATRONS_MGMT AS
 						p_nationality	=> p_nationality,
 						p_department	=> p_department,
 						p_username	=> p_username,
-						p_password	=> p_password
+						p_password	=> p_password,
+						p_patron_type => 'S'
 
 		);
 		--Created Patron

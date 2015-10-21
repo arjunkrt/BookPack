@@ -14,7 +14,9 @@ PROCEDURE addPatron(
 					p_nationality 	IN 		athoma12.patrons.nationality%type,
 					p_department 	IN 		athoma12.patrons.department%type,
 					p_username  	IN 		athoma12.patrons.username%type,
-					p_password 		IN 		athoma12.patrons.password_hash%type);
+					p_password 		IN 		athoma12.patrons.password_hash%type,
+					p_patron_type   IN 		athoma12.patrons.patron_type%type
+					);
 
 PROCEDURE addStudentProgram(
 					p_program_id	OUT 	athoma12.student_programs.program_id%type,
