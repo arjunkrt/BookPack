@@ -22,10 +22,11 @@ public class Main {
 			stdin.nextLine();
 			switch (func) {
 			case 1:
-				Login.login_screen();
+				Login l1 = new Login();
+				l1.login_screen();
 				break;
 			case 2:
-				//function2_search_by_author_JDBC_API();
+				
 				break;
 			default:
 				System.out.println("Wrong input. Try again!");

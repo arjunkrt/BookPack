@@ -1,0 +1,30 @@
+set serveroutput on;
+declare
+l_student_id NUMBER;
+begin
+ athoma12.patrons_mgmt.addStudent(
+				p_student_id => l_student_id,
+				p_fName => 'Anish',
+				p_lName => 'Thomas',
+				p_dob => '01-JAN-1900',
+				p_sex => 'M',
+				p_nationality => 'INDIA',
+				p_department => 'Computer Science',
+				p_username => 'athoma12@ncsu.edu',
+				p_password => 'Pass123',
+        p_degree_program => 'M.S.',
+        p_st_classification => 'Graduate',
+        p_st_category => 'Graduate',
+        p_phone_number => '123456789',
+        p_alt_phone_number => '987654321',
+        p_address_line_1 => '2842 Avent Ferry Road',
+        p_address_line_2 => '',
+        p_address_line_3 => '',
+        p_city => 'Raleigh',
+        p_state => 'North Carolina',
+        p_country => 'USA'
+);
+dbms_output.put_line('l_student_id :'||l_student_id);
+end;
+/
+commit;

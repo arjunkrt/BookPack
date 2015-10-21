@@ -6,10 +6,19 @@ import oracle.jdbc.OracleTypes;
 
 public class Login {
 
+	double patron_id;
+	String user_type;
+	
+	Login()
+	{
+		patron_id = 0;
+		user_type = "";
+	}
+	
 	static Scanner stdin = new Scanner(System.in);
 	static final String jdbcURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
 
-	public static void login_screen()
+	public void login_screen()
 	{
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -35,23 +44,30 @@ public class Login {
 				System.out.println("Enter the password");
 				user_pwd = stdin.nextLine();
 
-				String sql = "{ ? = call athoma12.USER_AUTH.VALIDATELOGIN(?,?) }";
+				String sql = "{call athoma12.user_auth.validateLogin(?,?,?,?,?)}";
 				CallableStatement cstmt = conn.prepareCall(sql);
-				cstmt.registerOutParameter(1, java.sql.Types.INTEGER);  
-				cstmt.setString(2,email_id);
-				cstmt.setString(3,user_pwd);
+			
+				cstmt.setString(1,email_id);
+				cstmt.setString(2,user_pwd);
+				cstmt.registerOutParameter(3, java.sql.Types.DOUBLE);
+				cstmt.registerOutParameter(4, java.sql.Types.VARCHAR);
+				cstmt.registerOutParameter(5, java.sql.Types.INTEGER);
 				
-				//System.out.println("Before execution");
 				cstmt.execute();
-				//System.out.println("After execution");
-
-				int id = cstmt.getInt(1);
+				
+				patron_id = cstmt.getDouble(3);
+				user_type = cstmt.getString(4);			
+				int id = cstmt.getInt(5);
+				
 				if (id > 0) {
 					System.out.println("Success");
+					System.out.println(id);
 				} else {
-					System.out.println("Login Failed");
+					System.out.println("Login Failed, Please login again");
+					Login l1 = new Login();
+					l1.login_screen();
 				}
-
+				
 			} finally {
 				close(rs);
 				close(stmt);

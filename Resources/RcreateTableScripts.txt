@@ -1,0 +1,74 @@
+--Create TABLE Commands
+
+create table pkattep.Rooms
+( room_id NUMBER(20) NOT NULL,
+ Floor NUMBER(50) NOT NULL,
+ Capacity NUMBER(50) NOT NULL,
+ --as of now only 2 capacities are assumed - 4 and 10
+ Type VARCHAR2(10) NOT NULL
+ --Type should be one among conf or study
+ status VARCHAR(10) NOT NULL
+ --status should contain only values in Available, Checked out, Requested
+ Libid NUMBER(10)
+ --Libid can be NULL coz there are some online resources
+);
+
+create table pkattep.cameras
+(Rid NUMBER(20) NOT NULL,
+ cam_id NUMBER(20) NOT NULL,
+ model VARCHAR2(20) NOT NULL,
+ memory NUMBER(20),
+ lens_config VARCHAR2(20),
+ Manufacturer VARCHAR2(20),
+);
+
+create table pkattep.publications
+(Rid NUMBER(20) NOT NULL,
+ Pid NUMBER(20) NOT NULL,
+ year VARCHAR2(20) NOT NULL,
+ type NUMBER(20) NOT NULL,
+ title VARCHAR2(40) NOT NULL
+);
+
+------------------------------------------------
+create table pkattep.Publications_Authors
+(Pid NUMBER(20) NOT NULL,
+ Aid NUMBER(20) NOT NULL
+);
+
+create table pkattep.authors
+(Aid NUMBER(20) NOT NULL,
+Author_name VARCHAR2(20) NOT NULL
+);
+
+create table pkattep.Books
+(Pid NUMBER(20) NOT NULL,
+ ISBN VARCHAR2(20) NOT NULL,
+ edition NUMBER(10),
+ reserved BOOLEAN NOT NULL,
+ publishers VARCHAR2(20)
+);
+
+create table pkattep.journals
+(Pid NUMBER(20) NOT NULL,
+ ISSN VARCHAR2(20) NOT NULL,
+);
+
+create table pkattep.Conf_Proceedings
+(Pid NUMBER(20) NOT NULL,
+ conf_no NUMBER(20) NOT NULL,
+);
+
+------------------------------------------------
+create table pkattep.Resources
+(Rid NUMBER(20) NOT NULL,
+ status VARCHAR(10) NOT NULL
+ --status should contain only values in Available, Checked out, Requested
+ Libid NUMBER(10)
+ --Libid can be NULL coz there are some online resources
+);
+
+create table pkattep.library
+(Libid NUMBER(10),
+LibName VARCHAR2(20)
+);
