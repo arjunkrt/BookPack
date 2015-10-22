@@ -7,6 +7,7 @@ public class Login {
 
 	double patron_id = 0;
 	String user_type = "";
+	int success_id = 0;
 	private static Login login = new Login( );
 
 	static Scanner stdin = new Scanner(System.in);
@@ -15,7 +16,7 @@ public class Login {
 	public static Login getInstance( ) {
 		return login;
 	}
-	public int login_screen()
+	public void login_screen()
 	{
 		System.out.println();
 		System.out.println("Login Screen");
@@ -29,7 +30,6 @@ public class Login {
 
 		String sql = "{call athoma12.user_auth.validateLogin(?,?,?,?,?)}";
 		CallableStatement cstmt=null;
-		int id = 0;
 		
 		try {
 			cstmt = DBConnection.conn.prepareCall(sql);
@@ -44,12 +44,12 @@ public class Login {
 
 			patron_id = cstmt.getDouble(3);
 			user_type = cstmt.getString(4);			
-			id = cstmt.getInt(5);
+			success_id = cstmt.getInt(5);
 
-			if (id == 0){
+			if (success_id == 0){
 				System.out.println("Login Failed, Please login again");
-				Login l1 = new Login();
-				l1.login_screen();
+				Login login = Login.getInstance();
+				login.login_screen();
 			}
 		}
 		catch (SQLException e) {
@@ -62,6 +62,5 @@ public class Login {
 				}
 			}
 		}
-		return id;
 	}
 }

@@ -20,14 +20,13 @@ public class Main {
 			System.out.print("Enter your Command >> ");
 			func = stdin.nextInt();
 			stdin.nextLine();
-			int id = 0;
 			switch (func) {
 			case 1:
 				DBConnection cobj = new DBConnection();
 				cobj.JDBCConnection();
-				Login login = Login.getInstance();// new Login();
-				id = login.login_screen();
-				if (id > 0) {
+				Login login = Login.getInstance();
+				login.login_screen();
+				if (login.success_id > 0) {
 					System.out.println("Success");
 				}
 				break;

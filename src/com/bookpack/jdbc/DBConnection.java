@@ -29,7 +29,7 @@ public class DBConnection {
 	         if(!conn.isClosed())
 	         {
 	        	 conn.commit();
-	        	 conn.close();        // close open files
+	        	 conn.close();        
 	         }
 	     } finally {
 	         super.finalize();
