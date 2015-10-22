@@ -7,7 +7,7 @@ public class DBConnection {
 	static final String jdbcURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
 	public static Connection conn;
 
-	public void login_screen()
+	public void JDBCConnection()
 	{
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver");

@@ -23,7 +23,7 @@ public class Main {
 			switch (func) {
 			case 1:
 				DBConnection cobj = new DBConnection();
-				cobj.login_screen();
+				cobj.JDBCConnection();
 				Login login = Login.getInstance();// new Login();
 				login.login_screen();
 				break;
