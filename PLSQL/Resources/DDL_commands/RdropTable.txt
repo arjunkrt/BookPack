@@ -2,6 +2,18 @@
 -- from other table must be dropped first - before the table whose attribute was
 -- referenced
 
+--DROPPING VIEWS
+
+DROP VIEW pkattep.BOOK_VIEW;
+DROP VIEW pkattep.JOURNALS_VIEW;
+DROP VIEW pkattep.CONF_VIEW;
+DROP VIEW pkattep.CAM_VIEW;
+
+DROP VIEW pkattep.ROOM_VIEW_STUDENTS;
+DROP VIEW pkattep.ROOM_VIEW_FACULTY;
+
+--DROPPING TABLES
+
 DROP TABLE pkattep.ROOMS;
 DROP TABLE pkattep.CAMERAS;
 

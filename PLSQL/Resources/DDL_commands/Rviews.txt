@@ -3,24 +3,24 @@
 --VIEWS FOR PUBLICATIONS
 
 CREATE VIEW BOOK_VIEW AS
-SELECT B.Pid AS Publication_ID, P.title, B.edition, P.type, B.ISBN, P.year, (CASE WHEN B.reserved=0 THEN 'NO' ELSE 'YES' END) AS Reserved, B.publishers
+SELECT B.rtype_id AS BOOK_ID, P.title, B.edition, B.ISBN, P.year, (CASE WHEN B.reserved=0 THEN 'NO' ELSE 'YES' END) AS Reserved, B.publishers
 FROM pkattep.Books B, pkattep.publications P
-WHERE B.Pid = P.Pid;
+WHERE B.rtype_id = P.rtype_id;
 
 CREATE VIEW JOURNALS_VIEW AS
-SELECT J.Pid AS Publication_ID, P.title, J.type, J.ISSN, P.year
+SELECT J.rtype_id AS JOURNALS_ID, P.title, J.ISSN, P.year
 FROM pkattep.Journals J, pkattep.publications P
-WHERE J.Pid = P.Pid;
+WHERE J.rtype_id = P.rtype_id;
 
 CREATE VIEW CONF_VIEW AS
-SELECT C.Pid AS Publication_ID, P.title, C.type, C.conf_no, P.year
+SELECT C.rtype_id AS CONF_ID, P.title, C.conf_no, P.year
 FROM pkattep.Conf_Proceedings C, pkattep.publications P
-WHERE C.Pid = P.Pid;
+WHERE C.rtype_id = P.rtype_id;
 
 --VIEWS FOR CAMERAS
 
 CREATE VIEW CAM_VIEW AS
-SELECT model, memory, lens_config, Manufacturer
+SELECT rtype_id AS CAMERA_ID, model, memory, lens_config, Manufacturer
 FROM pkattep.cameras;
 
 
@@ -29,15 +29,16 @@ FROM pkattep.cameras;
 --VIEW FOR STUDENTS
 
 CREATE VIEW ROOM_VIEW_STUDENTS AS
-SELECT room_id, floor, capacity, type, status, Libid
-FROM pkattep.Rooms
-WHERE type = 'study';
+SELECT RO.rtype_id AS ROOM_ID, RO.floor, RO.capacity, L.Lib_name
+FROM pkattep.Rooms RO, pkattep.Resources R, pkattep.library L
+WHERE RO.roomtype = 'study' AND RO.rtype_id=R.rtype_id AND R.lib_id=L.lib_id;
 
 --VIEW FOR FACULTY
 
 CREATE VIEW ROOM_VIEW_FACULTY AS
-SELECT room_id, floor, capacity, type, status, Libid
-FROM pkattep.Rooms;
+SELECT RO.rtype_id AS ROOM_ID, RO.floor, RO.capacity, L.Lib_name
+FROM pkattep.Rooms RO, pkattep.Resources R, pkattep.library L
+WHERE RO.rtype_id=R.rtype_id AND R.lib_id=L.lib_id;
 
 --Following views are for the second layer of request to view each of the resources
 
