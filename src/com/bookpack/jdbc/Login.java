@@ -7,6 +7,7 @@ public class Login {
 
 	double patron_id = 0;
 	String user_type = "";
+	String user_name = "";
 	int success_id = 0;
 	private static Login login = new Login( );
 
@@ -15,6 +16,42 @@ public class Login {
 	protected Login(){}
 	public static Login getInstance( ) {
 		return login;
+	}
+	public void home_screen(Login login)
+	{
+		int func;
+		System.out.println("----------------------------------");
+		System.out.println("<Menu>");	
+		System.out.println("1. Profile");
+		System.out.println("2. Resources");
+		System.out.println("3. Checked­out Resources");
+		System.out.println("4. Resource Request");
+		System.out.println("5. Notifications");
+		System.out.println("6. Due­Balance");
+		System.out.println("7. Logout");
+		System.out.print("Enter your Choice >> ");
+		func = stdin.nextInt();
+		stdin.nextLine();
+		switch (func) {
+		case 1:
+			Profile profile = Profile.getInstance();
+			profile.display_student(login);
+			break;
+		case 2:
+			
+			break;
+		case 3:
+			Resource_check_out resource_check_out = Resource_check_out.getInstance();
+			resource_check_out.display_checked_out_resources(login);
+			break;
+		case 5:
+			Notifications notifications = Notifications.getInstance();
+			notifications.display_notifications(login);
+			break;
+		default:
+			System.out.println("Wrong input. Try again!");
+			login.home_screen(login);
+		}
 	}
 	public void main_screen()
 	{
@@ -34,34 +71,7 @@ public class Login {
 			case 1:
 				login.login_screen();
 				if (login.success_id > 0) {
-					
-					System.out.println("----------------------------------");
-					System.out.println("<Menu>");	
-					System.out.println("1. Profile");
-					System.out.println("2. Resources");
-					System.out.println("3. Checked­out Resources");
-					System.out.println("4. Resource Request");
-					System.out.println("5. Notifications");
-					System.out.println("6. Due­Balance");
-					System.out.println("7. Logout");
-					System.out.print("Enter your Choice >> ");
-					func = stdin.nextInt();
-					stdin.nextLine();
-					switch (func) {
-					case 1:
-						Profile profile = Profile.getInstance();
-						profile.display_student(login);
-						break;
-					case 2:
-						
-						break;
-					case 3:
-						Resource_check_out resource_check_out = Resource_check_out.getInstance();
-						resource_check_out.display_checked_out_resources(login);
-						break;
-					default:
-						System.out.println("Wrong input. Try again!");
-					}		
+					login.home_screen(login);
 				}
 				break;
 			case 2:
@@ -79,7 +89,7 @@ public class Login {
 		System.out.println("Login Screen");
 		System.out.println("----------------------------------");
 		String email_id;
-		System.out.println("Enter your email ID");
+		System.out.println("Enter your login ID");
 		email_id = stdin.nextLine();
 		String user_pwd;
 		System.out.println("Enter the password");
@@ -102,6 +112,7 @@ public class Login {
 			patron_id = cstmt.getDouble(3);
 			user_type = cstmt.getString(4);			
 			success_id = cstmt.getInt(5);
+			user_name = email_id;
 
 			if (success_id == 0){
 				System.out.println("Login Failed, Please login again");
