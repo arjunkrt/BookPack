@@ -40,28 +40,26 @@ public class Profile {
 				String dept = rs.getString("DEPARTMENT");
 				String nationality = rs.getString("NATIONALITY");
 				String sex = rs.getString("SEX");
-				if(sex == "M")
+				if(sex.equals("M"))
 				{
 					sex = "Male";
 				}
-				else if(sex == "F")
+				else if(sex.equals("F"))
 				{
 					sex = "Female";
 				}
 				//String patron_type = rs.getString("PATRON_TYPE");
-				String address1 = rs.getString("ADDRESS_LINE_1");
-				String address2 = rs.getString("ADDRESS_LINE_2");
-				String address3 = rs.getString("ADDRESS_LINE_3");
+				String address1 = rs.getString("ADDRESS_LINE_1") != null ? rs.getString("ADDRESS_LINE_1") : "";
+				String address2 = rs.getString("ADDRESS_LINE_2") != null ? rs.getString("ADDRESS_LINE_2") : "";
+				String address3 = rs.getString("ADDRESS_LINE_3") != null ? rs.getString("ADDRESS_LINE_3") : "";
 				String city = rs.getString("CITY");
 				String state = rs.getString("STATE");
 				String country = rs.getString("COUNTRY");
-				String ph_no = rs.getString("PHONE_NUMBER");
-				String alt_ph_no = rs.getString("ALT_PHONE_NUMBER");
+				String ph_no = rs.getString("PHONE_NUMBER") != null ? rs.getString("PHONE_NUMBER") : "";
+				String alt_ph_no = rs.getString("ALT_PHONE_NUMBER") != null ? rs.getString("ALT_PHONE_NUMBER") : "";
 				String degree_pgm = rs.getString("DEGREE_PROGRAM");
 				String st_cat = rs.getString("ST_CATEGORY");
 				String st_class = rs.getString("ST_CLASSIFICATION");
-				
-				String newLine = System.getProperty("line.separator");
 				
 				System.out.print("Student Name: ");
 				System.out.println(first_name + " " + last_name);
@@ -75,8 +73,11 @@ public class Profile {
 				System.out.println(sex);
 				//System.out.println(patron_type);
 				System.out.println("Address: ");
+				System.out.print("Line 1: ");
 				System.out.println(address1);
+				System.out.print("Line 2: ");
 				System.out.println(address2);
+				System.out.print("Line 3: ");
 				System.out.println(address3);
 				System.out.print("City: ");
 				System.out.println(city);
