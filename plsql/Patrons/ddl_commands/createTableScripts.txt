@@ -14,7 +14,7 @@ create table athoma12.patrons
 );
 
 create table athoma12.students
-(student_id NUMBER(20) NOT NULL,
+(student_id VARCHAR2(20) NOT NULL,
  patron_id NUMBER(20) NOT NULL,
  program_id NUMBER(20),
  phone_id NUMBER(20),
@@ -46,7 +46,8 @@ create table athoma12.phones
 
 create table athoma12.courses
 (course_id NUMBER(20) NOT NULL,
- course_name VARCHAR2(50) NOT NULL
+ course_name VARCHAR2(50) NOT NULL,
+ course_book_id NUMBER(20)
 );
 
 create table athoma12.courses_taken
@@ -56,7 +57,7 @@ create table athoma12.courses_taken
 
 
 create table athoma12.faculty
-(faculty_id NUMBER(20) NOT NULL,
+(faculty_id VARCHAR2(20) NOT NULL,
  patron_id NUMBER(20) NOT NULL,
  fac_category VARCHAR2(50) NOT NULL
 );

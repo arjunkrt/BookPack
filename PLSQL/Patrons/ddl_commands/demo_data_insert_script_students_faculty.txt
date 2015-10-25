@@ -1,0 +1,159 @@
+set serveroutput on;
+declare
+l_student_id VARCHAR2(20);
+l_faculty_id VARCHAR2(20);
+begin
+ l_student_id := 'S1';
+ athoma12.patrons_mgmt.addStudent(
+                                p_student_id => l_student_id,
+                                p_fName => 'Jesse',
+                                p_lName => 'Pinkman',
+                                p_dob => '03-OCT-1988',
+                                p_sex => 'M',
+                                p_nationality => 'American',
+                                p_department => 'Chemistry',
+                                p_username => 'jpink',
+                                p_password => 'jpink',
+                                p_degree_program => 'BS',
+                                p_st_classification => 'Undergraduate',
+                                p_st_category => 'First Year',
+                                p_phone_number => '123456789',
+                                p_alt_phone_number => '123456787',
+                                p_address_line_1 => '1511 Graduate Lane',
+                                p_address_line_2 => NULL,
+                                p_address_line_3 => NULL,
+                                p_city => 'Raleigh',
+                                p_state => 'NC',
+                                p_country => 'USA'
+);
+dbms_output.put_line('l_student_id :'||l_student_id);
+ l_student_id := 'S2';
+ athoma12.patrons_mgmt.addStudent(
+                                p_student_id => l_student_id,
+                                p_fName => 'Walt',
+                                p_lName => 'Jr.',
+                                p_dob => '03-NOV-1988',
+                                p_sex => 'M',
+                                p_nationality => 'American',
+                                p_department => 'Chemistry',
+                                p_username => 'wjr',
+                                p_password => 'wjr',
+                                p_degree_program => 'BS',
+                                p_st_classification => 'Undergraduate',
+                                p_st_category => 'Second Year',
+                                p_phone_number => '123456780',
+                                p_alt_phone_number => '123456781',
+                                p_address_line_1 => '1512 Graduate Lane',
+                                p_address_line_2 => NULL,
+                                p_address_line_3 => NULL,
+                                p_city => 'Raleigh',
+                                p_state => 'NC',
+                                p_country => 'USA'
+);
+dbms_output.put_line('l_student_id :'||l_student_id);
+ l_student_id := 'S3';
+ athoma12.patrons_mgmt.addStudent(
+                                p_student_id => l_student_id,
+                                p_fName => 'Gale',
+                                p_lName => 'Boetticher',
+                                p_dob => '03-DEC-1988',
+                                p_sex => 'M',
+                                p_nationality => 'Chile',
+                                p_department => 'Chemistry',
+                                p_username => 'gboet',
+                                p_password => 'gboet',
+                                p_degree_program => 'BS',
+                                p_st_classification => 'Undergraduate',
+                                p_st_category => 'Third Year',
+                                p_phone_number => '123456782',
+                                p_alt_phone_number => '123456783',
+                                p_address_line_1 => '1513 Graduate Lane',
+                                p_address_line_2 => NULL,
+                                p_address_line_3 => NULL,
+                                p_city => 'Raleigh',
+                                p_state => 'NC',
+                                p_country => 'USA'
+);
+dbms_output.put_line('l_student_id :'||l_student_id);
+ l_student_id := 'S4';
+ athoma12.patrons_mgmt.addStudent(
+                                p_student_id => l_student_id,
+                                p_fName => 'Saul',
+                                p_lName => 'Goodman',
+                                p_dob => '03-Jan-1988',
+                                p_sex => 'M',
+                                p_nationality => 'American',
+                                p_department => 'Chemistry',
+                                p_username => 'sgood',
+                                p_password => 'sgood',
+                                p_degree_program => 'MS',
+                                p_st_classification => 'Graduate',
+                                p_st_category => 'First Year',
+                                p_phone_number => '123456789',
+                                p_alt_phone_number => '123456787',
+                                p_address_line_1 => '1511 Graduate Lane',
+                                p_address_line_2 => NULL,
+                                p_address_line_3 => NULL,
+                                p_city => 'Raleigh',
+                                p_state => 'NC',
+                                p_country => 'USA'
+);
+dbms_output.put_line('l_student_id :'||l_student_id);
+ l_faculty_id := 'F1';
+ athoma12.patrons_mgmt.addFaculty(
+                                p_faculty_id => l_faculty_id,
+                                p_fName => 'Walter',
+                                p_lName => 'White',
+                                p_dob => '01-Jan-1900',
+                                p_sex => 'M',
+                                p_nationality => 'American',
+                                p_department => 'Chemistry',
+                                p_username => 'wwhite',
+                                p_password => 'wwhite',
+                                p_fac_category => 'Professor'
+);
+dbms_output.put_line('l_faculty_id :'||l_faculty_id);
+ l_faculty_id := 'F2';
+ athoma12.patrons_mgmt.addFaculty(
+                                p_faculty_id => l_faculty_id,
+                                p_fName => 'Gustavo',
+                                p_lName => 'Fring',
+                                p_dob => '01-Jan-1900',
+                                p_sex => 'M',
+                                p_nationality => 'American',
+                                p_department => 'Chemistry',
+                                p_username => 'gfring',
+                                p_password => 'gfring',
+                                p_fac_category => 'Assistant Professor'
+);
+dbms_output.put_line('l_faculty_id :'||l_faculty_id);
+ l_faculty_id := 'F3';
+ athoma12.patrons_mgmt.addFaculty(
+                                p_faculty_id => l_faculty_id,
+                                p_fName => 'Hank',
+                                p_lName => 'Schrader',
+                                p_dob => '01-Jan-1900',
+                                p_sex => 'M',
+                                p_nationality => 'American',
+                                p_department => 'Chemistry',
+                                p_username => 'hschrad',
+                                p_password => 'hschrad',
+                                p_fac_category => 'Associate Professor'
+);
+dbms_output.put_line('l_faculty_id :'||l_faculty_id);
+ l_faculty_id := 'F4';
+ athoma12.patrons_mgmt.addFaculty(
+                                p_faculty_id => l_faculty_id,
+                                p_fName => 'Skyler',
+                                p_lName => 'White',
+                                p_dob => '01-Jan-1900',
+                                p_sex => 'M',
+                                p_nationality => 'American',
+                                p_department => 'Chemistry',
+                                p_username => 'swhite',
+                                p_password => 'swhite',
+                                p_fac_category => 'Professor'
+);
+dbms_output.put_line('l_faculty_id :'||l_faculty_id);
+end;
+/
