@@ -94,6 +94,7 @@ public class Login {
 		String user_pwd;
 		System.out.println("Enter the password");
 		user_pwd = stdin.nextLine();
+		
 
 		String sql = "{call athoma12.user_auth.validateLogin(?,?,?,?,?)}";
 		CallableStatement cstmt=null;
