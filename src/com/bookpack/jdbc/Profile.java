@@ -13,6 +13,10 @@ public class Profile {
 	public static Profile getInstance( ) {
 		return profile;
 	}
+	public void edit_student(Login login)
+	{
+		
+	}
 	public void display_student(Login login)
 	{
 		System.out.println("Display student detail");
@@ -57,37 +61,38 @@ public class Profile {
 				String st_cat = rs.getString("ST_CATEGORY");
 				String st_class = rs.getString("ST_CLASSIFICATION");
 				
-				System.out.println("Student Name: ");
-				System.out.println(first_name);
-				System.out.println(last_name);
-				System.out.println("Date of birth: ");
+				String newLine = System.getProperty("line.separator");
+				
+				System.out.print("Student Name: ");
+				System.out.println(first_name + " " + last_name);
+				System.out.print("Date of birth: ");
 				System.out.println(dob);
-				System.out.println("Department: ");
+				System.out.print("Department: ");
 				System.out.println(dept);
-				System.out.println("Nationality: ");
+				System.out.print("Nationality: ");
 				System.out.println(nationality);
-				System.out.println("Sex: ");
+				System.out.print("Sex: ");
 				System.out.println(sex);
 				//System.out.println(patron_type);
 				System.out.println("Address: ");
 				System.out.println(address1);
 				System.out.println(address2);
 				System.out.println(address3);
-				System.out.println("City: ");
+				System.out.print("City: ");
 				System.out.println(city);
-				System.out.println("State: ");
+				System.out.print("State: ");
 				System.out.println(state);
-				System.out.println("Country: ");
+				System.out.print("Country: ");
 				System.out.println(country);
-				System.out.println("Phone Number: ");
+				System.out.print("Phone Number: ");
 				System.out.println(ph_no);
-				System.out.println("Alternate phone numebr: ");
+				System.out.print("Alternate phone numebr: ");
 				System.out.println(alt_ph_no);
-				System.out.println("Degree Program: ");
-				System.out.println(degree_pgm);
-				System.out.println("Student Category: ");
+				System.out.print("Degree Program: ");
+				System.out.print(degree_pgm);
+				System.out.print("Student Category: ");
 				System.out.println(st_cat);
-				System.out.println("Student Classification: ");
+				System.out.print("Student Classification: ");
 				System.out.println(st_class);
 				
 
@@ -113,10 +118,10 @@ public class Profile {
 		stdin.nextLine();
 		switch (func) {
 		case 1:
-			
+			edit_student(login);
 			break;
 		case 2:
-			
+			login.home_screen(login);
 			break;
 		default:
 			System.out.println("Wrong input. Try again!");

@@ -40,7 +40,7 @@ public class Notifications {
 
 			rs = cstmt.executeQuery();
 				
-			System.out.print("Sl. No    ");
+			System.out.print("Sl.No    ");
 			System.out.print("Resource Type    ");
 			System.out.println("Due date"); 
 			
@@ -50,7 +50,9 @@ public class Notifications {
 				String resource_type = rs.getString("ATTRIBUTE2");
 				String date = rs.getString("ATTRIBUTE3");
 				System.out.print(sl_no);
+				System.out.print("             ");
 				System.out.print(resource_type);
+				System.out.print("             ");
 				System.out.println(date);
 
 			}
@@ -74,7 +76,7 @@ public class Notifications {
 		stdin.nextLine();
 		switch (func) {
 		case 1:
-			
+			login.home_screen(login);
 			break;
 		default:
 			System.out.println("Wrong input. Try again!");
