@@ -41,7 +41,7 @@ PROCEDURE addAddress(
 					);
 
 PROCEDURE addStudent(
-					p_student_id	OUT 	athoma12.students.student_id%type,
+					p_student_id	IN OUT 	athoma12.students.student_id%type,
 					p_fName 		IN		athoma12.patrons.first_name%type, 
 					p_lName 		IN 		athoma12.patrons.last_name%type,
 					p_dob 			IN 		athoma12.patrons.date_of_birth%type,
@@ -63,7 +63,28 @@ PROCEDURE addStudent(
 					p_country		IN 		athoma12.addresses.country%type	DEFAULT NULL	
 					);
 
+PROCEDURE addFaculty(
+					p_faculty_id	IN OUT 	athoma12.faculty.faculty_id%type,
+					p_fName 		IN		athoma12.patrons.first_name%type, 
+					p_lName 		IN 		athoma12.patrons.last_name%type,
+					p_dob 			IN 		athoma12.patrons.date_of_birth%type,
+					p_sex 			IN 		athoma12.patrons.sex%type,
+					p_nationality 	IN 		athoma12.patrons.nationality%type,
+					p_department 	IN 		athoma12.patrons.department%type,
+					p_username  	IN 		athoma12.patrons.username%type,
+					p_password 		IN 		athoma12.patrons.password_hash%type,
+					p_fac_category	IN 		athoma12.faculty.fac_category%type DEFAULT NULL
+);
 
+PROCEDURE updateProfile(
+			        p_userName                IN        ATHOMA12.patrons.username%type,              
+			        p_password                  IN         ATHOMA12.patrons.password_hash%type,
+			        a_address_line_1        IN         ATHOMA12.ADDRESSES.ADDRESS_LINE_1 %type,
+			        a_address_line_2        IN         ATHOMA12.ADDRESSES.ADDRESS_LINE_2%type,
+			        a_address_line_3        IN         ATHOMA12.ADDRESSES.ADDRESS_LINE_3%type,
+			        p_phone_number1          IN         ATHOMA12.PHONES.PHONE_NUMBER%type,
+			        p_phone_number2          IN         ATHOMA12.PHONES.PHONE_NUMBER%type
+);
 
 
 
