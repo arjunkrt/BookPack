@@ -46,7 +46,8 @@ public class Main {
 						profile.display_student(login);
 						break;
 					case 2:
-						
+						Resource resource = Resource.getInstance();
+						resource.show_resource(login);
 						break;
 					case 3:
 						Resource_check_out resource_check_out = Resource_check_out.getInstance();
