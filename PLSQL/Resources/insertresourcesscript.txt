@@ -1,7 +1,9 @@
 set serveroutput on;
+
 declare
 l_rtype_id NUMBER(20);
 l_aid NUMBER(20);
+
 begin
 l_rtype_id := 0;
 athoma12.resources_mgmt.addBook(l_rtype_id, 'B1', 1, 1, 'Pub1', '2005', 'Introduction to Chemistry', 2, 2, 'B');
@@ -40,6 +42,7 @@ athoma12.resources_mgmt.createAuthor(l_aid, 'HyeongSik Kim');
 athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
 l_rtype_id := 0;
 athoma12.resources_mgmt.addConf(l_rtype_id, 'C2', '2014', 'SIGMOD','An agglomerative query model for discovery in linked data: semantics and approach', 1, 2, 'H');
+
 dbms_output.put_line('l_rtype_id :'||l_rtype_id);
 athoma12.resources_mgmt.createAuthor(l_aid, 'Sidan Gao');
 athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
