@@ -3,25 +3,25 @@
 
 create table pkattep.Rooms
 ( rtype_id NUMBER(20) NOT NULL,
- floor NUMBER(20) NOT NULL,
+ room_id VARCHAR2(20) NOT NULL,
+ position VARCHAR2(50) NOT NULL,
  capacity NUMBER(20) NOT NULL,
- --as of now only 2 capacities are assumed - 4 and 10
- roomtype VARCHAR2(10) NOT NULL
- --Type should be one among conf or study
+ roomtype VARCHAR2(50) NOT NULL
 );
 
 create table pkattep.cameras
 (rtype_id NUMBER(20) NOT NULL,
+ cam_id VARCHAR2(20) NOT NULL,
  model VARCHAR2(20) NOT NULL,
- memory NUMBER(20),
- lens_config VARCHAR2(20),
- manufacturer VARCHAR2(20) NOT NULL
+ memory VARCHAR2(20),
+ lens_config VARCHAR2(100),
+ make VARCHAR2(50) NOT NULL
 );
 
 create table pkattep.publications
 (rtype_id NUMBER(20) NOT NULL,
  year VARCHAR2(20) NOT NULL,
- title VARCHAR2(50) NOT NULL
+ title VARCHAR2(300) NOT NULL
 );
 
 ------------------------------------------------
@@ -50,7 +50,8 @@ create table pkattep.journals
 
 create table pkattep.Conf_Proceedings
 (rtype_id NUMBER(20) NOT NULL,
- conf_no NUMBER(20) NOT NULL
+ conf_no VARCHAR(20) NOT NULL,
+ conf_name VARCHAR2(50)
 );
 
 ------------------------------------------------

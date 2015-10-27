@@ -1,0 +1,11 @@
+insert into library(lib_id, lib_name) values(LIB_ID_SEQ.nextval, 'DH Hill Library');
+insert into library(lib_id, lib_name) values(LIB_ID_SEQ.nextval, 'Hunt Library');
+
+insert into courses(course_id, course_name)
+values(courses_seq.nextval, 'CH101');
+insert into courses(course_id, course_name)
+values(courses_seq.nextval, 'CH102');
+insert into courses(course_id, course_name)
+values(courses_seq.nextval, 'CH103');
+insert into courses(course_id, course_name)
+values(courses_seq.nextval, 'CH104');

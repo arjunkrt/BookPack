@@ -20,7 +20,7 @@ WHERE C.rtype_id = P.rtype_id;
 --VIEWS FOR CAMERAS
 
 CREATE VIEW CAM_VIEW AS
-SELECT rtype_id AS CAMERA_ID, model, memory, lens_config, Manufacturer
+SELECT rtype_id AS CAMERA_ID, model, memory, lens_config, make
 FROM pkattep.cameras;
 
 
@@ -29,14 +29,14 @@ FROM pkattep.cameras;
 --VIEW FOR STUDENTS
 
 CREATE VIEW ROOM_VIEW_STUDENTS AS
-SELECT RO.rtype_id AS ROOM_ID, RO.floor, RO.capacity, L.Lib_name
+SELECT RO.rtype_id AS ROOM_ID, RO.position, RO.capacity, L.Lib_name
 FROM pkattep.Rooms RO, pkattep.Resources R, pkattep.library L
 WHERE RO.roomtype = 'study' AND RO.rtype_id=R.rtype_id AND R.lib_id=L.lib_id;
 
 --VIEW FOR FACULTY
 
 CREATE VIEW ROOM_VIEW_FACULTY AS
-SELECT RO.rtype_id AS ROOM_ID, RO.floor, RO.capacity, L.Lib_name
+SELECT RO.rtype_id AS ROOM_ID, RO.position, RO.capacity, L.Lib_name
 FROM pkattep.Rooms RO, pkattep.Resources R, pkattep.library L
 WHERE RO.rtype_id=R.rtype_id AND R.lib_id=L.lib_id;
 

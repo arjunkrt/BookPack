@@ -1,0 +1,70 @@
+set serveroutput on;
+
+declare
+l_rtype_id NUMBER(20);
+l_aid NUMBER(20);
+
+begin
+l_rtype_id := 0;
+athoma12.resources_mgmt.addBook(l_rtype_id, 'B1', 1, 1, 'Pub1', '2005', 'Introduction to Chemistry', 2, 2, 'B');
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.createAuthor(l_aid, 'SK Goyal');
+athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
+l_rtype_id := 0;
+athoma12.resources_mgmt.addBook(l_rtype_id, 'B2', 2, 0, 'Pub2', '2006', 'Introduction to Organic Chemistry', 2, 2, 'B');
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.createAuthor(l_aid, 'HC Verma');
+athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
+l_rtype_id := 0;
+athoma12.resources_mgmt.addBook(l_rtype_id, 'B3', 3, 1, 'Pub3', '2000', 'Introduction to Physical Chemistry', 2, 2, 'H');
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.createAuthor(l_aid, 'Resnick Halliday Walker');
+athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
+l_rtype_id := 0;
+athoma12.resources_mgmt.addBook(l_rtype_id, 'B4', 4, 0, 'Pub4', '2005', 'Introduction to Inorganic Chemistry', 2, 2, 'H');
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.createAuthor(l_aid, 'RC Mukherjee');
+athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
+l_rtype_id := 0;
+athoma12.resources_mgmt.addJournal(l_rtype_id, 'J1', '2010', 'Journal of Web Semantic', 1, 2, 'H');
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.createAuthor(l_aid, 'Roberto Navigli');
+athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
+l_rtype_id := 0;
+athoma12.resources_mgmt.addJournal(l_rtype_id, 'J2', '2011', 'International Journal on Semantic Web and Information', 1, 2, 'H');
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.createAuthor(l_aid, 'Tim Berners Lee');
+athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
+l_rtype_id := 0;
+athoma12.resources_mgmt.addConf(l_rtype_id, 'C1', '2013', 'WWW', 'Optimization Techniques for Large Scale Graph Analytics on Map Reduce', 1, 2, 'H');
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.createAuthor(l_aid, 'HyeongSik Kim');
+athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
+l_rtype_id := 0;
+athoma12.resources_mgmt.addConf(l_rtype_id, 'C2', '2014', 'SIGMOD','An agglomerative query model for discovery in linked data: semantics and approach', 1, 2, 'H');
+
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.createAuthor(l_aid, 'Sidan Gao');
+athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
+athoma12.resources_mgmt.addRoom(l_rtype_id, 'R1', '3rd Floor', 2, 'Conference Room', 1, 2);
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.addRoom(l_rtype_id, 'R2', '3rd Floor', 3, 'Study Room', 1, 2);
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.addRoom(l_rtype_id, 'R3', '2nd Floor', 4, 'Study Room', 1, 1);
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.addRoom(l_rtype_id, 'R4', '3rd Floor', 3, 'Conference Room', 1, 2);
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.addRoom(l_rtype_id, 'R5', '3rd Floor', 4, 'Study Room', 1, 2);
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.addRoom(l_rtype_id, 'R6', '3rd Floor', 4, 'Study Room', 1, 1);
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.addRoom(l_rtype_id, 'R7', '2nd Floor', 2, 'Study Room', 1, 2);
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.addCamera(l_rtype_id, 'C1', 'E-620','16G', '14-42mm lens 1:3.5-5.6','Olympus', 1, 2);
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+athoma12.resources_mgmt.addCamera(l_rtype_id, 'C2', 'EOS Rebel T4i','32G','18-135mm EF-S IS STM Lens','Cannon', 2, 2);
+dbms_output.put_line('l_rtype_id :'||l_rtype_id);
+
+commit;
+end;
+/

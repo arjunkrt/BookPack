@@ -1,0 +1,18 @@
+set serveroutput on;
+declare
+l_program_id NUMBER;
+begin
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'BS', 'Undergraduate', 'First Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'BS', 'Undergraduate', 'Second Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'BS', 'Undergraduate', 'Third Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'BS', 'Undergraduate', 'Fourth Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'MS', 'Graduate', 'First Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'MS', 'Graduate', 'Second Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'PhD', 'Graduate', 'First Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'PhD', 'Graduate', 'Second Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'PhD', 'Graduate', 'Third Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'PhD', 'Graduate', 'Fourth Year');
+ athoma12.patrons_mgmt.addStudentProgram(l_program_id, 'PhD', 'Graduate', 'Fifth Year');
+end;
+/
+commit;
