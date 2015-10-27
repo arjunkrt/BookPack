@@ -211,14 +211,21 @@ CREATE OR REPLACE PACKAGE BODY PATRONS_MGMT AS
         l_phone_id ATHOMA12.PHONES.phone_id%type;
         l_alt_phone_id ATHOMA12.PHONES.phone_id%type;
         l_patron_id ATHOMA12.PATRONS.patron_id%type;
+        l_patron_type ATHOMA12.PATRONS.patron_type%type; 
 	BEGIN
-	  SELECT patron_ID INTO l_patron_id from ATHOMA12.patrons WHERE username=p_userName;
+	  SELECT patron_ID, patron_type INTO l_patron_id, l_patron_type from ATHOMA12.patrons WHERE username=p_userName;
+	  if l_patron_type ='S' then   
 	  SELECT address_id, phone_id, alt_phone_id  INTO l_address_id, l_phone_id, l_alt_phone_id FROM ATHOMA12.STUDENTS where patron_ID=l_patron_id;
 	  UPDATE ATHOMA12.patrons   SET password_hash=p_password where username = p_userName;
 	  UPDATE ATHOMA12.addresses SET ADDRESS_LINE_1=a_address_line_1,ADDRESS_LINE_2=a_address_line_2,ADDRESS_LINE_3=a_address_line_3 where ADDRESS_ID = l_address_id;
 	  UPDATE ATHOMA12.PHONES SET PHONE_NUMBER=p_phone_number1 where PHONE_ID = l_phone_id;
 	  UPDATE ATHOMA12.PHONES SET PHONE_NUMBER=p_phone_number2 where PHONE_ID = l_alt_phone_id;
 	  COMMIT;
+	  elsif l_patron_type = 'F' THEN
+	  UPDATE ATHOMA12.patrons   SET password_hash=p_password where username = p_userName;
+    	  COMMIT;
+     	  END IF;
+
 	END updateProfile;
 
 
