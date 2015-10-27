@@ -1,12 +1,19 @@
 --Alter Table Commands for keys and primary keys
-
---RESOURCES
-ALTER TABLE pkattep.RESOURCES ADD CONSTRAINT r_pk PRIMARY KEY(rid);
-ALTER TABLE pkattep.RESOURCES ADD CONSTRAINT lib_id_fk FOREIGN KEY(lib_id) REFERENCES pkattep.library(lib_id) ON DELETE SET NULL;
-ALTER TABLE pkattep.RESOURCES ADD CONSTRAINT resources_rtype_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Resource_types(rtype_id) ON DELETE SET NULL;
+--it needs to be taken care that before creating a foreign key, the primary key for the
+--referenced relation is already created
 
 --LIBRARY
 ALTER TABLE pkattep.LIBRARY ADD CONSTRAINT lib_pk PRIMARY KEY(lib_id);
+
+-----------------------------------------------------------------------------
+--RESOURCE_TYPES
+ALTER TABLE pkattep.RESOURCE_TYPES ADD CONSTRAINT rt_pk PRIMARY KEY(rtype_id);
+
+-----------------------------------------------------------------------------
+--RESOURCES
+ALTER TABLE pkattep.RESOURCES ADD CONSTRAINT r_pk PRIMARY KEY(rid);
+ALTER TABLE pkattep.RESOURCES ADD CONSTRAINT r_lib_fk FOREIGN KEY(lib_id) REFERENCES pkattep.library(lib_id) ON DELETE SET NULL;
+ALTER TABLE pkattep.RESOURCES ADD CONSTRAINT r_rt_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Resource_types(rtype_id) ON DELETE SET NULL;
 
 -----------------------------------------------------------------------------
 --ROOMS
@@ -15,20 +22,20 @@ ALTER TABLE pkattep.ROOMS ADD CONSTRAINT rooms_rtype_fk FOREIGN KEY(rtype_id) RE
 
 --CAMERAS
 ALTER TABLE pkattep.CAMERAS ADD CONSTRAINT cam_pk PRIMARY KEY(rtype_id);
-ALTER TABLE pkattep.CAMERAS ADD CONSTRAINT cameras_rtype_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Resource_types(rtype_id) ON DELETE CASCADE;
+ALTER TABLE pkattep.CAMERAS ADD CONSTRAINT cam_rtype_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Resource_types(rtype_id) ON DELETE CASCADE;
 
 --PUBLICATIONS
 ALTER TABLE pkattep.PUBLICATIONS ADD CONSTRAINT pub_pk PRIMARY KEY(rtype_id);
 ALTER TABLE pkattep.PUBLICATIONS ADD CONSTRAINT pub_rtype_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Resource_types(rtype_id) ON DELETE CASCADE;
 
 -----------------------------------------------------------------------------
+--AUTHORS
+ALTER TABLE pkattep.AUTHORS ADD CONSTRAINT auth_pk PRIMARY KEY(Aid);
+
 --PUBLICATIONS_AUTHORS
 ALTER TABLE pkattep.PUBLICATIONS_AUTHORS ADD CONSTRAINT pub_auth_pk PRIMARY KEY(rtype_id,Aid);
 ALTER TABLE pkattep.PUBLICATIONS_AUTHORS ADD CONSTRAINT pub_auth_rtype_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Publications(rtype_id) ON DELETE CASCADE;
 ALTER TABLE pkattep.PUBLICATIONS_AUTHORS ADD CONSTRAINT pub_auth_aid_fk FOREIGN KEY(Aid) REFERENCES pkattep.Authors(Aid) ON DELETE SET NULL;
-
---AUTHORS
-ALTER TABLE pkattep.AUTHORS ADD CONSTRAINT auth_pk PRIMARY KEY(Aid);
 
 --BOOKS
 ALTER TABLE pkattep.BOOKS ADD CONSTRAINT book_rtype_pk PRIMARY KEY(rtype_id);
@@ -45,4 +52,4 @@ ALTER TABLE pkattep.CONF_PROCEEDINGS ADD CONSTRAINT conf_proceedings_rtype_fk FO
 --ePUBLICATIONS
 ALTER TABLE pkattep.ePUBLICATIONS ADD CONSTRAINT ePUBLICATIONS_pk PRIMARY KEY(rtype_id);
 ALTER TABLE pkattep.ePUBLICATIONS ADD CONSTRAINT epub_lib_id_fk FOREIGN KEY(lib_id) REFERENCES pkattep.library(lib_id) ON DELETE CASCADE;
-ALTER TABLE pkattep.ePUBLICATIONS ADD CONSTRAINT resources_rtype_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Resource_types(rtype_id) ON DELETE SET NULL;
+ALTER TABLE pkattep.ePUBLICATIONS ADD CONSTRAINT epub_rt_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Resource_types(rtype_id) ON DELETE SET NULL;

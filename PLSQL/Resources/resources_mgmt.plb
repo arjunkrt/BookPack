@@ -35,7 +35,8 @@ BEGIN
 		INSERT INTO athoma12.epublications(rtype_id, lib_id) VALUES(p_rtype_id, p_lib_id);
 	END IF;
 
-END addBook;	
+END addBook;
+	
 PROCEDURE createAuthor(
 					p_aid 			IN OUT 	athoma12.authors.aid%type,
 					p_author_name	IN 		athoma12.authors.author_name%type
@@ -61,6 +62,7 @@ BEGIN
 insert into athoma12.publications_authors(rtype_id, aid) values(p_rtype_id, p_aid);
 
 END mapPubAuthor;
+
 PROCEDURE addJournal(
 					p_rtype_id 		IN OUT	athoma12.journals.rtype_id%type,
 					p_issn 			IN 		athoma12.journals.issn%type,
@@ -90,6 +92,7 @@ BEGIN
 	END IF;
 
 END addJournal;	
+
 PROCEDURE addConf(
 					p_rtype_id 		IN OUT	athoma12.conf_proceedings.rtype_id%type,
 					p_conf_no		IN 		athoma12.conf_proceedings.conf_no%type,
