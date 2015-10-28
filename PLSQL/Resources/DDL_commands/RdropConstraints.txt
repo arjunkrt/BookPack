@@ -1,0 +1,89 @@
+--Alter Table Commands for values
+
+--RESOURCES
+ALTER TABLE pkattep.RESOURCES DROP CONSTRAINT R_status;
+
+--Alter Table Commands for keys and primary keys
+--it needs to be taken care that before creating a foreign key, the primary key for the
+--referenced relation is already created
+
+-----------------------------------------------------------------------------
+DROP ALL FOREIGN KEYS
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+--RESOURCES
+ALTER TABLE pkattep.RESOURCES DROP CONSTRAINT r_lib_fk;
+ALTER TABLE pkattep.RESOURCES DROP CONSTRAINT r_rt_fk;
+
+-----------------------------------------------------------------------------
+--ROOMS
+ALTER TABLE pkattep.ROOMS DROP CONSTRAINT rooms_rtype_fk;
+
+--CAMERAS
+ALTER TABLE pkattep.CAMERAS DROP CONSTRAINT cam_rtype_fk;
+
+--PUBLICATIONS
+ALTER TABLE pkattep.PUBLICATIONS DROP CONSTRAINT pub_rtype_fk;
+
+-----------------------------------------------------------------------------
+--PUBLICATIONS_AUTHORS
+ALTER TABLE pkattep.PUBLICATIONS_AUTHORS DROP CONSTRAINT pub_auth_rtype_fk;
+ALTER TABLE pkattep.PUBLICATIONS_AUTHORS DROP CONSTRAINT pub_auth_aid_fk;
+
+--BOOKS
+ALTER TABLE pkattep.BOOKS DROP CONSTRAINT book_rtype_fk;
+
+--JOURNALS
+ALTER TABLE pkattep.JOURNALS DROP CONSTRAINT journals_rtype_fk;
+
+--CONF_PROCEEDINGS
+ALTER TABLE pkattep.CONF_PROCEEDINGS DROP CONSTRAINT conf_proceedings_rtype_fk;
+
+--ePUBLICATIONS
+ALTER TABLE pkattep.ePUBLICATIONS DROP CONSTRAINT epub_lib_id_fk;
+ALTER TABLE pkattep.ePUBLICATIONS DROP CONSTRAINT epub_rt_fk;
+
+-----------------------------------------------------------------------------
+DROP ALL PRIMARY KEYS
+-----------------------------------------------------------------------------
+
+--LIBRARY
+ALTER TABLE pkattep.LIBRARY DROP CONSTRAINT lib_pk CASCADE;
+
+-----------------------------------------------------------------------------
+--RESOURCE_TYPES
+ALTER TABLE pkattep.RESOURCE_TYPES DROP CONSTRAINT rt_pk CASCADE;
+
+-----------------------------------------------------------------------------
+--RESOURCES
+ALTER TABLE pkattep.RESOURCES DROP CONSTRAINT r_pk CASCADE;
+
+-----------------------------------------------------------------------------
+--ROOMS
+ALTER TABLE pkattep.ROOMS DROP CONSTRAINT rooms_pk CASCADE;
+
+--CAMERAS
+ALTER TABLE pkattep.CAMERAS DROP CONSTRAINT cam_pk CASCADE;
+
+--PUBLICATIONS
+ALTER TABLE pkattep.PUBLICATIONS DROP CONSTRAINT pub_pk CASCADE;
+
+-----------------------------------------------------------------------------
+--AUTHORS
+ALTER TABLE pkattep.AUTHORS DROP CONSTRAINT auth_pk CASCADE;
+
+--PUBLICATIONS_AUTHORS
+ALTER TABLE pkattep.PUBLICATIONS_AUTHORS DROP CONSTRAINT pub_auth_pk CASCADE;
+
+--BOOKS
+ALTER TABLE pkattep.BOOKS DROP CONSTRAINT book_rtype_pk CASCADE;
+
+--JOURNALS
+ALTER TABLE pkattep.JOURNALS DROP CONSTRAINT journals_rtype_pk CASCADE;
+
+--CONF_PROCEEDINGS
+ALTER TABLE pkattep.CONF_PROCEEDINGS DROP CONSTRAINT conf_proceedings_pk CASCADE;
+
+--ePUBLICATIONS
+ALTER TABLE pkattep.ePUBLICATIONS DROP CONSTRAINT ePUBLICATIONS_pk CASCADE;
