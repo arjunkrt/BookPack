@@ -18,34 +18,10 @@ WHERE C.rtype_id = P.rtype_id;
 --VIEWS FOR CAMERAS
 
 CREATE VIEW CAM_VIEW AS
-SELECT rtype_id AS CAMERA_ID, model, memory, lens_config, make
+SELECT rtype_id AS CAMERA_ID, model
 FROM pkattep.cameras;
 
 CREATE VIEW CAM_VIEW2 AS
 SELECT rtype_id AS CAMERA_ID, model, memory, lens_config, make
 FROM pkattep.cameras
 WHERE rtypeid = usr_selection;
-
---VIEWS FOR ROOMS
-
-CREATE VIEW ROOM_VIEW AS
-SELECT RO.rtype_id AS ROOM_ID, RO.position, L.lib_name
-FROM pkattep.Rooms RO, pkattep.Resource_types RT, pkattep.Resources R, pkattep.library L
-WHERE RO.rtype_id = RT.rtype_ID AND R.rtype_ID = RT.rtype_ID AND R.lib_id = L.lib_id;
-
---VIEW FOR STUDENTS
-
-CREATE VIEW ROOM_VIEW_STUDENTS AS
-SELECT RO.rtype_id AS ROOM_ID, RO.position, RO.capacity, L.Lib_name
-FROM pkattep.Rooms RO, pkattep.Resources R, pkattep.library L
-WHERE RO.roomtype = 'study' AND RO.rtype_id=R.rtype_id AND R.lib_id=L.lib_id;
-
---VIEW FOR FACULTY
-
-CREATE VIEW ROOM_VIEW_FACULTY AS
-SELECT RO.rtype_id AS ROOM_ID, RO.position, RO.capacity, L.Lib_name
-FROM pkattep.Rooms RO, pkattep.Resources R, pkattep.library L
-WHERE RO.rtype_id=R.rtype_id AND R.lib_id=L.lib_id;
-
---Following views are for the second layer of request to view each of the resources
-
