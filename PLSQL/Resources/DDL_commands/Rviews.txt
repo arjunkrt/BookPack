@@ -25,3 +25,7 @@ CREATE VIEW CAM_VIEW2 AS
 SELECT rtype_id AS CAMERA_ID, model, memory, lens_config, make
 FROM pkattep.cameras
 WHERE rtypeid = usr_selection;
+
+--VIEW FOR DISPLAYING RESOURCES REQUESTED
+--This will be a reference datatype in a procedure to display
+--resources requested
