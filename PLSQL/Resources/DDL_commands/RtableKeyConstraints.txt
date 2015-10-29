@@ -53,3 +53,14 @@ ALTER TABLE pkattep.CONF_PROCEEDINGS ADD CONSTRAINT conf_proceedings_rtype_fk FO
 ALTER TABLE pkattep.ePUBLICATIONS ADD CONSTRAINT ePUBLICATIONS_pk PRIMARY KEY(rtype_id);
 ALTER TABLE pkattep.ePUBLICATIONS ADD CONSTRAINT epub_lib_id_fk FOREIGN KEY(lib_id) REFERENCES pkattep.library(lib_id) ON DELETE CASCADE;
 ALTER TABLE pkattep.ePUBLICATIONS ADD CONSTRAINT epub_rt_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Resource_types(rtype_id) ON DELETE SET NULL;
+
+-----------------------------------------------------------------------------
+--BORROWS
+ALTER TABLE pkattep.BORROWS ADD CONSTRAINT borrows_pk PRIMARY KEY(patron_id, rid, checkout_time);
+ALTER TABLE pkattep.BORROWS ADD CONSTRAINT borrows_patron_id_fk FOREIGN KEY(patron_id) REFERENCES athoma12.patrons(patron_id) ON DELETE CASCADE;
+ALTER TABLE pkattep.BORROWS ADD CONSTRAINT borrows_rid_fk FOREIGN KEY(rid) REFERENCES pkattep.Resources(rid) ON DELETE SET NULL;
+
+--WAITLIST
+ALTER TABLE pkattep.WAITLIST ADD CONSTRAINT waitlist_pk PRIMARY KEY(patron_id, rtype_id);
+ALTER TABLE pkattep.WAITLIST ADD CONSTRAINT waitlist_patron_id_fk FOREIGN KEY(patron_id) REFERENCES athoma12.patrons(patron_id) ON DELETE CASCADE;
+ALTER TABLE pkattep.WAITLIST ADD CONSTRAINT waitlist_rtype_id_fk FOREIGN KEY(rtype_id) REFERENCES pkattep.Resources(rtype_id) ON DELETE CASCADE;

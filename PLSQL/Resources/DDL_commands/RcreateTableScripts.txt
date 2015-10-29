@@ -77,3 +77,17 @@ create table pkattep.ePublications
 (rtype_id NUMBER(20) NOT NULL,
  lib_id NUMBER(20)
  );
+ 
+ ------------------------------------------------
+ create table pkattep.borrows
+ (patron_id NUMBER(20) NOT NULL,
+ rid NUMBER(20) NOT NULL,
+ checkout_time TIMESTAMP NOT NULL,
+ due_time TIMESTAMP,
+ return_time TIMESTAMP
+ ); 
+ 
+ create table pkattep.waitlist
+ (patron_id NUMBER(20) NOT NULL,
+ rtype_id NUMBER(20) NOT NULL
+ );
