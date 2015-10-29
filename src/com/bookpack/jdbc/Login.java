@@ -8,6 +8,7 @@ public class Login {
 	double patron_id = 0;
 	String user_type = "";
 	String user_name = "";
+	String user_password = "";
 	int success_id = 0;
 	private static Login login = new Login( );
 
@@ -114,6 +115,7 @@ public class Login {
 			user_type = cstmt.getString(4);			
 			success_id = cstmt.getInt(5);
 			user_name = email_id;
+			user_password = user_pwd;
 
 			if (success_id == 0){
 				System.out.println("Login Failed, Please login again");

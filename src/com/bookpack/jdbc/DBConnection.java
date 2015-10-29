@@ -17,7 +17,6 @@ public class DBConnection {
 
 				conn = DriverManager.getConnection(jdbcURL, user, passwd);
 				conn.setAutoCommit(false);
-				//System.out.println("Connection established.");
 				
 		} catch(Throwable oops) {
 			oops.printStackTrace();
