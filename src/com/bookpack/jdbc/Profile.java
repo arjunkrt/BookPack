@@ -21,12 +21,12 @@ public class Profile {
 	public static Profile getInstance( ) {
 		return profile;
 	}
-	
+
 	public void update_profile(Login login)
 	{
 		String sql = "{call athoma12.patrons_mgmt.updateProfile(?,?,?,?,?,?,?)}";
 		CallableStatement cstmt=null;
-		
+
 		try {
 			cstmt = DBConnection.conn.prepareCall(sql);
 
@@ -52,8 +52,8 @@ public class Profile {
 			}
 		}
 	}
-	
-	public void edit_student(Login login)
+
+	public void edit_profile(Login login)
 	{
 		System.out.println("Edit student detail");
 		System.out.println("----------------------------------");
@@ -61,76 +61,122 @@ public class Profile {
 
 		System.out.print("1. User Password: ");
 		System.out.println(login.user_password);
-		System.out.println("Address: ");
-		System.out.print("2. Line 1: ");
-		System.out.println(address1);
-		System.out.print("3. Line 2: ");
-		System.out.println(address2);
-		System.out.print("4. Line 3: ");
-		System.out.println(address3);
-		System.out.print("5. Phone Number: ");
-		System.out.println(ph_no);
-		System.out.print("6. Alternate phone numebr: ");
-		System.out.println(alt_ph_no);
+		/*
+		 * If the logged in user is a student
+		*/
+		if(login.user_type.equals("S"))
+		{
+			System.out.println("Address: ");
+			System.out.print("2. Line 1: ");
+			System.out.println(address1);
+			System.out.print("3. Line 2: ");
+			System.out.println(address2);
+			System.out.print("4. Line 3: ");
+			System.out.println(address3);
+			System.out.print("5. Phone Number: ");
+			System.out.println(ph_no);
+			System.out.print("6. Alternate phone numebr: ");
+			System.out.println(alt_ph_no);
+		}
 
 		int func;
-
-		do
+		if(login.user_type.equals("S"))
 		{
-			System.out.println("<Menu>");	
-			System.out.println("1. To Enter new User Password: ");
-			System.out.println("2. To Enter new Address Line 1: ");
-			System.out.println("3. To Enter new Address Line 2: ");
-			System.out.println("4. To Enter new Address Line 3: ");
-			System.out.println("5. To Enter new Phone Number: ");
-			System.out.println("6. To Enter new Alternate phone number: ");
-			System.out.println("7. To Save all the fields ");
-			System.out.println("8. Go Back( will remove all the unsaved changes) ");
-			System.out.println("Enter your Choice >> ");
-			func = stdin.nextInt();
-			stdin.nextLine();
-			switch (func) {
-			case 1:
-				System.out.print("User Password: ");
-				login.user_password = stdin.nextLine();
-				break;
-			case 2:
-				System.out.println("Address Line 1: ");
-				address1 = stdin.nextLine();
-				break;
-			case 3:
-				System.out.println("Address Line 2: ");
-				address2 = stdin.nextLine();
-				break;
-			case 4:
-				System.out.println("Address Line 3: ");
-				address3 = stdin.nextLine();
-				break;
-			case 5:
-				System.out.print("Phone numebr: ");
-				ph_no = stdin.nextLine();
-				break;
-			case 6:
-				System.out.print("Alternate phone numebr: ");
-				alt_ph_no = stdin.nextLine();
-				break;
-			case 7:
-				update_profile(login);
-				System.out.println("Save Success");
-				break;
-			case 8:
-				display_student(login);
-				break;
-			default:
-				System.out.println("Wrong input. Try again!");
-			}
-		}while(func!=8);
-		
+			do
+			{
+				System.out.println("<Menu>");	
+				System.out.println("1. To Enter new User Password ");
+				System.out.println("2. To Enter new Address Line 1 ");
+				System.out.println("3. To Enter new Address Line 2 ");
+				System.out.println("4. To Enter new Address Line 3 ");
+				System.out.println("5. To Enter new Phone Number ");
+				System.out.println("6. To Enter new Alternate phone number ");
+				System.out.println("7. To Save all the fields ");
+				System.out.println("8. Go Back( will remove all the unsaved changes) ");
+				System.out.println("Enter your Choice >> ");
+				func = stdin.nextInt();
+				stdin.nextLine();
+				switch (func) {
+				case 1:
+					System.out.print("User Password: ");
+					login.user_password = stdin.nextLine();
+					break;
+				case 2:
+					System.out.println("Address Line 1: ");
+					address1 = stdin.nextLine();
+					break;
+				case 3:
+					System.out.println("Address Line 2: ");
+					address2 = stdin.nextLine();
+					break;
+				case 4:
+					System.out.println("Address Line 3: ");
+					address3 = stdin.nextLine();
+					break;
+				case 5:
+					System.out.print("Phone numebr: ");
+					ph_no = stdin.nextLine();
+					break;
+				case 6:
+					System.out.print("Alternate phone numebr: ");
+					alt_ph_no = stdin.nextLine();
+					break;
+				case 7:
+					update_profile(login);
+					System.out.println("Save Success");
+					break;
+				case 8:
+					display_profile(login);
+					break;
+				default:
+					System.out.println("Wrong input. Try again!");
+				}
+			}while(func!=8);
+		}
+		/*
+		 * If the logged in user is a Faculty
+		*/
+		else if(login.user_type.equals("F"))
+		{
+			do
+			{
+				System.out.println("<Menu>");	
+				System.out.println("1. To Enter new User Password: ");
+				System.out.println("2. To Save all the fields ");
+				System.out.println("3. Go Back( will remove all the unsaved changes) ");
+				System.out.println("Enter your Choice >> ");
+				func = stdin.nextInt();
+				stdin.nextLine();
+				switch (func) {
+				case 1:
+					System.out.print("User Password: ");
+					login.user_password = stdin.nextLine();
+					break;
+				case 2:
+					update_profile(login);
+					System.out.println("Save Success");
+					break;
+				case 3:
+					display_profile(login);
+					break;
+				default:
+					System.out.println("Wrong input. Try again!");
+				}
+			}while(func!=3);
+		}
+
 	}
-	
-	public void display_student(Login login)
+
+	public void display_profile(Login login)
 	{
-		System.out.println("Display student detail");
+		if(login.user_type.equals("S"))
+		{
+		System.out.println("Display Student detail");
+		}
+		else if(login.user_type.equals("F"))
+		{
+		System.out.println("Display Faculty detail");
+		}
 		System.out.println("----------------------------------");
 
 		String sql = "select * from athoma12.view_profile where username = ?";
@@ -230,7 +276,7 @@ public class Profile {
 		stdin.nextLine();
 		switch (func) {
 		case 1:
-			edit_student(login);
+			edit_profile(login);
 			break;
 		case 2:
 			login.home_screen(login);

@@ -36,7 +36,7 @@ public class Login {
 		switch (func) {
 		case 1:
 			Profile profile = Profile.getInstance();
-			profile.display_student(login);
+			profile.display_profile(login);
 			break;
 		case 2:
 			
