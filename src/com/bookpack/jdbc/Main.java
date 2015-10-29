@@ -11,7 +11,7 @@ public class Main {
 		DBConnection cobj = new DBConnection();
 		cobj.JDBCConnection();
 		
-		Login login = Login.getInstance();
+		Login login = Login.getObject();
 		login.main_screen();
 		
 		try {

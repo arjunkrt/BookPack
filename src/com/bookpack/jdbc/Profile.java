@@ -18,7 +18,7 @@ public class Profile {
 	static Scanner stdin = new Scanner(System.in);
 	private static Profile profile = new Profile( );
 
-	public static Profile getInstance( ) {
+	public static Profile getObject( ) {
 		return profile;
 	}
 

@@ -12,7 +12,7 @@ public class Notifications {
 	static Scanner stdin = new Scanner(System.in);
 	private static Notifications notifications = new Notifications( );
 	
-	public static Notifications getInstance( ) {
+	public static Notifications getObject( ) {
 		return notifications;
 	}
 	public void display_notifications(Login login)

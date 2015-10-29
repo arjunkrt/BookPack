@@ -15,7 +15,7 @@ public class Login {
 	static Scanner stdin = new Scanner(System.in);
 
 	protected Login(){}
-	public static Login getInstance( ) {
+	public static Login getObject( ) {
 		return login;
 	}
 	public void home_screen(Login login)
@@ -35,7 +35,7 @@ public class Login {
 		stdin.nextLine();
 		switch (func) {
 		case 1:
-			Profile profile = Profile.getInstance();
+			Profile profile = Profile.getObject();
 			profile.display_profile(login);
 			break;
 		case 2:
@@ -46,7 +46,7 @@ public class Login {
 			resource_check_out.display_checked_out_resources(login);
 			break;
 		case 5:
-			Notifications notifications = Notifications.getInstance();
+			Notifications notifications = Notifications.getObject();
 			notifications.display_notifications(login);
 			break;
 		default:
