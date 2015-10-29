@@ -42,8 +42,12 @@ public class Login {
 			
 			break;
 		case 3:
-			Resource_check_out resource_check_out = Resource_check_out.getInstance();
+			ResourceCheckout resource_check_out = ResourceCheckout.getInstance();
 			resource_check_out.display_checked_out_resources(login);
+			break;
+		case 4:
+			ResourceRequest resource_request = ResourceRequest.getInstance();
+			resource_request.display_requested_resources(login);
 			break;
 		case 5:
 			Notifications notifications = Notifications.getObject();

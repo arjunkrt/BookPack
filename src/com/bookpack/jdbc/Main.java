@@ -15,7 +15,7 @@ public class Main {
 		login.main_screen();
 		
 		try {
-			cobj.conn.close();
+			DBConnection.conn.close();
 		} catch (SQLException e) {
 			
 			e.printStackTrace();
