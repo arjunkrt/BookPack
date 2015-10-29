@@ -19,6 +19,7 @@ PROCEDURE pubCheckoutProc1(
 					) IS
 rtype_id_table INTEGER(4) := 0;
 count_available INTEGER(4) := 0;
+in_borrows INTEGER(4) := 0;
 in_waitlist INTEGER(4) := 0;
 BEGIN	
 
@@ -40,7 +41,7 @@ BEGIN
 				IF rtype_id_table > 0 THEN rtype_id_table := 3 END IF;
 				END IF;
 				
---Put the details from the identified branch into OUT variables
+--Put the details from the identified table into OUT variables
 
 				IF rtype_id_table == 1 THEN
 				SELECT P.title, B.ISBN, B.edition, B.publishers, P.year
@@ -62,23 +63,17 @@ BEGIN
 				FROM pkattep.Conf_Proceedings C, pkattep.publications P
 				WHERE C.rtype_id = P.rtype_id
 				END IF;
+
+-- is_in_borrows function which returns if the patron already has the publication
+-- if he is there 1 is returned, 0 otherwise
+
+				in_borrows := is_in_borrows(r_rtype_id, r_patron_id);
+				in_waitlist := is_in_waitlist(r_rtype_id);
 				
 --To determine which action to perform and find lib_num
 				
 				SELECT COUNT(*) INTO count_available FROM Resources R
 				WHERE R.rtype_id = r_rtype_id AND R.status = 'Available';
-
-------------------------------------------------				
--- WAITLIST QUEUE IMPLEMENTATION PENDING		
--- Will have to look up into waitlist queue to
--- determine if the book is requested by 
--- someone else		
-------------------------------------------------
-				
--- Calling the yet to be implemented is_in_waitlist function which returns
--- 1 if the publication is in waitlist
--- 0 if it is not 
-				in_waitlist := is_in_waitlist;
 
 				IF count_available == 0 THEN r_action := 4;
 				ELSIF count_available > 0 THEN r_action := 1;
@@ -95,6 +90,11 @@ PROCEDURE pubCheckoutProc2(
 					r_due_time		OUT 		DATETIME
 					) IS
 BEGIN
+
+-- is_in_waitlist function which returns the number of the patron in the queue
+-- if he is there, 0 otherwise
+
+				no_in_waitlist := is_in_waitlist(r_rtype_id, r_patron_id);
 				
 END pubCheckoutProc2;
 
