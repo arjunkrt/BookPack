@@ -5,3 +5,19 @@ LOOP
 END LOOP;
 END;
 /
+
+BEGIN
+FOR x IN (SELECT * FROM user_views)
+LOOP
+  EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.view_name || ' TO ghanams, akarat, pkattep, agarg9';
+END LOOP;
+END;
+/
+
+BEGIN
+FOR x IN (select * from all_objects where owner = 'ATHOMA12' and object_type= 'PACKAGE')
+LOOP
+  EXECUTE IMMEDIATE 'GRANT EXECUTE ON ' || x.OBJECT_NAME || ' TO ghanams, akarat, pkattep, agarg9';
+END LOOP;
+END;
+/
