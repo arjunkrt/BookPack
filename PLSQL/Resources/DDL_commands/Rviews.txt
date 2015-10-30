@@ -3,17 +3,8 @@
 --VIEWS FOR PUBLICATIONS
 
 CREATE VIEW PUB_VIEW AS
-SELECT B.rtype_id AS PUBLICATION_ID, P.title
-FROM pkattep.Books B, pkattep.publications P
-WHERE B.rtype_id = P.rtype_id
-UNION
-SELECT J.rtype_id AS PUBLICATION_ID, P.title
-FROM pkattep.Journals J, pkattep.publications P
-WHERE J.rtype_id = P.rtype_id
-UNION
-SELECT C.rtype_id AS PUBLICATION_ID, P.title
-FROM pkattep.Conf_Proceedings C, pkattep.publications P
-WHERE C.rtype_id = P.rtype_id;
+SELECT rtype_id AS PUBLICATION_ID, title
+FROM pkattep.publications;
 
 --VIEWS FOR CAMERAS
 
@@ -29,3 +20,4 @@ WHERE rtypeid = usr_selection;
 --VIEW FOR DISPLAYING RESOURCES REQUESTED
 --This will be a reference datatype in a procedure to display
 --resources requested
+
