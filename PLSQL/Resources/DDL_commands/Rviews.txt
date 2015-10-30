@@ -29,3 +29,54 @@ WHERE rtypeid = usr_selection;
 --VIEW FOR DISPLAYING RESOURCES REQUESTED
 --This will be a reference datatype in a procedure to display
 --resources requested
+
+
+
+--View to check resources checked out by user
+create or replace view athoma12.user_checkout_summary as 
+ select B.patron_id, B.checkout_time, B.due_time, RT.type, L.LIB_NAME, L.lib_id, R.rid, RT.rtype_id 
+ from athoma12.borrows B, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
+ where B.rid = R.rid
+ and R.rtype_id = RT.rtype_id
+ and L.lib_id = R.lib_id
+ ;
+
+ create or replace view athoma12.book_rid_details as
+ select B.rtype_id, B.ISBN, B.edition, B.reserved, B.publishers, P.year, P.title, R.rid, L.lib_name, L.lib_id, RT.type
+ from athoma12.books B, athoma12.publications P, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
+ where B.rtype_id = P.rtype_id
+ and R.rtype_id = RT.rtype_id
+ and RT.rtype_id = P.rtype_id
+ and l.lib_id = R.lib_id;
+
+ create or replace view athoma12.journal_rid_details as
+ select J.rtype_id, J.ISSN, P.year, P.title, R.rid, L.lib_name, L.lib_id, RT.type
+ from athoma12.journals J, athoma12.publications P, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
+ where J.rtype_id = P.rtype_id
+ and R.rtype_id = RT.rtype_id
+ and RT.rtype_id = P.rtype_id
+ and l.lib_id = R.lib_id;	
+
+ create or replace view athoma12.conf_proc_rid_details as
+ select C.rtype_id, C.conf_no, C.conf_name, P.year, P.title, R.rid, L.lib_name, L.lib_id, RT.type
+ from athoma12.conf_proceedings C, athoma12.publications P, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
+ where C.rtype_id = P.rtype_id
+ and R.rtype_id = RT.rtype_id
+ and RT.rtype_id = P.rtype_id
+ and l.lib_id = R.lib_id;	
+
+ create or replace view athoma12.rooms_rid_details as
+ select RO.rtype_id, RO.room_id, RO.position, RO.capacity, RO.roomtype, R.rid, L.lib_name, L.lib_id, RT.type
+ from athoma12.rooms RO, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
+ where RO.rtype_id = RT.rtype_id
+ and R.rtype_id = RT.rtype_id
+ and l.lib_id = R.lib_id;	
+
+ create or replace view athoma12.cam_rid_details as
+ select C.rtype_id, C.cam_id, C.model, C.memory, C.lens_config, C.make, R.rid, L.lib_name, L.lib_id, RT.type
+ from athoma12.cameras C, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
+ where C.rtype_id = RT.rtype_id
+ and R.rtype_id = RT.rtype_id
+ and l.lib_id = R.lib_id;	
+
+ 

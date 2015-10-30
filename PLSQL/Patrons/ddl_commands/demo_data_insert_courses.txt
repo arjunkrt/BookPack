@@ -1,11 +1,56 @@
-insert into library(lib_id, lib_name) values(LIB_ID_SEQ.nextval, 'DH Hill Library');
-insert into library(lib_id, lib_name) values(LIB_ID_SEQ.nextval, 'Hunt Library');
+declare
+l_course_id NUMBER(20);
+begin
+l_course_id := courses_seq.nextval;
+insert into athoma12.courses(course_id, course_name, course_book_id)
+values(l_course_id, 'CH101', 1054);
+insert into athoma12.faculty_teaches(faculty_id, course_id)
+values('F1', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S1', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S2', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S3', l_course_id);
 
-insert into courses(course_id, course_name)
-values(courses_seq.nextval, 'CH101');
-insert into courses(course_id, course_name)
-values(courses_seq.nextval, 'CH102');
-insert into courses(course_id, course_name)
-values(courses_seq.nextval, 'CH103');
-insert into courses(course_id, course_name)
-values(courses_seq.nextval, 'CH104');
+
+l_course_id := courses_seq.nextval;
+insert into athoma12.courses(course_id, course_name, course_book_id)
+values(l_course_id, 'CH102', 1055);
+insert into athoma12.faculty_teaches(faculty_id, course_id)
+values('F2', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S2', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S3', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S4', l_course_id);
+
+
+l_course_id := courses_seq.nextval;
+insert into athoma12.courses(course_id, course_name, course_book_id)
+values(l_course_id, 'CH103', 1056);
+insert into athoma12.faculty_teaches(faculty_id, course_id)
+values('F3', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S3', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S4', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S1', l_course_id);
+
+
+l_course_id := courses_seq.nextval;
+insert into athoma12.courses(course_id, course_name, course_book_id)
+values(l_course_id, 'CH104', 1057);
+insert into athoma12.faculty_teaches(faculty_id, course_id)
+values('F4', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S1', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S2', l_course_id);
+insert into athoma12.courses_taken(student_id, course_id)
+values('S4', l_course_id);
+
+end;
+/

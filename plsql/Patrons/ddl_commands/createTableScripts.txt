@@ -51,7 +51,7 @@ create table athoma12.courses
 );
 
 create table athoma12.courses_taken
-(student_id NUMBER(20),
+(student_id VARCHAR2(20),
  course_id NUMBER(20)
 );
 
@@ -63,7 +63,7 @@ create table athoma12.faculty
 );
 
 create table athoma12.faculty_teaches
-(faculty_id NUMBER(20),
+(faculty_id VARCHAR2(20),
  course_id NUMBER(20)
 );
 
