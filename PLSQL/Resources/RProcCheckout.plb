@@ -77,34 +77,29 @@ BEGIN
 --Put the details from the identified table into OUT variables
 
 		IF r_type == 'PB' THEN
-	    	SELECT P.title, B.ISBN, 
+	    	SELECT P.title, B.ISBN, B.edition, B.publishers, P.year
 			INTO r_title, r_identifier, r_edition, r_publishers, r_year
 			FROM pkattep.publications P, pkattep.Books B
 			WHERE rtype_id = r_rtype_id;
-			INSERT INTO r_res_req (what, name, position, lib_name)
-				VALUES ('Book', r_name, NULL, NULL);
 	  
 		ELSIF r_type == 'PJ' THEN
 	    	SELECT title
-			INTO r_name
-			FROM pkattep.publications P, pkattep.Books B
-			WHERE rtype_id = r_rtype_id;
-			INSERT INTO r_res_req (what, name, position, lib_name)
-				VALUES ('Journal', r_name, NULL, NULL);  
+			INTO r_title, r_identifier, r_edition, r_publishers, r_year
+			FROM pkattep.publications P, pkattep.Journals J
+			WHERE rtype_id = r_rtype_id; 
 	
 		ELSIF r_type == 'PC' THEN
 	    	SELECT title
-			INTO r_name
-			FROM pkattep.publications P, pkattep.Books B
+			INTO r_title, r_identifier, r_edition, r_publishers, r_year
+			FROM pkattep.publications P, pkattep.Conf_Proceedings C
 			WHERE rtype_id = r_rtype_id;
-			INSERT INTO r_res_req (what, name, position, lib_name)
-				VALUES ('Conference Proceeding', r_name, NULL, NULL);
 
 		ELSE 
-			INSERT INTO r_res_req (what, name, position, lib_name)
-			VALUES ('Conference Proceeding', r_name, NULL, NULL);
 				
 		END IF;
+		
+-- Finding which libraries that rtype is available
+
 									
 END pubCheckoutProc1;
 					
