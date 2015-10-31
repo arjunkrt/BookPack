@@ -13,6 +13,7 @@ do about the rtype_id he selected --
 3 - Renew
 4 - Cannot renew
 5 - already requested, will be notified when available
+6 - Reserved, cannnot checkout
 
 Actual checkout is performed by pubCheckoutProc2
 */
@@ -35,8 +36,12 @@ he_already_has_it INTEGER(4) := 0;
 he_already_has_requested_it INTEGER(4) := 0;
 another_has_requested_it INTEGER(4) := 0;
 pub_requested_is_available INTEGER(4) := 0;
+pub_is_reserved INTEGER(4) := 0;
+he_can_have_this_reserved_pub INTEGER(4) := 0;
 
 BEGIN	
+
+	SAVEPOINT beginProc;
 
 --Check if the same user has checked out the same book
 
@@ -48,7 +53,9 @@ BEGIN
 				WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id;
 				
 				SELECT COUNT(*) INTO pub_requested_is_available FROM pkattep.Resources
-				WHERE status = 'Available' AND rtype_id = r_rtype_id;				
+				WHERE status = 'Available' AND rtype_id = r_rtype_id;
+				
+				SELECT 		
 
 		IF he_already_has_it > 0 THEN
 		
@@ -83,23 +90,33 @@ BEGIN
 			WHERE rtype_id = r_rtype_id;
 	  
 		ELSIF r_type == 'PJ' THEN
-	    	SELECT title
+	    	SELECT P.title, J.ISSN, NULL, NULL, P.year
 			INTO r_title, r_identifier, r_edition, r_publishers, r_year
 			FROM pkattep.publications P, pkattep.Journals J
 			WHERE rtype_id = r_rtype_id; 
 	
 		ELSIF r_type == 'PC' THEN
-	    	SELECT title
+	    	SELECT P.title, J., NULL, NULL, P.year
 			INTO r_title, r_identifier, r_edition, r_publishers, r_year
 			FROM pkattep.publications P, pkattep.Conf_Proceedings C
 			WHERE rtype_id = r_rtype_id;
 
 		ELSE 
+			r_title = NULL;
+			r_identifier = NULL;
+			r_edition = NULL;
+			r_publishers = NULL;
+			r_year = NULL;
 				
 		END IF;
 		
--- Finding which libraries that rtype is available
+-- Finding in which libraries that rtype is available
 
+
+	COMMIT;
+	EXCEPTION
+	WHEN OTHERS THEN
+	ROLLBACK TO beginProc;
 									
 END pubCheckoutProc1;
 					
