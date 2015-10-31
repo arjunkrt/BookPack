@@ -29,7 +29,9 @@ public class Login {
 		System.out.println("4. Resource Request");
 		System.out.println("5. Notifications");
 		System.out.println("6. Due­Balance");
-		System.out.println("7. Logout");
+		if(login.user_type=="Teacher")
+			System.out.println(" 7. Reserve a publication. ");
+		System.out.println("-999. Logout");
 		System.out.print("Enter your Choice >> ");
 		func = stdin.nextInt();
 		stdin.nextLine();
@@ -53,6 +55,14 @@ public class Login {
 			Notifications notifications = Notifications.getObject();
 			notifications.display_notifications(login);
 			break;
+		case 6:
+			break;
+		case 7:
+			Reservation reservation = Reservation.getInstance();
+			reservation.reservation_publications(login);
+		case -999:
+			break;
+			
 		default:
 			System.out.println("Wrong input. Try again!");
 			login.home_screen(login);
