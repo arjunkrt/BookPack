@@ -12,12 +12,11 @@ public class DBConnection {
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			String user = "akarat";	
-			String passwd = "200109405";
+			String user = "";	
+			String passwd = "";
 
 				conn = DriverManager.getConnection(jdbcURL, user, passwd);
 				conn.setAutoCommit(false);
-				//System.out.println("Connection established.");
 				
 		} catch(Throwable oops) {
 			oops.printStackTrace();

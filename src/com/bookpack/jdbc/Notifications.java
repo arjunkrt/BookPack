@@ -1,6 +1,5 @@
 package com.bookpack.jdbc;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +11,7 @@ public class Notifications {
 	static Scanner stdin = new Scanner(System.in);
 	private static Notifications notifications = new Notifications( );
 	
-	public static Notifications getInstance( ) {
+	public static Notifications getObject( ) {
 		return notifications;
 	}
 	public void display_notifications(Login login)

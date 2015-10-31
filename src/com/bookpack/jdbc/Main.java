@@ -11,11 +11,11 @@ public class Main {
 		DBConnection cobj = new DBConnection();
 		cobj.JDBCConnection();
 		
-		Login login = Login.getInstance();
+		Login login = Login.getObject();
 		login.main_screen();
 		
 		try {
-			cobj.conn.close();
+			DBConnection.conn.close();
 		} catch (SQLException e) {
 			
 			e.printStackTrace();

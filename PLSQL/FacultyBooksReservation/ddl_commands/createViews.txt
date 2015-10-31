@@ -1,0 +1,6 @@
+CREATE OR REPLACE VIEW FAC_COURSE_BOOKS AS
+SELECT ft.faculty_id, c.course_id, c.course_name, p.title, p.year, b.isbn, b.edition, b.reserved, b.publishers, b.rtype_id
+FROM athoma12.faculty_teaches ft, athoma12.courses c, athoma12.books b, athoma12.publications p
+WHERE ft.course_id = c.course_ID
+AND c.course_book_id  = b.rtype_id
+AND b.rtype_id = p.rtype_id;

@@ -60,7 +60,13 @@ PROCEDURE addCamera(
 					p_lens_config	IN 		athoma12.cameras.lens_config%type,
 					p_make			IN 		athoma12.cameras.make%type,
 					p_quantity 		IN 		INTEGER,
-					p_lib_id 		IN 		athoma12.library.lib_id%type) ;					
+					p_lib_id 		IN 		athoma12.library.lib_id%type) ;	
+
+PROCEDURE getResourceDetailsCursor(
+					p_borrow_id		IN 		athoma12.borrows.borrow_id%type,
+					p_resource_type OUT	 	athoma12.resource_types.type%type,
+					p_resources_cursor OUT 	SYS_REFCURSOR
+					);											
 
 END RESOURCES_MGMT;
 /

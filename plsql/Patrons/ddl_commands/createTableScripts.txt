@@ -51,7 +51,7 @@ create table athoma12.courses
 );
 
 create table athoma12.courses_taken
-(student_id NUMBER(20),
+(student_id VARCHAR2(20),
  course_id NUMBER(20)
 );
 
@@ -63,7 +63,7 @@ create table athoma12.faculty
 );
 
 create table athoma12.faculty_teaches
-(faculty_id NUMBER(20),
+(faculty_id VARCHAR2(20),
  course_id NUMBER(20)
 );
 
@@ -77,38 +77,25 @@ create table athoma12.notification_patrons
 (notification_id NUMBER(20) NOT NULL,
  template_name VARCHAR2(20) NOT NULL,
  patron_id NUMBER(20) NOT NULL,
- attribute1 VARCHAR2(20),
- attribute2 VARCHAR2(20),
- attribute3 VARCHAR2(20),
- attribute4 VARCHAR2(20),
- attribute5 VARCHAR2(20),
- attribute6 VARCHAR2(20),
- attribute7 VARCHAR2(20),
- attribute8 VARCHAR2(20),
- attribute9 VARCHAR2(20),
- attribute10 VARCHAR2(20),
- grp_attribute1 NUMBER(20),
- grp_attribute2 NUMBER(20),
  notif_sent VARCHAR2(1) NOT NULL,
  notif_seen VARCHAR2(1) NOT NULL,
  CONSTRAINT notif_patrons_pk PRIMARY KEY(notification_id),
  CONSTRAINT notif_template_fk FOREIGN KEY(template_name) REFERENCES ATHOMA12.notification_templates(template_name) ON DELETE CASCADE,
  CONSTRAINT notif_patron_fk FOREIGN KEY(patron_id) REFERENCES ATHOMA12.patrons(patron_id) ON DELETE CASCADE
 );
+create table athoma12.notification_attributes
+(notification_id NUMBER(20) NOT NULL,
+ attribute_number NUMBER(20) NOT NULL,
+ attribute_value VARCHAR2(200),
+ CONSTRAINT notif_attributes_pk PRIMARY KEY(notification_id, attribute_number),
+ CONSTRAINT notif_attribs_fk FOREIGN KEY(notification_id) REFERENCES ATHOMA12.notification_patrons(notification_id) ON DELETE CASCADE
+);
 create table athoma12.notification_grp_params
-(notif_grp_param_id NUMBER(20) NOT NULL,
- notification_id NUMBER(20) NOT NULL,
- attribute1 VARCHAR2(20),
- attribute2 VARCHAR2(20),
- attribute3 VARCHAR2(20),
- attribute4 VARCHAR2(20),
- attribute5 VARCHAR2(20),
- attribute6 VARCHAR2(20),
- attribute7 VARCHAR2(20),
- attribute8 VARCHAR2(20),
- attribute9 VARCHAR2(20),
- attribute10 VARCHAR2(20), 
- CONSTRAINT notif_grp_params_pk PRIMARY KEY(notif_grp_param_id),
+(notification_id NUMBER(20) NOT NULL,
+ grp_attribute_number NUMBER(20) NOT NULL,
+ ind_attribute_number NUMBER(20) NOT NULL,
+ attribute_value VARCHAR2(200),
+ CONSTRAINT notif_grp_params_pk PRIMARY KEY(notification_id, grp_attribute_number, ind_attribute_number),
  CONSTRAINT notif_grp_fk FOREIGN KEY(notification_id) REFERENCES ATHOMA12.notification_patrons(notification_id) ON DELETE CASCADE
 );
 
