@@ -19,39 +19,52 @@ public class Login {
 	}
 	public void home_screen(Login login)
 	{
-		int func;
-		System.out.println("----------------------------------");
-		System.out.println("<Menu>");	
-		System.out.println("1. Profile");
-		System.out.println("2. Resources");
-		System.out.println("3. Checked­out Resources");
-		System.out.println("4. Resource Request");
-		System.out.println("5. Notifications");
-		System.out.println("6. Due­Balance");
-		System.out.println("7. Logout");
-		System.out.print("Enter your Choice >> ");
-		func = stdin.nextInt();
-		stdin.nextLine();
-		switch (func) {
-		case 1:
-			Profile profile = Profile.getInstance();
-			profile.display_student(login);
-			break;
-		case 2:
-			
-			break;
-		case 3:
-			Resource_check_out resource_check_out = Resource_check_out.getInstance();
-			resource_check_out.display_checked_out_resources(login);
-			break;
-		case 5:
-			Notifications notifications = Notifications.getInstance();
-			notifications.display_notifications(login);
-			break;
-		default:
-			System.out.println("Wrong input. Try again!");
-			login.home_screen(login);
-		}
+		int func, flag=0;
+		do{
+			System.out.println("----------------------------------");
+			System.out.println("<Menu>");	
+			System.out.println("1. Profile");
+			System.out.println("2. Resources");
+			System.out.println("3. Checked­out Resources");
+			System.out.println("4. Resource Request");
+			System.out.println("5. Notifications");
+			System.out.println("6. Due­Balance");
+			System.out.println("7. Return a Resource");
+			System.out.println("8. Logout");
+			System.out.print("Enter your Choice >> ");
+			func = stdin.nextInt();
+			stdin.nextLine();
+			switch (func) {
+			case 1:
+				Profile profile = Profile.getInstance();
+				profile.display_student(login);
+				break;
+			case 2:
+				
+				break;
+			case 3:
+				Resource_check_out resource_check_out = Resource_check_out.getInstance();
+				resource_check_out.display_checked_out_resources(login);
+				break;
+			case 5:
+				Notifications notifications = Notifications.getInstance();
+				notifications.display_notifications(login);
+				break;
+			case 6:
+				Due_Balance due_balance = Due_Balance.getInstance();
+				//due_balance.display_balance(login);
+				break;
+			case 7:
+				
+			case 8: 
+				System.out.println("You have successfully logged out. ");
+				flag = 1;
+				break;
+			default:
+				System.out.println("Wrong input. Try again!");
+				//login.home_screen(login);
+			}
+		}while(flag!=1);
 	}
 	public void main_screen()
 	{
