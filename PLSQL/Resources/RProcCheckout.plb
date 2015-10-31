@@ -37,12 +37,12 @@ PROCEDURE pubCheckoutProc1(
 					) IS
 r_type pkattep.Resource_types.type%type;
 
-he_already_has_it INTEGER(4) := 0;
-he_already_has_requested_it INTEGER(4) := 0;
-another_has_requested_it INTEGER(4) := 0;
-pub_is_available INTEGER(4) := 0;
-pub_is_reserved INTEGER(4) := 0;
-he_can_have_this_reserved_pub INTEGER(4) := 0;
+he_already_has_it NUMBER := 0;
+he_already_has_requested_it NUMBER := 0;
+another_has_requested_it NUMBER := 0;
+pub_is_available NUMBER := 0;
+pub_is_reserved NUMBER := 0;
+he_can_have_this_reserved_pub NUMBER := 0;
 
 BEGIN	
 
