@@ -80,7 +80,8 @@ create table pkattep.ePublications
  
  ------------------------------------------------
  create table pkattep.borrows
- (patron_id NUMBER(20) NOT NULL,
+ (borrow_id NUMBER(10) NOT NULL,
+ patron_id NUMBER(20) NOT NULL,
  rid NUMBER(20) NOT NULL,
  checkout_time TIMESTAMP NOT NULL,
  due_time TIMESTAMP,
