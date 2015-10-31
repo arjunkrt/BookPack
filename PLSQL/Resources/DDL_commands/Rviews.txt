@@ -2,26 +2,17 @@
 
 --VIEWS FOR PUBLICATIONS
 
-CREATE VIEW PUB_VIEW AS
-SELECT B.rtype_id AS PUBLICATION_ID, P.title
-FROM pkattep.Books B, pkattep.publications P
-WHERE B.rtype_id = P.rtype_id
-UNION
-SELECT J.rtype_id AS PUBLICATION_ID, P.title
-FROM pkattep.Journals J, pkattep.publications P
-WHERE J.rtype_id = P.rtype_id
-UNION
-SELECT C.rtype_id AS PUBLICATION_ID, P.title
-FROM pkattep.Conf_Proceedings C, pkattep.publications P
-WHERE C.rtype_id = P.rtype_id;
+CREATE OR REPLACE VIEW pkattep.PUB_VIEW AS
+SELECT rtype_id AS PUBLICATION_ID, title
+FROM pkattep.publications;
 
 --VIEWS FOR CAMERAS
 
-CREATE VIEW CAM_VIEW AS
+CREATE OR REPLACE VIEW pkattep.CAM_VIEW AS
 SELECT rtype_id AS CAMERA_ID, model
 FROM pkattep.cameras;
 
-CREATE VIEW CAM_VIEW2 AS
+CREATE OR REPLACE VIEW pkattep.CAM_VIEW2 AS
 SELECT rtype_id AS CAMERA_ID, model, memory, lens_config, make
 FROM pkattep.cameras
 WHERE rtypeid = usr_selection;
@@ -29,8 +20,6 @@ WHERE rtypeid = usr_selection;
 --VIEW FOR DISPLAYING RESOURCES REQUESTED
 --This will be a reference datatype in a procedure to display
 --resources requested
-
-
 
 --View to check resources checked out by user
 create or replace view athoma12.user_checkout_summary as 
@@ -79,6 +68,4 @@ create or replace view athoma12.user_checkout_summary as
  from athoma12.cameras C, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
  where C.rtype_id = RT.rtype_id
  and R.rtype_id = RT.rtype_id
- and l.lib_id = R.lib_id;	
-
- 
+ and l.lib_id = R.lib_id;

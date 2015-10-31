@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE RPROC2 AS
+CREATE OR REPLACE PACKAGE RProcRes_req_display AS
 /* Version Control Comments Block
 
 120.0 	PKATTEP 	Creation
@@ -9,13 +9,14 @@ PROCEDURE resourceReqProc(
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_res_req		OUT 		pkattep.resource_req%type
 					)
-r_rtype_id athoma12.patrons.patron_id%type;
-rr_patron_id pkattep.resource_req%type;
+rr_patron_id athoma12.patrons.patron_id%type;
+r_rtype_id pkattep.Resource_types.rtype_id%type;
+r_type pkattep.Resource_types.type%type;
 
-r_what VARCHAR2(20);
-r_name VARCHAR2(50);
-r_position VARCHAR2(50);
-r_lib_name VARCHAR2(50);
+r_what pkattep.resource_req.what%type;
+r_name pkattep.resource_req.name%type;
+r_position pkattep.resource_req.position%type;
+r_lib_name pkattep.resource_req.lib_name%type;
 
 CURSOR r_waitlist is SELECT patron_id, rtype_id FROM pkattep.waitlist;
 	
@@ -72,12 +73,11 @@ BEGIN
 				
 		END IF;
 	
-	
 	END IF;  
    END LOOP;
    CLOSE r_waitlist;
 									
 END resourceReqProc;		
 
-END RPROC2;
+END RProcRes_req_display;
 /
