@@ -2,34 +2,33 @@
 
 --VIEWS FOR PUBLICATIONS
 
-CREATE OR REPLACE VIEW pkattep.PUB_VIEW AS
+CREATE OR REPLACE VIEW athoma12.PUB_VIEW AS
 SELECT rtype_id AS PUBLICATION_ID, title
-FROM pkattep.publications;
+FROM athoma12.publications;
 
 --VIEWS FOR CAMERAS
 
-CREATE OR REPLACE VIEW pkattep.CAM_VIEW AS
+CREATE OR REPLACE VIEW athoma12.CAM_VIEW AS
 SELECT rtype_id AS CAMERA_ID, model
-FROM pkattep.cameras;
+FROM athoma12.cameras;
 
-CREATE OR REPLACE VIEW pkattep.CAM_VIEW2 AS
+CREATE OR REPLACE VIEW athoma12.CAM_VIEW2 AS
 SELECT rtype_id AS CAMERA_ID, model, memory, lens_config, make
-FROM pkattep.cameras
+FROM athoma12.cameras
 WHERE rtypeid = usr_selection;
 
 --VIEW FOR WAITLIST DISPLAY OF A USER
-CREATE OR REPLACE VIEW pkattep.user_waitlist_summary as
-SELECT RT.type, P.title AS DESCRIPTION, L.lib_name
-FROM pkattep.Publications P, pkattep.Resources R, pkattep.Resource_types RT, pkattep.library L
-WHERE P.rtype_id = R.rtype_id AND R.rtype_id = RT.rtype_id AND R.lib_id = L.lib_id;
+SELECT RT.type, P.title AS DESCRIPTION, NULL
+FROM athoma12.Publications P, athoma12.Resource_types RT, athoma12.waitlist W
+WHERE W.patron_id = r_patron_id AND W.rtype_id = P.rtype_id AND W.rtype_id = RT.rtype_id
 UNION
-SELECT RT.type, C.make||' '||C.model AS DESCRIPTION, L.lib_name
-FROM pkattep.cameras C, pkattep.Resources R, pkattep.Resource_types RT, pkattep.library L
-WHERE C.rtype_id = R.rtype_id AND R.rtype_id = RT.rtype_id AND R.lib_id = L.lib_id;
+SELECT RT.type, C.make||' '||C.model AS DESCRIPTION, NULL
+FROM athoma12.cameras C, athoma12.Resource_types RT, athoma12.waitlist W
+WHERE W.patron_id = r_patron_id AND W.rtype_id = C.rtype_id AND W.rtype_id = RT.rtype_id
 UNION
 SELECT RT.type, RO.room_id||' '||RO.position AS DESCRIPTION, L.lib_name
-FROM pkattep.Rooms RO, pkattep.Resources R, pkattep.Resource_types RT, pkattep.library L
-WHERE RO.rtype_id = R.rtype_id AND R.rtype_id = RT.rtype_id AND R.lib_id = L.lib_id;
+FROM athoma12.rooms RO, athoma12.Resource_types RT, athoma12.waitlist W, athoma12.library L, athoma12.Resources R
+WHERE W.patron_id = r_patron_id AND W.rtype_id = RO.rtype_id AND W.rtype_id = RT.rtype_id AND RT.rtype_id = R.rtype_id AND R.lib_id = L.lib_id; 
 
 --VIEW FOR DISPLAYING RESOURCES REQUESTED
 --This will be a reference datatype in a procedure to display
