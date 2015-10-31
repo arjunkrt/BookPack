@@ -182,6 +182,39 @@ BEGIN
 	END LOOP;
 
 
-END addCamera;								
+END addCamera;
+
+PROCEDURE getResourceDetailsCursor(
+					p_borrow_id		IN 		athoma12.borrows.borrow_id%type,
+					p_resource_type OUT	 	athoma12.resource_types.type%type,
+					p_resources_cursor OUT 	SYS_REFCURSOR
+					) IS
+	l_rid athoma12.resources.rid%type;
+BEGIN
+	SELECT type, rid INTO p_resource_type, l_rid
+	FROM user_checkout_summary UCS
+	WHERE UCS.borrow_id = p_borrow_id;
+
+	IF p_resource_type = 'PB' THEN
+		OPEN p_resources_cursor FOR 
+		SELECT * FROM athoma12.book_rid_details WHERE rid = l_rid;
+	ELSIF p_resource_type = 'PC' THEN
+		OPEN p_resources_cursor FOR 
+		SELECT * FROM athoma12.conf_proc_rid_details WHERE rid = l_rid;
+	ELSIF p_resource_type = 'PJ' THEN
+		OPEN p_resources_cursor FOR 
+		SELECT * FROM athoma12.journal_rid_details WHERE rid = l_rid;
+	ELSIF p_resource_type = 'C' THEN
+		OPEN p_resources_cursor FOR 
+		SELECT * FROM athoma12.cam_rid_details WHERE rid = l_rid;
+	ELSIF p_resource_type = 'RC' THEN
+		OPEN p_resources_cursor FOR 
+		SELECT * FROM athoma12.rooms_rid_details WHERE rid = l_rid;
+	ELSIF p_resource_type = 'RS' THEN
+		OPEN p_resources_cursor FOR 
+		SELECT * FROM athoma12.rooms_rid_details WHERE rid = l_rid;
+	END IF;
+END getResourceDetailsCursor;
+
 END RESOURCES_MGMT;
 /
