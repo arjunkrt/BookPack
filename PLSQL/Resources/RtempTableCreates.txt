@@ -1,7 +1,0 @@
-create table pkattep.resource_req
-(
-what VARCHAR2(20) NOT NULL,
-name VARCHAR2(50) NOT NULL,
-position VARCHAR2(50),
-lib_name VARCHAR2(50)
-);
