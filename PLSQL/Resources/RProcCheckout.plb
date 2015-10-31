@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE RProcCheckout AS
+CREATE OR REPLACE PACKAGE BODY RProcCheckout AS
 /* Version Control Comments Block
 
 120.0 	PKATTEP 	Creation
@@ -33,16 +33,16 @@ PROCEDURE pubCheckoutProc1(
 					r_edition 		OUT 		pkattep.books.edition%type,
 					r_publishers 	OUT 		pkattep.books.publishers%type,
 					r_year 		 	OUT 		pkattep.publications.year%type,
-					r_action		OUT 		NUMBER,
+					r_action		OUT 		NUMBER
 					) IS
 r_type pkattep.Resource_types.type%type;
 
-he_already_has_it NUMBER := 0;
-he_already_has_requested_it NUMBER := 0;
-another_has_requested_it NUMBER := 0;
-pub_is_available NUMBER := 0;
-pub_is_reserved NUMBER := 0;
-he_can_have_this_reserved_pub NUMBER := 0;
+he_already_has_it NUMBER(10) := 0;
+he_already_has_requested_it NUMBER(10) := 0;
+another_has_requested_it NUMBER(10) := 0;
+pub_is_available NUMBER(10) := 0;
+pub_is_reserved NUMBER(10) := 0;
+he_can_have_this_reserved_pub NUMBER(10) := 0;
 
 BEGIN	
 
@@ -88,19 +88,21 @@ BEGIN
 				FROM pkattep.waitlist WHERE rtype_id = r_rtype_id;
 				
 				IF another_has_requested_it > 0 THEN
-					r_action = 4;
+					r_action := 4;
 				ELSE
-					r_action = 3;
+					r_action := 3;
+				END IF;
 					
 		ELSIF pub_is_available > 0 THEN
-					r_action = 1;
+					r_action := 1;
 					
 		ELSIF he_already_has_requested_it > 0 THEN
-					r_action = 5;
-		ELSE 		r_action = 2;
+					r_action := 5;
+		ELSE 		r_action := 2;
 		END IF;		
 	ELSE
-					r_action = 6;			
+					r_action := 6;	
+    END IF;		
 				
 --Identifying which table the rtype_id belongs to
 
@@ -112,26 +114,26 @@ BEGIN
 	    	SELECT P.title, B.ISBN, B.edition, B.publishers, P.year
 			INTO r_title, r_identifier, r_edition, r_publishers, r_year
 			FROM pkattep.publications P, pkattep.Books B
-			WHERE rtype_id = r_rtype_id;
+			WHERE P.rtype_id = r_rtype_id AND P.rtype_id = B.rtype_id;
 	  
 		ELSIF r_type = 'PJ' THEN
 	    	SELECT P.title, J.ISSN, NULL, NULL, P.year
 			INTO r_title, r_identifier, r_edition, r_publishers, r_year
 			FROM pkattep.publications P, pkattep.Journals J
-			WHERE rtype_id = r_rtype_id; 
+			WHERE P.rtype_id = r_rtype_id AND P.rtype_id = J.rtype_id;
 	
 		ELSIF r_type = 'PC' THEN
-	    	SELECT P.title, J., NULL, NULL, P.year
+	    	SELECT P.title, C.conf_no, NULL, NULL, P.year
 			INTO r_title, r_identifier, r_edition, r_publishers, r_year
 			FROM pkattep.publications P, pkattep.Conf_Proceedings C
-			WHERE rtype_id = r_rtype_id;
+			WHERE P.rtype_id = r_rtype_id AND P.rtype_id = C.rtype_id;
 
 		ELSE 
-			r_title = NULL;
-			r_identifier = NULL;
-			r_edition = NULL;
-			r_publishers = NULL;
-			r_year = NULL;
+			r_title := NULL;
+			r_identifier := NULL;
+			r_edition := NULL;
+			r_publishers := NULL;
+			r_year := NULL;
 				
 		END IF;
 		
@@ -141,7 +143,7 @@ BEGIN
 	ROLLBACK TO beginProc;
 									
 END pubCheckoutProc1;
-					
+/*					
 PROCEDURE pubCheckoutProc2(
 					r_rtype_id 		IN 			pkattep.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
@@ -150,13 +152,13 @@ PROCEDURE pubCheckoutProc2(
 					r_checkout_time IN	 		DATETIME,
 --					r_return_time 	IN			DATETIME,
 					r_due_time		OUT 		DATETIME,
-					r_lib_num		OUT			pkattep.library.lib_id%type,
+					r_lib_num		OUT			pkattep.library.lib_id%type
 					) IS
 BEGIN
 
 	SAVEPOINT beginProc;
 
--- is_in_waitlist function which returns the number of the patron in the queue
+-- is_in_waitlist function which returns the NUMBER(10) of the patron in the queue
 -- if he is there, 0 otherwise
 
 				no_in_waitlist := is_in_waitlist(r_rtype_id, r_patron_id);
@@ -214,6 +216,6 @@ PROCEDURE camCheckoutProc(
 					) IS
 					
 END camCheckoutProc;				
-
+*/
 END RProcCheckout;
 /
