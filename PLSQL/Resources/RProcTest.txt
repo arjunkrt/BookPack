@@ -1,0 +1,39 @@
+set serveroutput on;
+
+declare
+					r_title			pkattep.publications.title%type;
+					r_identifier	pkattep.books.isbn%type;
+					r_edition 		pkattep.books.edition%type;
+					r_publishers 	pkattep.books.publishers%type;
+					r_year 		 	pkattep.publications.year%type;
+					r_action		NUMBER(10);
+begin
+
+
+pkattep.RProcCheckout.pubCheckoutProc1(1056,1029,r_title,r_identifier,r_edition,r_publishers,r_year,r_action); 
+
+dbms_output.put_line('r_title :'||r_title);
+dbms_output.put_line('r_identifier :'||r_identifier);
+dbms_output.put_line('r_edition :'||r_edition);
+dbms_output.put_line('r_publishers :'||r_publishers);
+dbms_output.put_line('r_year :'||r_year);
+dbms_output.put_line('r_action :'||r_action);
+
+commit;
+end;
+/
+
+/*
+CREATE OR REPLACE VIEW athoma12.user_waitlist_summary as
+SELECT RT.type, P.title AS DESCRIPTION, NULL
+FROM athoma12.Publications P, athoma12.Resource_types RT, athoma12.waitlist W
+WHERE W.patron_id = 1029 AND W.rtype_id = P.rtype_id AND W.rtype_id = RT.rtype_id
+UNION
+SELECT RT.type, C.make||' '||C.model AS DESCRIPTION, NULL
+FROM athoma12.cameras C, athoma12.Resource_types RT, athoma12.waitlist W
+WHERE W.patron_id = 1029 AND W.rtype_id = C.rtype_id AND W.rtype_id = RT.rtype_id
+UNION
+SELECT RT.type, RO.room_id||' '||RO.position AS DESCRIPTION, L.lib_name
+FROM athoma12.rooms RO, athoma12.Resource_types RT, athoma12.waitlist W, athoma12.library L, athoma12.Resources R
+WHERE W.patron_id = 1029 AND W.rtype_id = RO.rtype_id AND W.rtype_id = RT.rtype_id AND RT.rtype_id = R.rtype_id AND R.lib_id = L.lib_id; 
+/*
