@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PACKAGE resource_due_balance AUTHID DEFINER AS
+CREATE OR REPLACE PACKAGE RESOURCE_DUE_BALANCE AUTHID DEFINER AS
 /* Version Control Comments Block
  	AGARG9 	Creation
 */
@@ -12,5 +12,5 @@ function get_due_balance(
             )
             RETURN NUMBER;
             
-END resource_due_balance;
+END RESOURCE_DUE_BALANCE;
 /
