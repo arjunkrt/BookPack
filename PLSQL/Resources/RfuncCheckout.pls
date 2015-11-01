@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE RFuncCheckout AS
+CREATE OR REPLACE PACKAGE RFuncCheckout DEFINER CURRENT_USER AS
 /* Version Control Comments Block
 
 120.0 	PKATTEP 	Creation

@@ -48,7 +48,7 @@ BEGIN
 				--Check if the same user has already checked out the same pub
 				SELECT COUNT(*) INTO he_already_has_it FROM athoma12.borrows B, athoma12.Resources R
 				WHERE R.rid = B.rid AND B.patron_id = r_patron_id AND R.rtype_id = r_rtype_id
-						AND (B.due_time >= CURRENT_TIMESTAMP OR B.due_time IS NULL);
+						AND B.return_time IS NULL;
 
 				--Check if the same user has already requested the same pub
 				SELECT COUNT(*) INTO he_already_has_requested_it FROM athoma12.waitlist
@@ -117,8 +117,8 @@ FUNCTION pubCheckoutFunc2(
 					r_action		IN	 		NUMBER,
 					r_h_or_e 		IN 			VARCHAR2,
 					r_lib_of_preference IN	 	NUMBER,
-					r_libname_of_pick_up OUT	athoma12.library.lib_name%type DEFAULT NULL,
-					r_no_in_waitlist OUT		NUMBER DEFAULT NULL
+					r_libname_of_pick_up OUT	athoma12.library.lib_name%type,
+					r_no_in_waitlist OUT		NUMBER
 					)
 RETURN TIMESTAMP
 IS
@@ -196,15 +196,16 @@ IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 		borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 		
 		IF pub_is_journal_or_conf > 0 THEN
-		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '12' hour);
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '12' hour);
 		ELSIF pub_is_reserved > 0 THEN
-		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '4' hour);
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '4' hour);
 		ELSIF is_he_faculty > 0 THEN
-		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1' month);
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1' month);
 		ELSE
-		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + 14);  --the default interval is days
-		
-		UPDATE TABLE athoma12.Resources
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + 14);  --the default interval is days
+		END IF;
+    
+		UPDATE pkattep.Resources
 		SET status = 'CheckedOut'
 		WHERE rid = rid_to_checkout;
 		
@@ -236,36 +237,4 @@ END IF;
 	
 END pubCheckoutFunc2;
 
-/*
-FUNCTION roomCheckoutFunc1(
-					r_patron_id		IN 			athoma12.patrons.patron_id%type,
-					r_no_occupants	IN			NUMBER,
-					r_libid			IN 			athoma12.publications_authors.aid%type
-					r_checkout_time IN	 		DATETIME,
---					r_return_time 	IN			DATETIME
-					) IS
-BEGIN
-				
-END roomCheckoutFunc1;
-					
-FUNCTION roomCheckoutFunc2(
-					r_rtype_id 		IN 			athoma12.books.rtype_id%type,
-					r_patron_id		IN 			athoma12.patrons.patron_id%type,
-					r_checkout_time IN	 		DATETIME,
---					r_return_time 	IN			DATETIME
-					) IS
-BEGIN
-				
-END roomCheckoutFunc2;
-					
-FUNCTION camCheckoutFunc(
-					r_rtype_id 		IN 		athoma12.conf_Funceedings.rtype_id%type,
-					r_patron_id		IN 			athoma12.patrons.patron_id%type,
-					r_checkout_time IN	 	DATETIME,
-					r_borrowed_waitlisted 	OUT		NUMBER,
-					r_due_time 		OUT		DATETIME
-					) IS
-					
-END camCheckoutFunc;				
-*/
 END RFuncCheckout;
