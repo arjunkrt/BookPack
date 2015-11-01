@@ -1,0 +1,27 @@
+declare
+l_notification_id athoma12.notification_patrons.notification_id%type;
+begin
+athoma12.notification_mgmt.createNotification(
+							p_notification_id => l_notification_id,
+							p_template_name => 'FIRST_REMINDER',
+							p_patron_id => 1020,
+							p_attribute0 => 'Arjun',
+							p_attribute1 => 'Karat',
+							p_attr_count => 2);
+
+
+athoma12.notification_mgmt.createNotificationGrpParams(
+							p_grp_attribute_number => 1,
+							p_notification_id => l_notification_id,
+							p_attribute0 => 'ID1',
+							p_attribute1 => '11/05/2015',
+							p_ind_attr_count => 2);
+athoma12.notification_mgmt.createNotificationGrpParams(
+							p_grp_attribute_number => 2,
+							p_notification_id => l_notification_id,
+							p_attribute0 => 'ID2',
+							p_attribute1 => '11/05/2015',
+							p_ind_attr_count => 2);
+
+end;
+/							
