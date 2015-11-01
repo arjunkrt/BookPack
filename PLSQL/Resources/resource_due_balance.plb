@@ -55,6 +55,8 @@ function get_due_balance(
   l_due_balance := 0;
   SELECT DUE_TIME,type into l_due_time,l_type from ATHOMA12.USER_CHECKOUT_SUMMARY where BORROW_ID=p_borrow_id;
   l_return_time := current_timestamp;
+  
+  if l_return_time > l_due_time THEN
   l_overdue_time := l_return_time - l_due_time;
 l_time_overdue := (extract (day from (l_overdue_time)) * 24) +
 (extract (hour from (l_overdue_time))) +
@@ -66,8 +68,7 @@ l_time_overdue := (extract (day from (l_overdue_time)) * 24) +
           l_time_overdue := l_time_overdue/24;
           l_due_balance := 2*floor(l_time_overdue);
          END if;
-         
-         if l_due_balance < 0 then
+  else       
          l_due_balance := 0;
          end if;
       RETURN l_due_balance;
