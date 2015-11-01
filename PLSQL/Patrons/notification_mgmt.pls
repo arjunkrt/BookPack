@@ -54,5 +54,8 @@ PROCEDURE updateNotificationSent(
 						p_notif_sent 		IN 		athoma12.notification_patrons.notif_sent%type
 );
 
+PROCEDURE runFirstReminder;
+PROCEDURE runSecondReminder;
+
 END NOTIFICATION_MGMT;
 /

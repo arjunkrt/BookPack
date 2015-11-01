@@ -85,7 +85,9 @@ create table pkattep.ePublications
  rid NUMBER(20) NOT NULL,
  checkout_time TIMESTAMP NOT NULL,
  due_time TIMESTAMP,
- return_time TIMESTAMP
+ return_time TIMESTAMP,
+ clear_dues VARCHAR2(1),
+ dues_collected NUMBER(20)
  ); 
  
  create table pkattep.waitlist
