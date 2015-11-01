@@ -48,7 +48,7 @@ BEGIN
 				--Check if the same user has already checked out the same pub
 				SELECT COUNT(*) INTO he_already_has_it FROM athoma12.borrows B, athoma12.Resources R
 				WHERE R.rid = B.rid AND B.patron_id = r_patron_id AND R.rtype_id = r_rtype_id
-						AND (B.return_time >= CURRENT_TIMESTAMP OR B.return_time IS NULL);
+						AND (B.due_time >= CURRENT_TIMESTAMP OR B.due_time IS NULL);
 
 				--Check if the same user has already requested the same pub
 				SELECT COUNT(*) INTO he_already_has_requested_it FROM athoma12.waitlist
@@ -110,41 +110,96 @@ BEGIN
 						
 	RETURN r_action;			
 END pubCheckoutFunc1;
-/*					
+					
 FUNCTION pubCheckoutFunc2(
 					r_rtype_id 		IN 			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_action		IN	 		NUMBER,
 					r_h_or_e 		IN 			VARCHAR2,
-					r_checkout_time IN	 		DATETIME,
---					r_return_time 	IN			DATETIME,
-					r_due_time		OUT 		DATETIME,
-					r_lib_num		OUT			athoma12.library.lib_id%type
-					) IS
+					r_lib_preference IN	 		NUMBER,
+					r_lib_of_pick_up OUT		athoma12.library.lib_id%type
+					)
+RETURN TIMESTAMP
+IS
+available_at_preferred_lib NUMBER(10) := 0;
+rid_to_checkout NUMBER(10);
+r_due_time TIMESTAMP;
+pub_is_reserved NUMBER(10) := 0;
+borrow_id_nextval NUMBER(10);
+pub_is_journal_or_conf NUMBER(10) := 0;
+is_he_faculty NUMBER(10) := 0;
 BEGIN
 
 	SAVEPOINT beginFunc;
 
--- is_in_waitlist function which returns the NUMBER(10) of the patron in the queue
--- if he is there, 0 otherwise
-
-				no_in_waitlist := is_in_waitlist(r_rtype_id, r_patron_id);
-				
-				
-				
-				-- Finding in which libraries that rtype is available
--- The Following data is hard-coded for the 2 libraries we have
--- This will have to change if more libraries are included
-
-	IF pub_is_available > 0 THEN
-	SELECT COUNT(DISTINCT lib_id) INTO r_lib_num FROM athoma12.Resources R, athoma12.library L
-	WHERE R.rtype_id = r_rtype_id AND R.lib_id = L.lib_id;
+IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
+	IF r_action = 1 THEN
 	
-		IF r_lib_num = 1 THEN
+		--Checking if the the pub was available at the preferred library
+		SELECT COUNT(*) INTO available_at_preferred_lib FROM athoma12.Resources
+		WHERE rtype_id = r_rtype_id AND lib_id = r_lib_preference AND status = 'Available';
 		
+		IF available_at_preferred_lib > 0 THEN
+			SELECT MIN(rid) INTO rid_to_checkout FROM pkattep.Resources
+			WHERE rtype_id = r_rtype_id AND lib_id = r_lib_preference AND status = 'Available'; 
+		
+		ELSE
+			SELECT MIN(rid) INTO rid_to_checkout FROM pkattep.Resources
+			WHERE rtype_id = r_rtype_id AND status = 'Available'; 
+		
+		END IF;
 	
-	ELSE 
-	r_lib_num = 0;
+	ELSIF r_action = 3  THEN
+		
+		UPDATE pkattep.borrows
+		SET return_time = CURRENT_TIMESTAMP;
+		WHERE patron_id = r_patron_id
+			AND rid IN (SELECT rid from athoma12.Resources WHERE rtype_id = r_rtype_id);
+	
+	ELSIF r_action = 2 THEN
+		
+		INSERT INTO pkattep.waitlist VALUES (r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, NULL);
+	
+	END IF;	
+	
+	IF r_action = 1 OR r_action = 3 THEN
+	
+				
+			--Check if pub is journal or conference
+			SELECT COUNT(*) INTO pub_is_journal_or_conf FROM athoma12.Resource_types
+			WHERE type = 'PJ' OR type = 'PJ' AND rtype_id = r_rtype_id;
+			
+			--Check if the pub is reserved
+			IF pub_is_journal_or_conf = 0
+			SELECT COUNT(*) INTO pub_is_reserved FROM athoma12.Books B, athoma12.Resource_types R
+			WHERE R.type = 'PB' AND B.reserved = 1 AND B.rtype_id = R.rtype_id AND B.rtype_id = r_rtype_id;
+			
+				--Check if the patron is a faculty
+			SELECT COUNT(*) INTO is_he_faculty FROM athoma12.patrons WHERE patron_type = 'F' AND patron_id = r_patron_id;
+			END IF;
+		
+		borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
+		
+		IF pub_is_journal_or_conf > 0 THEN
+		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '12' hour);
+		ELSIF pub_is_reserved > 0 THEN
+		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '4' hour);
+		ELSIF is_he_faculty > 0 THEN
+		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1' month);
+		ELSE
+		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + 14);  --the default interval is days
+	END IF;
+		
+ELSE
+			SELECT MIN(rid) INTO rid_to_checkout FROM pkattep.Resources
+			WHERE rtype_id = r_rtype_id;
+			
+			borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
+			
+			INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, NULL); 
+			--putting due date as NULL for epubs
+
+END IF;
 	
 	COMMIT;
 	EXCEPTION
@@ -152,7 +207,7 @@ BEGIN
 	ROLLBACK TO beginFunc;
 				
 END pubCheckoutFunc2;
-
+/*
 FUNCTION roomCheckoutFunc1(
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_no_occupants	IN			NUMBER,
