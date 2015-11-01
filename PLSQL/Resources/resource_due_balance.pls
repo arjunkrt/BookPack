@@ -7,4 +7,5 @@ procedure get_total_balance(
             l_total_balance OUT NUMBER);
             
 function get_due_balance(
-            p_borrow_id        IN    ATHOMA12.USER_CHECKOUT_SUMMARY.BORROW_ID%type);    
+            p_borrow_id        IN    ATHOMA12.USER_CHECKOUT_SUMMARY.BORROW_ID%type);
+            RETURN NUMBER;
