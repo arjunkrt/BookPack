@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE resource_due_balance AS
+CREATE OR REPLACE PACKAGE BODY resource_due_balance AS
 /* Version Control Comments Block
 120.0 	AGARG9 	Creation
 */
@@ -38,7 +38,7 @@ FOR resType in c1
       END if;
    END LOOP;
 END get_total_balance;
-/
+
 
 function get_due_balance(
             p_borrow_id        IN    ATHOMA12.USER_CHECKOUT_SUMMARY.BORROW_ID%type)
@@ -73,30 +73,5 @@ l_time_overdue := (extract (day from (l_overdue_time)) * 24) +
       RETURN l_due_balance;
       
 END get_due_balance;
+END resource_due_balance;
 /
-
-
-/*
-procedure update_duedate(
-            b_patron_id 	IN		borrows.patron_id%type,
-						b_rid			  IN 		borrows.rid%type,
-            b_return_time        OUT    BORROWS.RETURN_TIME%type,
-            b_hours_overdue OUT BORROWS.HOURS_OVERDUE%type) IS
-            --PRAGMA AUTONOMOUS_TRANSACTION;
-        b_checkout_time BORROWS.CHECKOUT_TIME%type;
-        b_due_time  BORROWS.DUE_TIME%type;
-        b_borrow_id  BORROWS.BORROW_ID%type;
-	BEGIN
-    SELECT MAX(BORROW_ID) into b_borrow_id from BORROWS where patron_id=b_patron_id and rid=b_rid;
-  SELECT CHECKOUT_TIME,DUE_TIME,RETURN_TIME into b_checkout_time,b_due_time,b_return_time from BORROWS where BORROW_ID=b_borrow_id;
-  if b_return_time is NULL then
-  b_return_time := current_timestamp;
-  end if;
- SELECT EXTRACT (DAY    FROM (b_return_time-b_due_time))*24+
-             EXTRACT (HOUR   FROM (b_return_time-b_due_time))+
-             EXTRACT (MINUTE FROM (b_return_time-b_due_time))/60+
-             EXTRACT (SECOND FROM (b_return_time-b_due_time))/3600 DELTA INTO b_hours_overdue FROM BORROWS where BORROW_ID=b_borrow_id;
-             commit;
-  UPDATE BORROWS SET HOURS_OVERDUE=b_hours_overdue where BORROW_ID=b_borrow_id;
-END update_duedate; 
-*/
