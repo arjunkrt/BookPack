@@ -204,5 +204,95 @@ PROCEDURE createNotification(
 			notification_id = p_notification_id;
 	END updateNotificationSent;
 
+
+	PROCEDURE runFirstReminder IS
+		l_notification_id athoma12.notification_patrons.notification_id%type;
+		CURSOR findPatrons IS
+			select p.patron_id, p.first_name, p.last_name, p.department, p.username from patrons p
+				where exists(select 1 from user_checkout_summary ucs where due_time between systimestamp  and systimestamp+interval '3' DAY
+				and ucs.patron_id = p.patron_id
+				and not exists (select 1 from notification_grp_params ngp, notification_patrons np where 
+                np.template_name = 'FIRST_REMINDER' and ngp.grp_attribute_number = 1 and ngp.ind_attribute_number=1
+                and to_number(ngp.attribute_value) = ucs.borrow_id)
+				);
+
+
+		CURSOR findBorrowRecs(l_patron_id NUMBER) IS
+			select * from user_checkout_summary ucs where due_time between systimestamp  and systimestamp+interval '3' DAY and patron_id = l_patron_id
+			and not exists (select 1 from notification_grp_params ngp, notification_patrons np where 
+                np.template_name = 'FIRST_REMINDER' and ngp.grp_attribute_number = 1 and ngp.ind_attribute_number=1
+                and to_number(ngp.attribute_value) = ucs.borrow_id)
+				;
+	BEGIN
+		SAVEPOINT beginProc;
+		FOR patronsRec in findPatrons
+		LOOP
+			
+			athoma12.notification_mgmt.createNotification(
+							p_notification_id => l_notification_id,
+							p_template_name => 'FIRST_REMINDER',
+							p_patron_id => patronsRec.patron_id,
+							p_attribute0 => patronsRec.first_name,
+							p_attr_count => 1);
+
+
+			FOR borrowsRec in findBorrowRecs(patronsRec.patron_id)
+			LOOP
+				athoma12.notification_mgmt.createNotificationGrpParams(
+							p_grp_attribute_number => 1,
+							p_notification_id => l_notification_id,
+							p_attribute0 => borrowsRec.borrow_id,
+							p_attribute1 => borrowsRec.description,
+							p_attribute2 => borrowsRec.due_time,
+							p_ind_attr_count => 2);
+			END LOOP;
+		END LOOP;
+
+	END runFirstReminder;
+
+	PROCEDURE runSecondReminder IS
+		l_notification_id athoma12.notification_patrons.notification_id%type;
+		CURSOR findPatrons IS
+			select p.patron_id, p.first_name, p.last_name, p.department, p.username from patrons p
+				where exists(select 1 from user_checkout_summary ucs where due_time between systimestamp  and systimestamp+interval '1' DAY
+				and ucs.patron_id = p.patron_id
+				and not exists (select 1 from notification_grp_params ngp, notification_patrons np where 
+                np.template_name = 'DUE_SECOND_REMINDER' and ngp.grp_attribute_number = 1 and ngp.ind_attribute_number=1
+                and to_number(ngp.attribute_value) = ucs.borrow_id)
+				);
+
+
+		CURSOR findBorrowRecs(l_patron_id NUMBER) IS
+			select * from user_checkout_summary ucs where due_time between systimestamp  and systimestamp+interval '1' DAY and patron_id = l_patron_id
+			and not exists (select 1 from notification_grp_params ngp, notification_patrons np where 
+                np.template_name = 'SECOND_DUE_REMINDER' and ngp.grp_attribute_number = 1 and ngp.ind_attribute_number=1
+                and to_number(ngp.attribute_value) = ucs.borrow_id)
+				;
+	BEGIN
+		SAVEPOINT beginProc;
+		FOR patronsRec in findPatrons
+		LOOP
+			
+			athoma12.notification_mgmt.createNotification(
+							p_notification_id => l_notification_id,
+							p_template_name => 'DUE_SECOND_REMINDER',
+							p_patron_id => patronsRec.patron_id,
+							p_attribute0 => patronsRec.first_name,
+							p_attr_count => 1);
+
+
+			FOR borrowsRec in findBorrowRecs(patronsRec.patron_id)
+			LOOP
+				athoma12.notification_mgmt.createNotificationGrpParams(
+							p_grp_attribute_number => 1,
+							p_notification_id => l_notification_id,
+							p_attribute0 => borrowsRec.borrow_id,
+							p_attribute1 => borrowsRec.description,
+							p_attribute2 => borrowsRec.due_time,
+							p_ind_attr_count => 2);
+			END LOOP;
+		END LOOP;
+
+	END runSecondReminder;
 END NOTIFICATION_MGMT;
 /
