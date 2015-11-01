@@ -15,10 +15,10 @@ Resource_due_balanace performs following actions.
 
 procedure get_total_balance(
             p_patron_id 	IN		ATHOMA12.USER_CHECKOUT_SUMMARY.patron_id%type,
-	    l_rid			  OUT 		ATHOMA12.USER_CHECKOUT_SUMMARY.rid%type,
-            l_type      OUT    ATHOMA12.USER_CHECKOUT_SUMMARY.TYPE%type,
-            l_due_balance OUT  NUMBER,
             l_total_balance OUT NUMBER)IS
+            l_rid			 		ATHOMA12.USER_CHECKOUT_SUMMARY.rid%type;
+            l_due_balance NUMBER;
+            l_type        ATHOMA12.USER_CHECKOUT_SUMMARY.TYPE%type;
             l_borrow_id   ATHOMA12.USER_CHECKOUT_SUMMARY.BORROW_ID%type;
             l_overdue_time interval day to second := null;
            cursor c1 is select RID,TYPE,BORROW_ID from ATHOMA12.USER_CHECKOUT_SUMMARY where PATRON_ID=p_patron_id and RETURN_TIME is null;	
