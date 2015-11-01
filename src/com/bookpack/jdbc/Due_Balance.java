@@ -1,5 +1,7 @@
 package com.bookpack.jdbc;
 
+import java.sql.CallableStatement;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Due_Balance {
@@ -17,6 +19,35 @@ public class Due_Balance {
 	}
 	public void display_balance(Login l1){
 		lobj = l1;
+		CallableStatement cstmt = null;
+		String sql = "{call athoma12.faculty_books.get_total_balance(?,?,?,?,?)}";
+		lobj = l1;
+		double total;
+		
+		try{
+			cstmt = DBConnection.conn.prepareCall(sql);
+			cstmt.setDouble(1, lobj.patron_id);
+			cstmt.registerOutParameter(2, java.sql.Types.DOUBLE);
+			cstmt.registerOutParameter(3, java.sql.Types.VARCHAR);
+			cstmt.registerOutParameter(4, java.sql.Types.DOUBLE);
+			cstmt.registerOutParameter(5, java.sql.Types.DOUBLE);
+			
+			cstmt.execute();
+			
+			total = cstmt.getDouble(5);
+			
+			System.out.println(" Your total Due balance is: " + total);
+		}catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if(cstmt != null)
+			{
+				try{cstmt.close();}
+				catch(SQLException e){
+				}
+			}
+		}
+		
 		
 	}
 }

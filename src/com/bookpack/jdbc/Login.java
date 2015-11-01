@@ -29,8 +29,9 @@ public class Login {
 		System.out.println("4. Resource Request");
 		System.out.println("5. Notifications");
 		System.out.println("6. Due­Balance");
-		if(login.user_type=="Teacher")
-			System.out.println(" 7. Reserve a publication. ");
+		System.out.println("7. Return a Resource");
+		if(login.user_type.equalsIgnoreCase("F"))
+			System.out.println("8. Reserve a publication. ");
 		System.out.println("-999. Logout");
 		System.out.print("Enter your Choice >> ");
 		func = stdin.nextInt();
@@ -58,6 +59,10 @@ public class Login {
 		case 6:
 			break;
 		case 7:
+			Return_Resource ret_resource = Return_Resource.getInstance();
+			ret_resource.display_resource(login);
+			break;
+		case 8:
 			Reservation reservation = Reservation.getInstance();
 			reservation.reservation_publications(login);
 		case -999:

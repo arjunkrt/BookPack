@@ -32,7 +32,7 @@ private static Resource resource = new Resource( );
 						System.out.println("2. Camera. ");
 						System.out.println("3. Study Rooms. ");
 						
-						if(l1.user_type == "Teacher");
+						if(l1.user_type.equals("F"));
 							System.out.println("4. Conference Rooms. ");
 	
 						System.out.println("99. Go Back (Main Menu). ");
@@ -41,11 +41,11 @@ private static Resource resource = new Resource( );
 						
 						switch(choice){
 						case 1: show_publications();break;
-						case 2: if(l1.user_type == "Student"){		/* Value of Student/teacher check with DB */
+						case 2: if(l1.user_type.equalsIgnoreCase("S")){		/* Value of Student/teacher check with DB */
 									show_study_rooms();
 									break;
 								}
-								else if(l1.user_type == "Teacher"){
+								else if(l1.user_type.equalsIgnoreCase("F")){
 									show_conf_rooms();
 									break;
 								}
