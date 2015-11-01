@@ -25,7 +25,7 @@ is available the r_lib_num will be coded as follows --
 Actual checkout is performed by pubCheckoutFunc2
 */
 
--- pubCheckoutFunc1 working for scenarios 1, 3 & 6 -- yet to be tested for 2, 4, 5
+-- pubCheckoutFunc1 working for scenarios 1, 3, 6 -- yet to be tested for 2, 4, 5
 FUNCTION pubCheckoutFunc1(
 					r_rtype_id 		IN			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type
@@ -110,7 +110,7 @@ BEGIN
 						
 	RETURN r_action;			
 END pubCheckoutFunc1;
-					
+/*					
 FUNCTION pubCheckoutFunc2(
 					r_rtype_id 		IN 			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
@@ -236,5 +236,5 @@ END IF;
 	ROLLBACK TO beginFunc;
 	
 END pubCheckoutFunc2;
-
+*/
 END RFuncCheckout;
