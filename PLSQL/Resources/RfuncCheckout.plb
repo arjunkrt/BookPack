@@ -116,49 +116,64 @@ FUNCTION pubCheckoutFunc2(
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_action		IN	 		NUMBER,
 					r_h_or_e 		IN 			VARCHAR2,
-					r_lib_preference IN	 		NUMBER,
-					r_lib_of_pick_up OUT		athoma12.library.lib_id%type
+					r_lib_of_preference IN	 	NUMBER,
+					r_libname_of_pick_up OUT	athoma12.library.lib_name%type DEFAULT NULL,
+					r_no_in_waitlist OUT		NUMBER DEFAULT NULL
 					)
 RETURN TIMESTAMP
 IS
 available_at_preferred_lib NUMBER(10) := 0;
 rid_to_checkout NUMBER(10);
-r_due_time TIMESTAMP;
+r_due_time TIMESTAMP DEFAULT NULL;
 pub_is_reserved NUMBER(10) := 0;
-borrow_id_nextval NUMBER(10);
+borrow_id_nextval NUMBER(10) DEFAULT NULL;
 pub_is_journal_or_conf NUMBER(10) := 0;
 is_he_faculty NUMBER(10) := 0;
 BEGIN
-
 	SAVEPOINT beginFunc;
 
 IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
+
+-- There a couple of calculations to be done when pub is a hard copy
+
 	IF r_action = 1 THEN
+	-- we have to perform the checkout operation
 	
 		--Checking if the the pub was available at the preferred library
 		SELECT COUNT(*) INTO available_at_preferred_lib FROM athoma12.Resources
-		WHERE rtype_id = r_rtype_id AND lib_id = r_lib_preference AND status = 'Available';
+		WHERE rtype_id = r_rtype_id AND lib_id = r_lib_of_preference AND status = 'Available';
 		
 		IF available_at_preferred_lib > 0 THEN
-			SELECT MIN(rid) INTO rid_to_checkout FROM pkattep.Resources
-			WHERE rtype_id = r_rtype_id AND lib_id = r_lib_preference AND status = 'Available'; 
+			SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
+			WHERE rtype_id = r_rtype_id AND lib_id = r_lib_of_preference AND status = 'Available';
+			
+			SELECT L.lib_name INTO r_libname_of_pick_up FROM athoma12.library L, athoma12.Resources R
+			WHERE R.rid = rid_to_checkout AND R.lib_id = L.lib_id;
 		
 		ELSE
-			SELECT MIN(rid) INTO rid_to_checkout FROM pkattep.Resources
-			WHERE rtype_id = r_rtype_id AND status = 'Available'; 
+			SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
+			WHERE rtype_id = r_rtype_id AND status = 'Available';
+			
+			SELECT L.lib_name INTO r_libname_of_pick_up FROM athoma12.library L, athoma12.Resources R
+			WHERE R.rid = rid_to_checkout AND R.lib_id = L.lib_id;
 		
 		END IF;
 	
 	ELSIF r_action = 3  THEN
+	-- Renew operation to be done
+	-- Here, we take the return of the book and do re-checkout
 		
 		UPDATE pkattep.borrows
-		SET return_time = CURRENT_TIMESTAMP;
+		SET return_time = CURRENT_TIMESTAMP
 		WHERE patron_id = r_patron_id
 			AND rid IN (SELECT rid from athoma12.Resources WHERE rtype_id = r_rtype_id);
 	
 	ELSIF r_action = 2 THEN
 		
-		INSERT INTO pkattep.waitlist VALUES (r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, NULL);
+		INSERT INTO pkattep.waitlist VALUES (r_patron_id, r_rtype_id, CURRENT_TIMESTAMP, NULL);
+		
+		SELECT COUNT(*) INTO r_no_in_waitlist FROM pkattep.waitlist
+		WHERE rtype_id = r_rtype_id;
 	
 	END IF;	
 	
@@ -167,10 +182,10 @@ IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 				
 			--Check if pub is journal or conference
 			SELECT COUNT(*) INTO pub_is_journal_or_conf FROM athoma12.Resource_types
-			WHERE type = 'PJ' OR type = 'PJ' AND rtype_id = r_rtype_id;
+			WHERE (type = 'PJ' OR type = 'PJ') AND rtype_id = r_rtype_id;
 			
 			--Check if the pub is reserved
-			IF pub_is_journal_or_conf = 0
+			IF pub_is_journal_or_conf = 0 THEN
 			SELECT COUNT(*) INTO pub_is_reserved FROM athoma12.Books B, athoma12.Resource_types R
 			WHERE R.type = 'PB' AND B.reserved = 1 AND B.rtype_id = R.rtype_id AND B.rtype_id = r_rtype_id;
 			
@@ -188,25 +203,39 @@ IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1' month);
 		ELSE
 		INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + 14);  --the default interval is days
+		
+		UPDATE TABLE athoma12.Resources
+		SET status = 'CheckedOut'
+		WHERE rid = rid_to_checkout;
+		
+		-- clearing the waitlist for the given rtype_id and patron_id after the checkout
+		DELETE FROM pkattep.waitlist
+		WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id;
+		
 	END IF;
 		
 ELSE
-			SELECT MIN(rid) INTO rid_to_checkout FROM pkattep.Resources
+
+	-- If the publication is an ecopy then checkout happens with the MIN(rid) for that rtype
+			SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
 			WHERE rtype_id = r_rtype_id;
 			
 			borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 			
 			INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, NULL); 
-			--putting due date as NULL for epubs
+			--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
 
 END IF;
 	
 	COMMIT;
+	return r_due_time;	
+	
 	EXCEPTION
 	WHEN OTHERS THEN
 	ROLLBACK TO beginFunc;
-				
+	
 END pubCheckoutFunc2;
+
 /*
 FUNCTION roomCheckoutFunc1(
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
