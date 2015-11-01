@@ -1,5 +1,5 @@
 
-CREATE OR REPLACE PACKAGE resource_due_balance AUTHID CURRENT_USER AS
+CREATE OR REPLACE PACKAGE resource_due_balance AUTHID DEFINER AS
 /* Version Control Comments Block
  	AGARG9 	Creation
 */
