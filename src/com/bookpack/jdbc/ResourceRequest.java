@@ -19,7 +19,7 @@ public class ResourceRequest {
 	}
 	public void requested_resources_details(Login login)
 	{
-		String sql = "{call pkatttep.RProcRes_req_display.resourceReqProc(?,?)}";
+		String sql = "{select * from athoma12.user_waitlist_summary where patron_id = ?}";
 		CallableStatement cstmt=null;
 
 		try {
