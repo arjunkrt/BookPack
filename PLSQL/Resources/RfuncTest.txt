@@ -1,0 +1,122 @@
+-- Publication details for a given patron_id and rtype_id
+-- and displaying what action the patron can do on this rtype_id
+
+	    	
+/*
+	--Following should have r_action = 1	
+			SELECT P.title, B.ISBN, B.edition, B.publishers, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1056,1029) AS r_action
+			FROM athoma12.publications P, athoma12.Books B
+			WHERE P.rtype_id = 1056 AND P.rtype_id = B.rtype_id
+	  		UNION
+	    	SELECT P.title, J.ISSN, NULL, NULL, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1056,1029) AS r_action
+			FROM athoma12.publications P, athoma12.Journals J
+			WHERE P.rtype_id = 1056 AND P.rtype_id = J.rtype_id
+			UNION
+	    	SELECT P.title, C.conf_no, NULL, NULL, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1056,1029) AS r_action
+			FROM athoma12.publications P, athoma12.Conf_Proceedings C
+			WHERE P.rtype_id = 1056 AND P.rtype_id = C.rtype_id;
+			
+	--Following should have r_action = 1 -- faculty
+			SELECT P.title, B.ISBN, B.edition, B.publishers, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1056,1030) AS r_action
+			FROM athoma12.publications P, athoma12.Books B
+			WHERE P.rtype_id = 1056 AND P.rtype_id = B.rtype_id
+	  		UNION
+	    	SELECT P.title, J.ISSN, NULL, NULL, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1056,1030) AS r_action
+			FROM athoma12.publications P, athoma12.Journals J
+			WHERE P.rtype_id = 1056 AND P.rtype_id = J.rtype_id
+			UNION
+	    	SELECT P.title, C.conf_no, NULL, NULL, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1056,1030) AS r_action
+			FROM athoma12.publications P, athoma12.Conf_Proceedings C
+			WHERE P.rtype_id = 1056 AND P.rtype_id = C.rtype_id;
+			
+--Following should have r_action = 6
+			SELECT P.title, B.ISBN, B.edition, B.publishers, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1056,1027) AS r_action
+			FROM athoma12.publications P, athoma12.Books B
+			WHERE P.rtype_id = 1056 AND P.rtype_id = B.rtype_id
+	  		UNION
+	    	SELECT P.title, J.ISSN, NULL, NULL, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1056,1027) AS r_action
+			FROM athoma12.publications P, athoma12.Journals J
+			WHERE P.rtype_id = 1056 AND P.rtype_id = J.rtype_id
+			UNION
+	    	SELECT P.title, C.conf_no, NULL, NULL, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1056,1027) AS r_action
+			FROM athoma12.publications P, athoma12.Conf_Proceedings C
+			WHERE P.rtype_id = 1056 AND P.rtype_id = C.rtype_id;
+			
+--Following should have r_action = 3			
+			SELECT P.title, B.ISBN, B.edition, B.publishers, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1057,1019) AS r_action
+			FROM athoma12.publications P, athoma12.Books B
+			WHERE P.rtype_id = 1057 AND P.rtype_id = B.rtype_id
+	  		UNION
+	    	SELECT P.title, J.ISSN, NULL, NULL, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1057,1019) AS r_action
+			FROM athoma12.publications P, athoma12.Journals J
+			WHERE P.rtype_id = 1057 AND P.rtype_id = J.rtype_id
+			UNION
+	    	SELECT P.title, C.conf_no, NULL, NULL, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(1057,1019) AS r_action
+			FROM athoma12.publications P, athoma12.Conf_Proceedings C
+			WHERE P.rtype_id = 1057 AND P.rtype_id = C.rtype_id;
+	
+	--Following should give 1		
+			SELECT COUNT(*) AS pub_is_reserved FROM athoma12.Books B, athoma12.Resource_types R
+			WHERE R.type = 'PB' AND B.reserved = 1 AND B.rtype_id = R.rtype_id AND B.rtype_id = 1056;
+	
+	--Following should give 0
+						SELECT COUNT(*) AS pub_is_reserved FROM athoma12.Books B, athoma12.Resource_types R
+			WHERE R.type = 'PB' AND B.reserved = 1 AND B.rtype_id = R.rtype_id AND B.rtype_id = 1055;
+			
+	--Following should give 1
+							SELECT COUNT(*) AS he_already_has_it FROM athoma12.borrows B, athoma12.Resources R
+				WHERE R.rid = B.rid AND B.patron_id = 1019 AND R.rtype_id = 1057
+						AND (B.return_time >= CURRENT_TIMESTAMP OR B.return_time IS NULL);
+						
+	--Following should give 0
+								SELECT COUNT(*) AS he_already_has_it FROM athoma12.borrows B, athoma12.Resources R
+				WHERE R.rid = B.rid AND B.patron_id = 1019 AND R.rtype_id = 1056
+						AND (B.return_time >= CURRENT_TIMESTAMP OR B.return_time IS NULL); 
+			
+					SELECT COUNT(*) AS he_can_have_this_reserved_pub
+				FROM athoma12.students S, athoma12.patrons P, athoma12.courses_taken CT, athoma12.courses C, athoma12.Books B
+				WHERE P.patron_id = 1029 AND S.patron_id = P.patron_id
+					 AND S.student_id = CT.student_id AND CT.course_id = C.course_id
+					AND C.course_book_id = B.rtype_id AND B.rtype_id = 1056;
+*/
+/*FUNCTION pubCheckoutFunc2(
+
+--Following should update borrows
+		UPDATE pkattep.borrows
+		SET return_time = CURRENT_TIMESTAMP;
+		WHERE patron_id = r_patron_id
+			AND rid IN (SELECT rid from athoma12.Resources WHERE rtype_id = r_rtype_id);
+			
+		UPDATE pkattep.borrows
+		SET return_time = CURRENT_TIMESTAMP
+		WHERE patron_id = 1019
+			AND rid IN (SELECT rid from athoma12.Resources WHERE rtype_id = 1054);
+			
+*/
+
+/*
+--VIEW TO DISPLAY DETAILS OF ROOMS GIVEN
+--TYPE, NUMBER_OF_OCCUPANTS, LIBRARY, TIME IN AND TIME OUT
+
+  SELECT RO.room_id, RO.position
+ FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R
+ WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id
+        AND RO.capacity = 2 AND RO.roomtype = 'Study Room' AND L.lib_id = 2
+        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM pkattep.waitlist
+                        WHERE (reservation_start BETWEEN CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP)
+                        AND (reservation_end BETWEEN CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP))
+UNION
+  SELECT RO.room_id, RO.position
+ FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R
+ WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id
+        AND RO.capacity >= 2 AND RO.roomtype = 'Study Room' AND L.lib_id = 1
+        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM pkattep.waitlist
+                        WHERE (reservation_start BETWEEN CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP)
+                        AND (reservation_end BETWEEN CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP))
+		AND NOT EXISTS (  SELECT RO.room_id, RO.position
+ 		FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R
+ 		WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id
+        AND RO.capacity = 2 AND RO.roomtype = 'Study Room' AND L.lib_id = 2
+        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM pkattep.waitlist
+                        WHERE (reservation_start BETWEEN CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP)
+                        AND (reservation_end BETWEEN CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP)));
