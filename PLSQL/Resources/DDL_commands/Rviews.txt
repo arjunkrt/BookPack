@@ -33,6 +33,7 @@ FROM athoma12.rooms RO, athoma12.Resource_types RT, athoma12.waitlist W, athoma1
 WHERE W.rtype_id = RO.rtype_id AND W.rtype_id = RT.rtype_id AND RT.rtype_id = R.rtype_id AND R.lib_id = L.lib_id;
 
 --VIEW FOR DISPLAYING DETAILS OF PUBLICATIONS AND R_ACTION POSSIBLE
+--Following view is wrong, dont use yet
 CREATE OR REPLACE VIEW athoma12.PUB_CHECKOUT_VIEW AS
 SELECT P.title, B.ISBN, B.edition, B.publishers, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(P.rtype_id,PT.patron_id) AS r_action, P.rtype_id, PT.patron_id
 FROM athoma12.publications P, athoma12.Books B, athoma12.Patrons PT
@@ -45,6 +46,9 @@ UNION
 SELECT P.title, C.conf_no, NULL, NULL, P.year, pkattep.RFuncCheckout.pubCheckoutFunc1(P.rtype_id,PT.patron_id) AS r_action, P.rtype_id, PT.patron_id
 FROM athoma12.publications P, athoma12.Conf_Proceedings C, athoma12.Patrons PT
 WHERE P.rtype_id = C.rtype_id;
+
+--Query to run
+select * from pkattep.PUB_CHECKOUT_VIEW where patron_id = usr_patron_id AND rtype_id = r_rtype_id;
 
 --------------------------------------------------------------------------------------
 --QUERY TO DISPLAY DETAILS OF ROOMS GIVEN
