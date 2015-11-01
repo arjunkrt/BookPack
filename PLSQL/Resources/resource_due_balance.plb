@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE BODY resource_due_balance AS
+CREATE OR REPLACE PACKAGE BODY RESOURCE_DUE_BALANCE AS
 /* Version Control Comments Block
 120.0 	AGARG9 	Creation
 */
@@ -74,5 +74,5 @@ l_time_overdue := (extract (day from (l_overdue_time)) * 24) +
       RETURN l_due_balance;
       
 END get_due_balance;
-END resource_due_balance;
+END RESOURCE_DUE_BALANCE;
 /
