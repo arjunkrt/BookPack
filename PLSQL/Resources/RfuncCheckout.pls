@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE RFuncCheckout DEFINER CURRENT_USER AS
+CREATE OR REPLACE PACKAGE RFUNCCHECKOUT DEFINER CURRENT_USER AS
 /* Version Control Comments Block
 
 120.0 	PKATTEP 	Creation
@@ -10,7 +10,7 @@ FUNCTION pubCheckoutFunc1(
 					r_patron_id		IN 			athoma12.patrons.patron_id%type
 					) 
 RETURN NUMBER;
-/*					
+			
 FUNCTION pubCheckoutFunc2(
 					r_rtype_id 		IN 			pkattep.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
@@ -21,8 +21,8 @@ FUNCTION pubCheckoutFunc2(
 					r_due_time		OUT 		DATETIME,
 					r_lib_num		OUT			pkattep.library.lib_id%type
 					);
-
-FUNCTION roomCheckoutFunc1(
+/*
+FUNCTION roomCheckoutFunc1
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_no_occupants	IN			NUMBER,
 					r_libid			IN 			pkattep.publications_authors.aid%type
@@ -44,5 +44,5 @@ FUNCTION camCheckoutFunc(
 					r_due_time 		OUT		DATETIME
 					);						
 */
-END RFuncCheckout;
+END RFUNCCHECKOUT;
 /

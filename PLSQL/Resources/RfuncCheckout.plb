@@ -1,4 +1,4 @@
-create or replace PACKAGE BODY RFuncCheckout AS
+create or replace PACKAGE BODY RFUNCCHECKOUT AS
 /* Version Control Comments Block
 
 120.0 	pkattep 	Creation
@@ -237,4 +237,4 @@ END IF;
 	
 END pubCheckoutFunc2;
 
-END RFuncCheckout;
+END RFUNCCHECKOUT;
