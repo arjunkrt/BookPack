@@ -96,21 +96,19 @@ l_due_balance := agarg9.get_due_balance(p_borrow_id);
 UPDATE ATHOMA12.BORROWS SET DUES_COLLECTED=l_due_balance where BORROW_ID=p_borrow_id;
 UPDATE ATHOMA12.BORROWS SET RETURN_TIME=current_timestamp where BORROW_ID=p_borrow_id;
 UPDATE ATHOMA12.BORROWS SET CLEAR_DUES='Y' where BORROW_ID=p_borrow_id;
---select rid into l_rid from ATHOMA12.BORROWS where BORROW_ID=p_borrow_id;
 select rtype_id into l_rtype_id from ATHOMA12.RESOURCES where rid=l_rid;
 UPDATE ATHOMA12.RESOURCES SET STATUS='Available' where rid=l_rid;
---select patron_id into l_patron_id from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id; 
 select count(*) into l_waitlist_count from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id;
 if l_waitlist_count>0 then
 select patron_id into l_patron_id from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id and NO_IN_WAITLIST IN (select min(no_in_waitlist) from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id);
---procedure to checkout book() and delete from waitlist;
 ATHOMA12.RFUNCCHECKOUT.pubCheckoutFunc2(l_rtype_id,l_patron_id,1,'h',1,l_libname_of_pick_up,l_no_in_waitlist,l_due_time,l_borrow_id_nextval);
---procedure to call notification thing from anish
---notiification_mgmt.waitListNotification(p_borrow_id);
+ATHOMA12.notification_mgmt.waitListNotification(l_borrow_id_nextval);
 end if;
 end if;
+commit;
 END return_resource;
 /
+
 
 END RESOURCE_DUE_BALANCE;
 /
