@@ -74,5 +74,37 @@ l_time_overdue := (extract (day from (l_overdue_time)) * 24) +
       RETURN l_due_balance;
       
 END get_due_balance;
+
+procedure return_resource(
+p_borrow_id IN ATHOMA12.BORROWS.borrow_id%type
+)IS
+l_due_balance NUMBER;
+l_return_time ATHOMA12.BORROWS.return_time%type;
+l_rid ATHOMA12.BORROWS.rid%type;
+l_rtype_id ATHOMA12.BORROWS.rid%type;
+l_waitlist_count number;
+l_patron_id ATHOMA12.BORROWS.patron_id%type;
+Begin
+select return_time,rid into l_return_time,l_rid from ATHOMA12.BORROWS where BORROW_ID=p_borrow_id;
+if l_return_time is NULL then
+l_due_balance := agarg9.get_due_balance(p_borrow_id);
+UPDATE ATHOMA12.BORROWS SET DUES_COLLECTED=l_due_balance where BORROW_ID=p_borrow_id;
+UPDATE ATHOMA12.BORROWS SET RETURN_TIME=current_timestamp where BORROW_ID=p_borrow_id;
+UPDATE ATHOMA12.BORROWS SET CLEAR_DUES='Y' where BORROW_ID=p_borrow_id;
+--select rid into l_rid from ATHOMA12.BORROWS where BORROW_ID=p_borrow_id;
+select rtype_id into l_rtype_id from ATHOMA12.RESOURCES where rid=l_rid;
+UPDATE ATHOMA12.RESOURCES SET STATUS='Available' where rid=l_rid;
+--select patron_id into l_patron_id from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id; 
+select count(*) into l_waitlist_count from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id;
+if l_waitlist_count>0 then
+select patron_id into l_patron_id from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id;
+--procedure to checkout book();
+--DELETE FROM ATHOMA12.WAITLIST WHERE patron_id= patron_id;
+--procedure to update all waitlist number in waitlist table
+--procedure to call notification thing from anish
+end if;
+end if;
+END return_resource;
+
 END RESOURCE_DUE_BALANCE;
 /
