@@ -18,6 +18,16 @@ PROCEDURE createNotificationGrpParams(
 						p_attribute7		IN		athoma12.notification_grp_params.attribute_value%type DEFAULT NULL,
 						p_attribute8		IN		athoma12.notification_grp_params.attribute_value%type DEFAULT NULL,
 						p_attribute9		IN		athoma12.notification_grp_params.attribute_value%type DEFAULT NULL,
+						p_name0				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,
+						p_name1				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,
+						p_name2				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,
+						p_name3				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,
+						p_name4				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,
+						p_name5				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,
+						p_name6				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,
+						p_name7				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,
+						p_name8				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,
+						p_name9				IN		athoma12.notification_grp_params.attribute_name%type DEFAULT NULL,						
 						p_ind_attr_count	IN 		NUMBER
 );
 PROCEDURE createNotification(
@@ -34,10 +44,19 @@ PROCEDURE createNotification(
 						p_attribute7		IN		athoma12.notification_attributes.attribute_value%type DEFAULT NULL,
 						p_attribute8		IN		athoma12.notification_attributes.attribute_value%type DEFAULT NULL,
 						p_attribute9		IN		athoma12.notification_attributes.attribute_value%type DEFAULT NULL,
+						p_name0				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,
+						p_name1				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,
+						p_name2				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,
+						p_name3				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,
+						p_name4				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,
+						p_name5				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,
+						p_name6				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,
+						p_name7				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,
+						p_name8				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,
+						p_name9				IN		athoma12.notification_attributes.attribute_name%type DEFAULT NULL,						
 						p_notif_sent		IN		athoma12.notification_patrons.notif_sent%type DEFAULT NULL,
 						p_notif_seen 		IN 		athoma12.notification_patrons.notif_seen%type DEFAULT NULL,
-						p_attr_count 		IN 		NUMBER
-);
+						p_attr_count 		IN 		NUMBER);
 /*
 PROCEDURE updateNotifWGroupParams(
 						p_notification_id 	IN	 	athoma12.notification_patrons.notification_id%type,
@@ -59,6 +78,10 @@ PROCEDURE runSecondReminder;
 PROCEDURE waitListNotification(
 						p_borrow_id 		IN 		athoma12.borrows.borrow_id%type						
 );
+PROCEDURE runFirstFeeReminder;
+PROCEDURE runSecondFeeReminder;
+PROCEDURE runLastFeeReminder;
+PROCEDURE suspendAccount;
 
 END NOTIFICATION_MGMT;
 /

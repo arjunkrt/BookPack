@@ -305,7 +305,7 @@
 
 	END IF;
     
-		UPDATE pkattep.borrows
+		UPDATE athoma12.borrows
 		SET due_time = r_due_time
 		WHERE patron_id = r_patron_id
 		AND rid IN (SELECT rid from athoma12.Resources WHERE rtype_id = r_rtype_id);

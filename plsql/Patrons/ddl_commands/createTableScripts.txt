@@ -11,6 +11,7 @@ create table athoma12.patrons
  username VARCHAR2(50) NOT NULL,
  password_hash VARCHAR2(100),
  patron_type VARCHAR2(20) NOT NULL,
+ acct_deact VARCHAR2(1) NOT NULL
 );
 
 create table athoma12.students
@@ -87,6 +88,7 @@ create table athoma12.notification_attributes
 (notification_id NUMBER(20) NOT NULL,
  attribute_number NUMBER(20) NOT NULL,
  attribute_value VARCHAR2(200),
+ attribute_name VARCHAR2(200),
  CONSTRAINT notif_attributes_pk PRIMARY KEY(notification_id, attribute_number),
  CONSTRAINT notif_attribs_fk FOREIGN KEY(notification_id) REFERENCES ATHOMA12.notification_patrons(notification_id) ON DELETE CASCADE
 );
@@ -95,6 +97,7 @@ create table athoma12.notification_grp_params
  grp_attribute_number NUMBER(20) NOT NULL,
  ind_attribute_number NUMBER(20) NOT NULL,
  attribute_value VARCHAR2(200),
+ attribute_name VARCHAR2(200),
  CONSTRAINT notif_grp_params_pk PRIMARY KEY(notification_id, grp_attribute_number, ind_attribute_number),
  CONSTRAINT notif_grp_fk FOREIGN KEY(notification_id) REFERENCES ATHOMA12.notification_patrons(notification_id) ON DELETE CASCADE
 );
