@@ -394,7 +394,7 @@ public class ResourceCheckout {
 		String r_type = "";
 		PreparedStatement pstmt = null;
 
-		String sql = "select BORROW_ID,RID,TYPE, ATHOMA12.resource_due_balance.get_due_balance(BORROW_ID) as due_balance, DESCRIPTION, due_time from athoma12.user_checkout_summary where patron_id = ?";
+		String sql = "select BORROW_ID from athoma12.user_checkout_summary where patron_id = ?";
 
 		ResultSet rs = null;
 

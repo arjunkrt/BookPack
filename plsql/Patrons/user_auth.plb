@@ -20,7 +20,8 @@ CREATE OR REPLACE PACKAGE BODY USER_AUTH AS
 			SELECT patron_id, patron_type, 1 INTO p_patron_id, p_patron_type, p_success
 			FROM athoma12.patrons p
 			WHERE p.username = p_username
-			AND   p.password_hash = p_password;
+			AND   p.password_hash = p_password
+			AND p.acct_deact = 'N';
 
 			p_success:= 1;
 		EXCEPTION
