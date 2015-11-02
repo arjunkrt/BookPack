@@ -92,7 +92,7 @@ l_borrow_id_nextval NUMBER;
 Begin
 select return_time,rid into l_return_time,l_rid from ATHOMA12.BORROWS where BORROW_ID=p_borrow_id;
 if l_return_time is NULL then
-l_due_balance := agarg9.get_due_balance(p_borrow_id);
+l_due_balance := athoma12.RESOURCE_DUE_BALANCE.get_due_balance(p_borrow_id);
 UPDATE ATHOMA12.BORROWS SET DUES_COLLECTED=l_due_balance where BORROW_ID=p_borrow_id;
 UPDATE ATHOMA12.BORROWS SET RETURN_TIME=current_timestamp where BORROW_ID=p_borrow_id;
 UPDATE ATHOMA12.BORROWS SET CLEAR_DUES='Y' where BORROW_ID=p_borrow_id;
@@ -107,7 +107,7 @@ end if;
 end if;
 commit;
 END return_resource;
-/
+
 
 
 END RESOURCE_DUE_BALANCE;
