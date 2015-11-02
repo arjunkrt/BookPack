@@ -32,7 +32,6 @@ public class ResourceRequest {
 
 			rs = cstmt.executeQuery();
 			
-
 			System.out.print("Resource Type    ");
 			System.out.print("Resource Description    ");
 			System.out.println("Library Name    ");
@@ -42,14 +41,6 @@ public class ResourceRequest {
 				String r_type = rs.getString("TYPE");
 				String last_name = rs.getString("DESCRIPTION");
 				String dept = rs.getString("LIBRARY");
-//				if(sex.equals("M"))
-//				{
-//					sex = "Male";
-//				}
-//				else if(sex.equals("F"))
-//				{
-//					sex = "Female";
-//				}
 
 			}
 
