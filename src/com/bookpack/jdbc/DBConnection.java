@@ -12,8 +12,8 @@ public class DBConnection {
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			String user = "";	
-			String passwd = "";
+			String user = "ghanams";	
+			String passwd = "200109966";
 
 				conn = DriverManager.getConnection(jdbcURL, user, passwd);
 				conn.setAutoCommit(false);
