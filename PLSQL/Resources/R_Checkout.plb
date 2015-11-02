@@ -122,7 +122,7 @@
 						r_libname_of_pick_up OUT	athoma12.library.lib_name%type,
 						r_no_in_waitlist OUT		NUMBER,
 	          			r_due_time    OUT   TIMESTAMP,
-	          			borrow_id_nextval OUT NUMBER
+	          			borrow_id_nextval OUT NUMBER)
 
 	IS
 	available_at_preferred_lib NUMBER(10) := 0;
