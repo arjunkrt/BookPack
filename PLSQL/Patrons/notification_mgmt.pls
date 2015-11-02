@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE NOTIFICATION_MGMT AUTHID CURRENT_USER AS
+CREATE OR REPLACE PACKAGE NOTIFICATION_MGMT AUTHID DEFINER AS
 /* Version Control Comments Block
 
 120.0 	ATHOMA12 	Creation
@@ -52,6 +52,12 @@ PROCEDURE updateNotificationSeen(
 PROCEDURE updateNotificationSent(
 						p_notification_id 	OUT 	athoma12.notification_patrons.notification_id%type,
 						p_notif_sent 		IN 		athoma12.notification_patrons.notif_sent%type
+);
+
+PROCEDURE runFirstReminder;
+PROCEDURE runSecondReminder;
+PROCEDURE waitListNotification(
+						p_borrow_id 		IN 		athoma12.borrows.borrow_id%type						
 );
 
 END NOTIFICATION_MGMT;

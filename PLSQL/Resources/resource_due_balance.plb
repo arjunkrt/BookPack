@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE resource_due_balance AS
+CREATE OR REPLACE PACKAGE BODY RESOURCE_DUE_BALANCE AS
 /* Version Control Comments Block
 120.0 	AGARG9 	Creation
 */
@@ -38,7 +38,7 @@ FOR resType in c1
       END if;
    END LOOP;
 END get_total_balance;
-/
+
 
 function get_due_balance(
             p_borrow_id        IN    ATHOMA12.USER_CHECKOUT_SUMMARY.BORROW_ID%type)
@@ -55,6 +55,8 @@ function get_due_balance(
   l_due_balance := 0;
   SELECT DUE_TIME,type into l_due_time,l_type from ATHOMA12.USER_CHECKOUT_SUMMARY where BORROW_ID=p_borrow_id;
   l_return_time := current_timestamp;
+  
+  if l_return_time > l_due_time THEN
   l_overdue_time := l_return_time - l_due_time;
 l_time_overdue := (extract (day from (l_overdue_time)) * 24) +
 (extract (hour from (l_overdue_time))) +
@@ -66,37 +68,47 @@ l_time_overdue := (extract (day from (l_overdue_time)) * 24) +
           l_time_overdue := l_time_overdue/24;
           l_due_balance := 2*floor(l_time_overdue);
          END if;
-         
-         if l_due_balance < 0 then
+  else       
          l_due_balance := 0;
          end if;
       RETURN l_due_balance;
       
 END get_due_balance;
+
+procedure return_resource(
+p_borrow_id IN ATHOMA12.BORROWS.borrow_id%type
+)IS
+l_due_balance NUMBER;
+l_return_time ATHOMA12.BORROWS.return_time%type;
+l_rid ATHOMA12.BORROWS.rid%type;
+l_rtype_id ATHOMA12.BORROWS.rid%type;
+l_waitlist_count number;
+l_patron_id ATHOMA12.BORROWS.patron_id%type;
+l_libname_of_pick_up athoma12.library.lib_name%type;
+l_no_in_waitlist NUMBER;
+l_due_time TIMESTAMP;
+l_borrow_id_nextval NUMBER;
+
+Begin
+select return_time,rid into l_return_time,l_rid from ATHOMA12.BORROWS where BORROW_ID=p_borrow_id;
+if l_return_time is NULL then
+l_due_balance := agarg9.get_due_balance(p_borrow_id);
+UPDATE ATHOMA12.BORROWS SET DUES_COLLECTED=l_due_balance where BORROW_ID=p_borrow_id;
+UPDATE ATHOMA12.BORROWS SET RETURN_TIME=current_timestamp where BORROW_ID=p_borrow_id;
+UPDATE ATHOMA12.BORROWS SET CLEAR_DUES='Y' where BORROW_ID=p_borrow_id;
+select rtype_id into l_rtype_id from ATHOMA12.RESOURCES where rid=l_rid;
+UPDATE ATHOMA12.RESOURCES SET STATUS='Available' where rid=l_rid;
+select count(*) into l_waitlist_count from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id;
+if l_waitlist_count>0 then
+select patron_id into l_patron_id from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id and NO_IN_WAITLIST IN (select min(no_in_waitlist) from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id);
+ATHOMA12.RFUNCCHECKOUT.pubCheckoutFunc2(l_rtype_id,l_patron_id,1,'h',1,l_libname_of_pick_up,l_no_in_waitlist,l_due_time,l_borrow_id_nextval);
+ATHOMA12.notification_mgmt.waitListNotification(l_borrow_id_nextval);
+end if;
+end if;
+commit;
+END return_resource;
 /
 
 
-/*
-procedure update_duedate(
-            b_patron_id 	IN		borrows.patron_id%type,
-						b_rid			  IN 		borrows.rid%type,
-            b_return_time        OUT    BORROWS.RETURN_TIME%type,
-            b_hours_overdue OUT BORROWS.HOURS_OVERDUE%type) IS
-            --PRAGMA AUTONOMOUS_TRANSACTION;
-        b_checkout_time BORROWS.CHECKOUT_TIME%type;
-        b_due_time  BORROWS.DUE_TIME%type;
-        b_borrow_id  BORROWS.BORROW_ID%type;
-	BEGIN
-    SELECT MAX(BORROW_ID) into b_borrow_id from BORROWS where patron_id=b_patron_id and rid=b_rid;
-  SELECT CHECKOUT_TIME,DUE_TIME,RETURN_TIME into b_checkout_time,b_due_time,b_return_time from BORROWS where BORROW_ID=b_borrow_id;
-  if b_return_time is NULL then
-  b_return_time := current_timestamp;
-  end if;
- SELECT EXTRACT (DAY    FROM (b_return_time-b_due_time))*24+
-             EXTRACT (HOUR   FROM (b_return_time-b_due_time))+
-             EXTRACT (MINUTE FROM (b_return_time-b_due_time))/60+
-             EXTRACT (SECOND FROM (b_return_time-b_due_time))/3600 DELTA INTO b_hours_overdue FROM BORROWS where BORROW_ID=b_borrow_id;
-             commit;
-  UPDATE BORROWS SET HOURS_OVERDUE=b_hours_overdue where BORROW_ID=b_borrow_id;
-END update_duedate; 
-*/
+END RESOURCE_DUE_BALANCE;
+/

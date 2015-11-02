@@ -15,6 +15,7 @@ public class DBConnection {
 			String user = "ghanams";	
 			String passwd = "200109966";
 
+
 				conn = DriverManager.getConnection(jdbcURL, user, passwd);
 				conn.setAutoCommit(false);
 				
