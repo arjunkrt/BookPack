@@ -93,7 +93,7 @@ create table pkattep.ePublications
  create table pkattep.waitlist
  (patron_id NUMBER(20) NOT NULL,
  rtype_id NUMBER(20) NOT NULL,
- --no_in_waitlist NUMBER(10) NOT NULL,
+ no_in_waitlist NUMBER(10) NOT NULL,
  reservation_start TIMESTAMP,
  reservation_end TIMESTAMP
  );

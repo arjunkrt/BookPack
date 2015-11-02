@@ -42,11 +42,11 @@ SELECT P.title, B.ISBN, B.edition, B.publishers, P.year, athoma12.RFuncCheckout.
 FROM athoma12.publications P, athoma12.Books B, athoma12.Patrons PT
 WHERE P.rtype_id = B.rtype_id
 UNION
-SELECT P.title, J.ISSN, NULL, NULL, P.year, athoma12.RFuncCheckout.pubCheckoutFunc1(P.rtype_id,PT.patron_id) AS r_action, P.rtype_id, PT.patron_id
+SELECT P.title, J.ISSN, -999, 'JUNK', P.year, athoma12.RFuncCheckout.pubCheckoutFunc1(P.rtype_id,PT.patron_id) AS r_action, P.rtype_id, PT.patron_id
 FROM athoma12.publications P, athoma12.Journals J, athoma12.Patrons PT
 WHERE P.rtype_id = J.rtype_id
 UNION
-SELECT P.title, C.conf_no, NULL, NULL, P.year, athoma12.RFuncCheckout.pubCheckoutFunc1(P.rtype_id,PT.patron_id) AS r_action, P.rtype_id, PT.patron_id
+SELECT P.title, C.conf_no, -999, 'JUNK', P.year, athoma12.RFuncCheckout.pubCheckoutFunc1(P.rtype_id,PT.patron_id) AS r_action, P.rtype_id, PT.patron_id
 FROM athoma12.publications P, athoma12.Conf_Proceedings C, athoma12.Patrons PT
 WHERE P.rtype_id = C.rtype_id;
 
