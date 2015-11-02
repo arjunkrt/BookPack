@@ -1,17 +1,17 @@
-CREATE OR REPLACE PACKAGE RFUNCCHECKOUT AUTHID DEFINER AS
+CREATE OR REPLACE PACKAGE R_CHECKOUT AUTHID DEFINER AS
 /* Version Control Comments Block
 
 120.0 	PKATTEP 	Creation
 
 */
 
-FUNCTION pubCheckoutFunc1(
+FUNCTION Validate_actions(
 					r_rtype_id 		IN			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type
 					) 
 RETURN NUMBER;
 			
-PROCEDURE pubCheckoutFunc2(
+PROCEDURE Checkout_or_waitlist(
 					r_rtype_id 		IN 			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_action		IN	 		NUMBER,
@@ -22,6 +22,12 @@ PROCEDURE pubCheckoutFunc2(
 					r_due_time    OUT   TIMESTAMP,
           			borrow_id_nextval OUT NUMBER
 					);
+					
+PROCEDURE Renew(
+					r_borrow_id 	IN			athoma12.borrows.borrow_id%type,
+					r_patron_id		IN 			athoma12.patrons.patron_id%type,
+					r_due_time    	OUT   		TIMESTAMP
+					) ;
 
-END RFUNCCHECKOUT;
+END R_CHECKOUT;
 /
