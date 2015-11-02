@@ -11,6 +11,10 @@ function get_due_balance(
             p_borrow_id        IN    ATHOMA12.USER_CHECKOUT_SUMMARY.BORROW_ID%type
             )
             RETURN NUMBER;
-            
+
+ procedure return_resource(
+            p_borrow_id IN ATHOMA12.BORROWS.borrow_id%type
+);
+
 END RESOURCE_DUE_BALANCE;
 /
