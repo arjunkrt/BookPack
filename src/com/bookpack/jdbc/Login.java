@@ -21,60 +21,68 @@ public class Login {
 	public void home_screen(Login login)
 	{
 		int func;
-		System.out.println("----------------------------------");
-		System.out.println("<Menu>");	
-		System.out.println("1. Profile");
-		System.out.println("2. Resources");
-		System.out.println("3. Checked­out Resources");
-		System.out.println("4. Resource Request");
-		System.out.println("5. Notifications");
-		System.out.println("6. Due­Balance");
-		System.out.println("7. Return a Resource");
-		if(login.user_type.equalsIgnoreCase("F"))
-			System.out.println("8. Reserve a publication. ");
-		System.out.println("-999. Logout");
-		System.out.print("Enter your Choice >> ");
-		func = stdin.nextInt();
-		stdin.nextLine();
-		switch (func) {
-		case 1:
-			Profile profile = Profile.getObject();
-			profile.display_profile(login);
-			break;
-		case 2:
-			Resource resource = Resource.getInstance();
-			resource.show_resource(login);
-			break;
-		case 3:
-			ResourceCheckout resource_check_out = ResourceCheckout.getInstance();
-			resource_check_out.display_checked_out_resources(login);
-			break;
-		case 4:
-			ResourceRequest resource_request = ResourceRequest.getInstance();
-			resource_request.display_requested_resources(login);
-			break;
-		case 5:
-			Notifications notifications = Notifications.getObject();
-			notifications.display_notifications(login);
-			break;
-		case 6:
-			Due_Balance due_balance = Due_Balance.getInstance();
-			due_balance.display_balance(login);
-			break;
-		case 7:
-			Return_Resource ret_resource = Return_Resource.getInstance();
-			ret_resource.display_resource(login);
-			break;
-		case 8:
-			Reservation reservation = Reservation.getInstance();
-			reservation.reservation_publications(login);
-		case -999:
-			break;
-			
-		default:
-			System.out.println("Wrong input. Try again!");
-			login.home_screen(login);
-		}
+		do{
+			System.out.println("----------------------------------");
+			System.out.println("<Menu>");	
+			System.out.println("1. Profile");
+			System.out.println("2. Resources");
+			System.out.println("3. Checked­out Resources");
+			System.out.println("4. Resource Request");
+			System.out.println("5. Notifications");
+			System.out.println("6. Due­Balance");
+			System.out.println("7. Return a Resource");
+			if(login.user_type.equalsIgnoreCase("F"))
+				System.out.println("8. Reserve a publication. ");
+			System.out.println("-999. Logout");
+			System.out.print("Enter your Choice >> ");
+			func = stdin.nextInt();
+			stdin.nextLine();
+			switch (func) {
+			case 1:
+				Profile profile = Profile.getObject();
+				profile.display_profile(login);
+				break;
+			case 2:
+				Resource resource = Resource.getInstance();
+				resource.show_resource(login);
+				break;
+			case 3:
+				ResourceCheckout resource_check_out = ResourceCheckout.getInstance();
+				resource_check_out.display_checked_out_resources(login);
+				break;
+			case 4:
+				ResourceRequest resource_request = ResourceRequest.getInstance();
+				resource_request.display_requested_resources(login);
+				break;
+			case 5:
+				Notifications notifications = Notifications.getObject();
+				notifications.display_notifications(login);
+				break;
+			case 6:
+				Due_Balance due_balance = Due_Balance.getInstance();
+				due_balance.display_balance(login);
+				break;
+			case 7:
+				Return_Resource ret_resource = Return_Resource.getInstance();
+				ret_resource.display_resource(login);
+				break;
+			case 8:
+				Reservation reservation = Reservation.getInstance();
+				reservation.reservation_publications(login);
+				break;
+			case -999:
+				login.patron_id = 0;
+				login.user_type = "";
+				login.user_name = "";
+				login.user_password = "";
+				main_screen();
+				break;
+				
+			default:
+				System.out.println("Wrong input. Try again!");
+				login.home_screen(login);
+			}
+		}while(func!=-999);
 	}
 	public void main_screen()
 	{

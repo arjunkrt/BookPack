@@ -68,28 +68,28 @@ private static Resource resource = new Resource( );
 			
 				try{
 					stmt = DBConnection.conn.createStatement();
-					ResultSet rs = stmt.executeQuery(sql);
 					
-					System.out.println(" List of all the publications : \n");
+						ResultSet rs = stmt.executeQuery(sql);
+						System.out.println(" List of all the publications : \n");
+						
+						while(rs.next()){
+							title = rs.getString("title");
+							rtype_id = rs.getDouble("RTYPE_ID");
+							System.out.println( ++option + ". Title: \t" + title);
+							rtype_ids.add(rtype_id);
+							//titles.add(title);
+						}
+						
+						System.out.println(" Choose any option. -999 to go back. ");
+						choice = stdin.nextInt();
 					
-					while(rs.next()){
-						title = rs.getString("title");
-						rtype_id = rs.getDouble("RTYPE_ID");
-						System.out.println( ++option + ". Title: \t" + title);
-						rtype_ids.add(rtype_id);
-						//titles.add(title);
-					}
-					
-					System.out.println(" Choose any option. -999 to go back. ");
-					choice = stdin.nextInt();
-				
-					if(choice == -999){
-						;
-					}
-					else{
-						rtype_id = rtype_ids.get(choice-1);						
-						show_details_pub(rtype_id);
-					}
+						if(choice == -999){
+							;
+						}
+						else{
+							rtype_id = rtype_ids.get(choice-1);						
+							show_details_pub(rtype_id);
+						}
 					
 				}catch (SQLException e) {
 					e.printStackTrace();
@@ -119,8 +119,8 @@ private static Resource resource = new Resource( );
 					lobj.patron_id + "AND rtype_id = " + rtype_id;
 		Statement stmt = null;
 		int choice=0, type=0;
-		String r_title, r_isbn, r_publishers, type_pub="";
-		double r_edition, r_year, r_action=0, lib_choice=0 ;
+		String r_title="", r_isbn="", r_publishers="", type_pub="";
+		double r_edition=-999, r_year, r_action=0, lib_choice=0 ;
 		ResultSet rs;
 		double option=0;
 		
@@ -138,9 +138,13 @@ private static Resource resource = new Resource( );
 				r_action = rs.getDouble("r_action");
 				
 				System.out.println("Title: " + r_title);
-				System.out.println("ISBN: " + r_isbn);
-				System.out.println("Author(s): " + r_publishers);
-				System.out.println("Edition: " + r_edition);
+				System.out.println("ISBN/ISSN/Conf No.: " + r_isbn);
+				if(r_publishers!=""){
+					System.out.println("Author(s): " + r_publishers);
+				}
+				if(r_edition!=-999){
+					System.out.println("Edition: " + r_edition);
+				}
 				System.out.println("Year: " + r_year);
 			}
 			
@@ -165,22 +169,22 @@ private static Resource resource = new Resource( );
 			if(type == 1)
 			{
 				type_pub = "H";
-				
 				if(r_action==1){
 					System.out.println("This publication is available for issue. Press 1 to issue. ");
 					choice = stdin.nextInt();
+					
+					System.out.println("Enter choice of Lib. 1: D.H. Hill. 2: James B. Hunt Library.");
+					lib_choice = stdin.nextDouble();
 				}
 				else if(r_action==2){
 					System.out.println("This publication is not currently available. Press 1 to be added to wait list. ");
 					choice = stdin.nextInt();
 				}				
-				System.out.println("Enter choice of Lib. 1: D.H. Hill. 2: James B. Hunt Library.");
-				lib_choice = stdin.nextDouble();
-				choice = 1;
 			}
 			else if(type == 2)
 			{
 				type_pub = "E";
+				r_action = 1;
 				choice = 1;
 
 			}
@@ -239,8 +243,11 @@ private static Resource resource = new Resource( );
 			
 			ret = ts2.toString();
 			if(r_action == 1){
-				if(ts2 != null){			
+				if(ts2 != null && type_pub!="E"){			
 					System.out.println("Congrats, you have checked it out. Return Date is : " + ret);
+				}
+				else if(type_pub == "E"){
+					System.out.println("Congrats, you have checked it out. ");
 				}
 			}
 			else if(r_action == 2){
