@@ -120,3 +120,12 @@ UNION
         AND NOT EXISTS (SELECT reservation_start , reservation_end FROM pkattep.waitlist
                         WHERE (reservation_start BETWEEN CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP)
                         AND (reservation_end BETWEEN CURRENT_TIMESTAMP AND CURRENT_TIMESTAMP)));
+						
+*/
+/*
+SELECT B.rid, R.rtype_id, RT.type INTO r_rid, r_rtype_id, r_type
+	FROM athoma12.Borrows B, athoma12.Resources R, athoma12.Resource_types RT
+	WHERE B.borrow_id = 1006 AND B.patron_id = 1019 AND B.rid = R.rid AND R.rtype_id = RT.rtype_id;
+	
+	
+	*/

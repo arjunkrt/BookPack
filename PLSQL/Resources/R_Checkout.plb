@@ -1,11 +1,11 @@
-	create or replace PACKAGE BODY RFUNCCHECKOUT AS
+	create or replace PACKAGE BODY R_CHECKOUT AS
 	/* Version Control Comments Block
 
 	120.0 	pkattep 	Creation
 
 	*/
 	/*
-	pubCheckoutFunc1 performs the checkout and renew option provision.
+	Validate_actions performs the checkout and renew option provision.
 	r_action here has following mapping. These indicate what the user can
 	do about the rtype_id he selected --
 	1 - Checkout
@@ -22,11 +22,11 @@
 	2 - available only in Hunt
 	3 - available in both libraries
 
-	Actual checkout is performed by pubCheckoutFunc2
+	Actual checkout is performed by Checkout_or_waitlist
 	*/
 
-	-- pubCheckoutFunc1 working for scenarios 1, 3 AND 6 -- yet to be tested for 2, 4, 5
-	FUNCTION pubCheckoutFunc1(
+	-- Validate_actions working for scenarios 1, 3 AND 6 -- yet to be tested for 2, 4, 5
+	FUNCTION Validate_actions(
 						r_rtype_id 		IN			athoma12.books.rtype_id%type,
 						r_patron_id		IN 			athoma12.patrons.patron_id%type
 						) 
@@ -109,9 +109,9 @@
 	    END IF;		
 							
 		RETURN r_action;			
-	END pubCheckoutFunc1;
+	END Validate_actions;
 						
-	PROCEDURE pubCheckoutFunc2(
+	PROCEDURE Checkout_or_waitlist(
 						r_rtype_id 		IN 			athoma12.books.rtype_id%type,
 						r_patron_id		IN 			athoma12.patrons.patron_id%type,
 						r_action		  IN	 		NUMBER,
@@ -141,39 +141,39 @@
 	r_due_time := TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF');
 	borrow_id_nextval := 0;
 
-	dbms_output.put_line('Begin  '||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
+	--dbms_output.put_line('Begin  '||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
 
 	IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 
-	  dbms_output.put_line('IN --'||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
+	  --dbms_output.put_line('IN --'||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
 	-- There a couple of calculations to be done when pub is a hard copy
 
 		IF r_action = 1 THEN
 		-- we have to perform the checkout operation
-	    dbms_output.put_line(r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
+	    --dbms_output.put_line(r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
 	    
 			--Checking if the the pub was available at the preferred library
 			SELECT COUNT(*) INTO available_at_preferred_lib FROM athoma12.Resources
 			WHERE rtype_id = r_rtype_id AND lib_id = r_lib_of_preference AND status = 'Available';
-	    dbms_output.put_line('available_at_preferred_lib :'||available_at_preferred_lib);
+	    --dbms_output.put_line('available_at_preferred_lib :'||available_at_preferred_lib);
 			
 			IF available_at_preferred_lib > 0 THEN
 				SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
 				WHERE rtype_id = r_rtype_id AND lib_id = r_lib_of_preference AND status = 'Available';
-	      dbms_output.put_line('rid_to_checkout :'||rid_to_checkout);
+	      --dbms_output.put_line('rid_to_checkout :'||rid_to_checkout);
 	    	
 				SELECT L.lib_name INTO r_libname_of_pick_up FROM athoma12.library L, athoma12.Resources R
 				WHERE R.rid = rid_to_checkout AND R.lib_id = L.lib_id;
-	      dbms_output.put_line('r_libname_of_pick_up :'||r_libname_of_pick_up);
+	      --dbms_output.put_line('r_libname_of_pick_up :'||r_libname_of_pick_up);
 	    
 			ELSE
 				SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
 				WHERE rtype_id = r_rtype_id AND status = 'Available';
-	      dbms_output.put_line('rid_to_checkout :'||rid_to_checkout);
+	      --dbms_output.put_line('rid_to_checkout :'||rid_to_checkout);
 				
 				SELECT L.lib_name INTO r_libname_of_pick_up FROM athoma12.library L, athoma12.Resources R
 				WHERE R.rid = rid_to_checkout AND R.lib_id = L.lib_id;
-	      dbms_output.put_line('r_libname_of_pick_up :'||r_libname_of_pick_up);
+	      --dbms_output.put_line('r_libname_of_pick_up :'||r_libname_of_pick_up);
 			
 			END IF;
 		
@@ -198,7 +198,7 @@
 					
 				--Check if pub is journal or conference
 				SELECT COUNT(*) INTO pub_is_journal_or_conf FROM athoma12.Resource_types
-				WHERE (type = 'PJ' OR type = 'PJ') AND rtype_id = r_rtype_id;
+				WHERE (type = 'PJ' OR type = 'PC') AND rtype_id = r_rtype_id;
 				
 				--Check if the pub is reserved
 				IF pub_is_journal_or_conf = 0 THEN
@@ -241,7 +241,7 @@
 			
 	ELSE
 
-	      dbms_output.put_line('EE  '||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
+	      --dbms_output.put_line('EE  '||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
 		-- If the publication is an ecopy then checkout happens with the MIN(rid) for that rtype
 				SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
 				WHERE rtype_id = r_rtype_id;
@@ -262,7 +262,54 @@
 		WHEN OTHERS THEN
 		ROLLBACK TO beginFunc;
 		
-	END pubCheckoutFunc2;
+	END Checkout_or_waitlist;
 
-END RFUNCCHECKOUT;
+	PROCEDURE Renew(
+					r_borrow_id 	IN			athoma12.borrows.borrow_id%type,
+					r_patron_id		IN 			athoma12.patrons.patron_id%type,
+					r_due_time    	OUT   		TIMESTAMP
+					) 
+	IS
+	r_rid athoma12.borrows.rid%type; 			
+	r_rtype_id athoma12.resources.rtype_id%type;
+	r_type athoma12.resource_types.type%type;
+	pub_is_reserved NUMBER;
+	is_he_faculty NUMBER;
+	
+	BEGIN	
+    
+	--Getting the rid, rtype_id, r_type for the given borrow_id and patron_id
+	SELECT B.rid, R.rtype_id, RT.type INTO r_rid, r_rtype_id, r_type
+	FROM athoma12.Borrows B, athoma12.Resources R, athoma12.Resource_types RT
+	WHERE B.borrow_id = r_borrow_id AND B.patron_id = r_patron_id AND B.rid = R.rid AND R.rtype_id = RT.rtype_id;
+	
+	--Check if the pub is reserved			
+	SELECT COUNT(*) INTO pub_is_reserved FROM athoma12.Books B, athoma12.Resource_types R
+	WHERE R.type = 'PB' AND B.reserved = 1 AND B.rtype_id = R.rtype_id AND B.rtype_id = r_rtype_id;
+	
+	--Check if user is faculty
+	SELECT COUNT(*) INTO is_he_faculty FROM athoma12.patrons WHERE patron_type = 'F' AND patron_id = r_patron_id;
+	
+	IF r_type = 'PJ' OR r_type = 'PC' THEN    	
+    	r_due_time := CURRENT_TIMESTAMP + interval '12' hour;
+
+	ELSIF r_type = 'PB' AND pub_is_reserved > 0 THEN
+		r_due_time := CURRENT_TIMESTAMP + interval '4' hour;
+
+	ELSIF r_type = 'PB' AND is_he_faculty > 0 THEN
+    	r_due_time := CURRENT_TIMESTAMP + interval '1' month;
+
+	ELSIF r_type = 'PB' THEN
+    	r_due_time := CURRENT_TIMESTAMP + 14;
+
+	END IF;
+    
+		UPDATE pkattep.borrows
+		SET due_time = r_due_time
+		WHERE patron_id = r_patron_id
+		AND rid IN (SELECT rid from athoma12.Resources WHERE rtype_id = r_rtype_id);
+			
+	END Renew;		
+
+END R_CHECKOUT;
 
