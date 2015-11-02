@@ -294,5 +294,27 @@ PROCEDURE createNotification(
 		END LOOP;
 
 	END runSecondReminder;
+	PROCEDURE waitListNotification(
+							p_borrow_id 		IN 		athoma12.borrows.borrow_id%type						
+	) IS
+		l_notification_id athoma12.notification_patrons.notification_id%type;
+		l_patron_id 	athoma12.patrons.patron_id%type;
+		l_description athoma12.user_checkout_summary.description%type;
+		l_first_name athoma12.patrons.first_name%type;
+	BEGIN
+
+		select p.patron_id, p.first_name, ucs.description into l_patron_id, l_first_name, l_description
+		from user_checkout_summary ucs, patrons p where ucs.borrow_id = p_borrow_id
+		and ucs.patron_id = p.patron_id;
+
+		athoma12.notification_mgmt.createNotification(
+							p_notification_id => l_notification_id,
+							p_template_name => 'WAITLIST_CLEAR',
+							p_patron_id => l_patron_id,
+							p_attribute0 => l_first_name,
+							p_attribute1 => l_description,
+							p_attr_count => 2);
+
+	END waitListNotification;	
 END NOTIFICATION_MGMT;
 /

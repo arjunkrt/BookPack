@@ -56,6 +56,9 @@ PROCEDURE updateNotificationSent(
 
 PROCEDURE runFirstReminder;
 PROCEDURE runSecondReminder;
+PROCEDURE waitListNotification(
+						p_borrow_id 		IN 		athoma12.borrows.borrow_id%type						
+);
 
 END NOTIFICATION_MGMT;
 /
