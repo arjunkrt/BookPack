@@ -139,7 +139,7 @@ private static Resource resource = new Resource( );
 				
 				System.out.println("Title: " + r_title);
 				System.out.println("ISBN/ISSN/Conf No.: " + r_isbn);
-				if(r_publishers!=""){
+				if(r_publishers!="JUNK"){
 					System.out.println("Author(s): " + r_publishers);
 				}
 				if(r_edition!=-999){
