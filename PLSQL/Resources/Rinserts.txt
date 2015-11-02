@@ -36,12 +36,12 @@ dbms_output.put_line('l_rtype_id :'||l_rtype_id);
 athoma12.resources_mgmt.createAuthor(l_aid, 'Tim Berners Lee');
 athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
 l_rtype_id := 0;
-athoma12.resources_mgmt.addConf(l_rtype_id, 'C1', '2013', 'WWW', 'Optimization Techniques for Large Scale Graph Analytics on Map Reduce', 1, 2, 'H');
+athoma12.resources_mgmt.addConf(l_rtype_id, 'C1', 'WWW', '2013', 'Optimization Techniques for Large Scale Graph Analytics on Map Reduce', 1, 2, 'H');
 dbms_output.put_line('l_rtype_id :'||l_rtype_id);
 athoma12.resources_mgmt.createAuthor(l_aid, 'HyeongSik Kim');
 athoma12.resources_mgmt.mapPubAuthor(l_rtype_id, l_aid);
 l_rtype_id := 0;
-athoma12.resources_mgmt.addConf(l_rtype_id, 'C2', '2014', 'SIGMOD','An agglomerative query model for discovery in linked data: semantics and approach', 1, 2, 'H');
+athoma12.resources_mgmt.addConf(l_rtype_id, 'C2', 'SIGMOD', '2014', 'An agglomerative query model for discovery in linked data: semantics and approach', 1, 2, 'H');
 
 dbms_output.put_line('l_rtype_id :'||l_rtype_id);
 athoma12.resources_mgmt.createAuthor(l_aid, 'Sidan Gao');
