@@ -23,7 +23,7 @@ PROCEDURE Checkout_or_waitlist(
           			borrow_id_nextval OUT NUMBER
 					);
 					
-	PROCEDURE Renew(
+PROCEDURE Renew(
 					r_borrow_id 	IN			athoma12.borrows.borrow_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_due_time    	OUT   		TIMESTAMP

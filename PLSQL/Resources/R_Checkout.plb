@@ -277,6 +277,7 @@
 	is_he_faculty NUMBER;
 	
 	BEGIN	
+		SAVEPOINT beginFunc;
     
 	--Getting the rid, rtype_id, r_type for the given borrow_id and patron_id
 	SELECT B.rid, R.rtype_id, RT.type INTO r_rid, r_rtype_id, r_type
@@ -308,6 +309,12 @@
 		SET due_time = r_due_time
 		WHERE patron_id = r_patron_id
 		AND rid IN (SELECT rid from athoma12.Resources WHERE rtype_id = r_rtype_id);
+		
+		COMMIT;	
+		
+		EXCEPTION
+		WHEN OTHERS THEN
+		ROLLBACK TO beginFunc;
 			
 	END Renew;		
 
