@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE RFuncCheckout2 DEFINER CURRENT_USER AS
+CREATE OR REPLACE PACKAGE RFUNCCHECKOUT2 DEFINER CURRENT_USER AS
 /* Version Control Comments Block
 
 120.0 	PKATTEP 	Creation
@@ -27,5 +27,5 @@ FUNCTION camCheckoutFunc(
 					r_due_time 		OUT		DATETIME
 					);						
 */
-END RFuncCheckout2;
+END RFUNCCHECKOUT2;
 /
