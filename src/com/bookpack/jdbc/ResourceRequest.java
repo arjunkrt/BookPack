@@ -1,6 +1,8 @@
 package com.bookpack.jdbc;
 
 import java.sql.CallableStatement;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -19,28 +21,37 @@ public class ResourceRequest {
 	}
 	public void requested_resources_details(Login login)
 	{
-		String sql = "{select * from athoma12.user_waitlist_summary where patron_id = ?}";
-		CallableStatement cstmt=null;
+		String sql = "select * from athoma12.user_waitlist_summary where patron_id = ?";
+		PreparedStatement cstmt=null;
+		ResultSet rs = null;
 
 		try {
-			cstmt = DBConnection.conn.prepareCall(sql);
 
-			cstmt.setDouble(1,login.patron_id);
-			cstmt.registerOutParameter (2,OracleTypes.ARRAY, "pkattep.resource_req");
-			cstmt.execute();
-			ARRAY simpleArray = (ARRAY) cstmt.getObject(2);
+			cstmt = DBConnection.conn.prepareStatement(sql);
+			cstmt.setDouble(1, login.patron_id);
+
+			rs = cstmt.executeQuery();
 			
-			Object[] data = (Object[]) simpleArray.getArray();
-//			for(Object tmp : data) {
-//	            Struct row = (Struct) tmp;
-//	            // Attributes are index 1 based...
-//	            int idx = 1;
-//	            for(Object attribute : row.getAttributes()) {               
-//	                System.out.println(metaData.getColumnName(idx) + " = " + attribute);                                            
-//	                ++idx;
-//	            }
-//	            System.out.println("---");
-//	        }
+
+			System.out.print("Resource Type    ");
+			System.out.print("Resource Description    ");
+			System.out.println("Library Name    ");
+			
+			while(rs.next())
+			{
+				String r_type = rs.getString("TYPE");
+				String last_name = rs.getString("DESCRIPTION");
+				String dept = rs.getString("LIBRARY");
+//				if(sex.equals("M"))
+//				{
+//					sex = "Male";
+//				}
+//				else if(sex.equals("F"))
+//				{
+//					sex = "Female";
+//				}
+
+			}
 
 		}
 		catch (SQLException e) {
