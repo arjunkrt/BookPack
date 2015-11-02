@@ -1,23 +1,23 @@
 --Following views are for the first layer of request to view each of the resources
-/*
+
 --VIEWS FOR PUBLICATIONS
 
 CREATE OR REPLACE VIEW athoma12.PUB_VIEW AS
-SELECT rtype_id AS PUBLICATION_ID, title
+SELECT rtype_id, title
 FROM athoma12.publications;
 
 --VIEWS FOR CAMERAS
 
 CREATE OR REPLACE VIEW athoma12.CAM_VIEW AS
-SELECT rtype_id AS CAMERA_ID, model
+SELECT rtype_id, model
 FROM athoma12.cameras;
 
 CREATE OR REPLACE VIEW athoma12.CAM_VIEW2 AS
-SELECT rtype_id AS CAMERA_ID, model, memory, lens_config, make
-FROM athoma12.cameras
-WHERE rtypeid = usr_selection;
+SELECT rtype_id, model, memory, lens_config, make
+FROM athoma12.cameras;
+--WHERE rtypeid = usr_selection;
 
-*/
+
 --------------------------------------------------------------------------------------
 --VIEW FOR WAITLIST DISPLAY OF A USER
 create or replace view athoma12.user_waitlist_summary as 

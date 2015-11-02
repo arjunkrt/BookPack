@@ -100,7 +100,7 @@ private static Reservation reservation = new Reservation( );
 	
 	public void update_table(double rtype_id, int act){
 		
-		String sql = "{call athoma12.user_auth.updateBookReservation(?,?)}";
+		String sql = "{call athoma12.faculty_books.updateBookReservation(?,?)}";
 		CallableStatement cstmt = null;
 		String action = "";
 		
@@ -110,16 +110,22 @@ private static Reservation reservation = new Reservation( );
 				action = "R";
 			else if(act == 0)
 				action = "U";
-			
+			System.out.println(rtype_id);
 			cstmt.setDouble(1, rtype_id);
 			cstmt.setString(2,  action);
 			
-			if(cstmt.execute()){
+			//System.out.println(cstmt.execute());
+			
+			if(cstmt.executeUpdate()>0){
 				if(act == 1){
 					System.out.println(" Book has been successsfully reserved. ");
 				}
 				else
 					System.out.println(" Book has been successsfully unreserved. ");
+			}
+			else
+			{
+				System.out.println(" Update Failed. ");
 			}
 			
 		}catch (SQLException e) {

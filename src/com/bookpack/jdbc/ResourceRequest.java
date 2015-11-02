@@ -1,14 +1,9 @@
 package com.bookpack.jdbc;
 
-import java.sql.CallableStatement;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
-
-import oracle.jdbc.OracleTypes;
-import oracle.sql.ARRAY;
 
 
 public class ResourceRequest {
@@ -32,7 +27,6 @@ public class ResourceRequest {
 
 			rs = cstmt.executeQuery();
 			
-
 			System.out.print("Resource Type    ");
 			System.out.print("Resource Description    ");
 			System.out.println("Library Name    ");
@@ -42,14 +36,6 @@ public class ResourceRequest {
 				String r_type = rs.getString("TYPE");
 				String last_name = rs.getString("DESCRIPTION");
 				String dept = rs.getString("LIBRARY");
-//				if(sex.equals("M"))
-//				{
-//					sex = "Male";
-//				}
-//				else if(sex.equals("F"))
-//				{
-//					sex = "Female";
-//				}
 
 			}
 
