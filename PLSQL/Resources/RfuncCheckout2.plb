@@ -42,4 +42,5 @@ FUNCTION camCheckoutFunc(
 					
 END camCheckoutFunc;				
 */
-END RFuncCheckout2;
+END RFUNCCHECKOUT2;
+/

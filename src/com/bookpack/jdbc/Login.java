@@ -91,6 +91,7 @@ public class Login {
 				break;
 			case 2:
 				System.out.println("Bye!!!!!!!!!!!!!!!!!!!!!!!");
+				System.out.println("Thank you for visiting bookpack");
 				break;
 			default:
 				System.out.println("Wrong input. Try again!");

@@ -1,4 +1,4 @@
-create or replace PACKAGE BODY RFuncCheckout AS
+create or replace PACKAGE BODY RFUNCCHECKOUT AS
 /* Version Control Comments Block
 
 120.0 	pkattep 	Creation
@@ -25,7 +25,7 @@ is available the r_lib_num will be coded as follows --
 Actual checkout is performed by pubCheckoutFunc2
 */
 
--- pubCheckoutFunc1 working for scenarios 1, 3, 6 -- yet to be tested for 2, 4, 5
+-- pubCheckoutFunc1 working for scenarios 1, 3 AND 6 -- yet to be tested for 2, 4, 5
 FUNCTION pubCheckoutFunc1(
 					r_rtype_id 		IN			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type
@@ -110,63 +110,72 @@ BEGIN
 						
 	RETURN r_action;			
 END pubCheckoutFunc1;
-/*					
-FUNCTION pubCheckoutFunc2(
+					
+PROCEDURE pubCheckoutFunc2(
 					r_rtype_id 		IN 			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
-					r_action		IN	 		NUMBER,
-					r_h_or_e 		IN 			VARCHAR2,
+					r_action		  IN	 		NUMBER,
+					r_h_or_e 		  IN 			VARCHAR2,
 					r_lib_of_preference IN	 	NUMBER,
 					r_libname_of_pick_up OUT	athoma12.library.lib_name%type,
-					r_no_in_waitlist OUT		NUMBER
+					r_no_in_waitlist OUT		NUMBER,
+          r_due_time    OUT   TIMESTAMP,
+          borrow_id_nextval OUT NUMBER
 					)
-RETURN TIMESTAMP
+
 IS
 available_at_preferred_lib NUMBER(10) := 0;
 rid_to_checkout NUMBER(10);
-r_due_time TIMESTAMP DEFAULT NULL;
+--r_due_time TIMESTAMP DEFAULT TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF');
 pub_is_reserved NUMBER(10) := 0;
-borrow_id_nextval NUMBER(10) DEFAULT NULL;
+--borrow_id_nextval NUMBER(10) DEFAULT NULL;
 pub_is_journal_or_conf NUMBER(10) := 0;
 is_he_faculty NUMBER(10) := 0;
+
 BEGIN
 	SAVEPOINT beginFunc;
+  
+  --Assigning some default values to the OUT variables
+r_libname_of_pick_up := NULL;
+r_no_in_waitlist := NULL;
+r_due_time := TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF');
+borrow_id_nextval := 0;
+
+dbms_output.put_line('Begin  '||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
 
 IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 
+  dbms_output.put_line('IN --'||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
 -- There a couple of calculations to be done when pub is a hard copy
 
 	IF r_action = 1 THEN
 	-- we have to perform the checkout operation
-	
+    dbms_output.put_line(r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
+    
 		--Checking if the the pub was available at the preferred library
 		SELECT COUNT(*) INTO available_at_preferred_lib FROM athoma12.Resources
 		WHERE rtype_id = r_rtype_id AND lib_id = r_lib_of_preference AND status = 'Available';
+    dbms_output.put_line('available_at_preferred_lib :'||available_at_preferred_lib);
 		
 		IF available_at_preferred_lib > 0 THEN
 			SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
 			WHERE rtype_id = r_rtype_id AND lib_id = r_lib_of_preference AND status = 'Available';
-			
+      dbms_output.put_line('rid_to_checkout :'||rid_to_checkout);
+    	
 			SELECT L.lib_name INTO r_libname_of_pick_up FROM athoma12.library L, athoma12.Resources R
 			WHERE R.rid = rid_to_checkout AND R.lib_id = L.lib_id;
-		
+      dbms_output.put_line('r_libname_of_pick_up :'||r_libname_of_pick_up);
+    
 		ELSE
 			SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
 			WHERE rtype_id = r_rtype_id AND status = 'Available';
+      dbms_output.put_line('rid_to_checkout :'||rid_to_checkout);
 			
 			SELECT L.lib_name INTO r_libname_of_pick_up FROM athoma12.library L, athoma12.Resources R
 			WHERE R.rid = rid_to_checkout AND R.lib_id = L.lib_id;
+      dbms_output.put_line('r_libname_of_pick_up :'||r_libname_of_pick_up);
 		
 		END IF;
-	
-	ELSIF r_action = 3  THEN
-	-- Renew operation to be done
-	-- Here, we take the return of the book and do re-checkout
-		
-		UPDATE pkattep.borrows
-		SET return_time = CURRENT_TIMESTAMP
-		WHERE patron_id = r_patron_id
-			AND rid IN (SELECT rid from athoma12.Resources WHERE rtype_id = r_rtype_id);
 	
 	ELSIF r_action = 2 THEN
 		
@@ -177,7 +186,7 @@ IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 	
 	END IF;	
 	
-	IF r_action = 1 OR r_action = 3 THEN
+	IF r_action = 1 THEN
 	
 				
 			--Check if pub is journal or conference
@@ -196,13 +205,21 @@ IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 		borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 		
 		IF pub_is_journal_or_conf > 0 THEN
-		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '12' hour);
+    r_due_time := CURRENT_TIMESTAMP + interval '12' hour;
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+    (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '12' hour);
 		ELSIF pub_is_reserved > 0 THEN
-		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '4' hour);
+		r_due_time := CURRENT_TIMESTAMP + interval '4' hour;
+    INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+    (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '4' hour);
 		ELSIF is_he_faculty > 0 THEN
-		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1' month);
+    r_due_time := CURRENT_TIMESTAMP + interval '1' month;
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+    (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1' month);
 		ELSE
-		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + 14);  --the default interval is days
+    r_due_time := CURRENT_TIMESTAMP + 14;
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+    (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + 14);  --the default interval is days
 		END IF;
     
 		UPDATE pkattep.Resources
@@ -217,24 +234,30 @@ IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 		
 ELSE
 
+      dbms_output.put_line('EE  '||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
 	-- If the publication is an ecopy then checkout happens with the MIN(rid) for that rtype
 			SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
 			WHERE rtype_id = r_rtype_id;
 			
 			borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 			
-			INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, NULL); 
+      r_due_time := TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF');
+			INSERT INTO pkattep.borrows (borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+      (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF')); 
 			--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
 
 END IF;
 	
 	COMMIT;
-	return r_due_time;	
+	--return r_due_time;	
 	
 	EXCEPTION
 	WHEN OTHERS THEN
 	ROLLBACK TO beginFunc;
 	
 END pubCheckoutFunc2;
-*/
-END RFuncCheckout;
+
+
+
+
+END RFUNCCHECKOUT;
