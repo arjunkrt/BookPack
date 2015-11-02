@@ -84,6 +84,11 @@ l_rid ATHOMA12.BORROWS.rid%type;
 l_rtype_id ATHOMA12.BORROWS.rid%type;
 l_waitlist_count number;
 l_patron_id ATHOMA12.BORROWS.patron_id%type;
+l_libname_of_pick_up athoma12.library.lib_name%type;
+l_no_in_waitlist NUMBER;
+l_due_time TIMESTAMP;
+l_borrow_id_nextval NUMBER;
+
 Begin
 select return_time,rid into l_return_time,l_rid from ATHOMA12.BORROWS where BORROW_ID=p_borrow_id;
 if l_return_time is NULL then
@@ -97,14 +102,15 @@ UPDATE ATHOMA12.RESOURCES SET STATUS='Available' where rid=l_rid;
 --select patron_id into l_patron_id from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id; 
 select count(*) into l_waitlist_count from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id;
 if l_waitlist_count>0 then
-select patron_id into l_patron_id from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id;
---procedure to checkout book();
---DELETE FROM ATHOMA12.WAITLIST WHERE patron_id= patron_id;
---procedure to update all waitlist number in waitlist table
+select patron_id into l_patron_id from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id and NO_IN_WAITLIST IN (select min(no_in_waitlist) from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id);
+--procedure to checkout book() and delete from waitlist;
+ATHOMA12.RFUNCCHECKOUT.pubCheckoutFunc2(l_rtype_id,l_patron_id,1,'h',1,l_libname_of_pick_up,l_no_in_waitlist,l_due_time,l_borrow_id_nextval);
 --procedure to call notification thing from anish
+--notiification_mgmt.waitListNotification(p_borrow_id);
 end if;
 end if;
 END return_resource;
+/
 
 END RESOURCE_DUE_BALANCE;
 /
