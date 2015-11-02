@@ -42,7 +42,7 @@
 	pub_is_reserved NUMBER(10) := 0;
 	he_can_have_this_reserved_pub NUMBER(10) := 0;
 	is_he_faculty NUMBER(10):= 0;
-
+	
 	BEGIN	
 
 					--Check if the same user has already checked out the same pub
@@ -130,12 +130,13 @@
 	pub_is_reserved NUMBER(10) := 0;
 	pub_is_journal_or_conf NUMBER(10) := 0;
 	is_he_faculty NUMBER(10) := 0;
-	r_type athoma12.resource_types.type%type;
+	ecopy_available NUMBER(10):= 0;
+	r_type athoma12.resource_types.type%type := NULL;
 	
-	he_already_has_requested_it NUMBER;
-	room_cam_checkout_time TIMESTAMP;
-	room_cam_return_time TIMESTAMP;
-	reservation_available NUMBER;
+	he_already_has_requested_it NUMBER := 0;
+	room_cam_checkout_time TIMESTAMP := NULL;
+	room_return_cam_due_time TIMESTAMP := NULL;
+	reservation_available NUMBER := 0;
 	BEGIN
 		SAVEPOINT beginFunc;
 	  
@@ -144,32 +145,39 @@
 	r_no_in_waitlist := NULL;
 	r_due_time := TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF');
 	borrow_id_nextval := 0;
-	room_cam_checkout_time := NULL;
-	room_cam_return_time := NULL;
 
-	select type INTO r_type FROM athoma12.Resource_types
-	WHERE rtype_id = r_rtype_id;
+	--finding the resource type of the rtype_id entered
+	select type INTO r_type FROM athoma12.Resource_types WHERE rtype_id = r_rtype_id;
 
 -----------------------------------------------------------------------------
 IF r_type = 'C' THEN	
 
 	IF r_action = 1 THEN
-		--valid inputs for this condition are r_patron_id, r_rtype_id, room_reservation_start, room_reservation_end
+		--valid inputs for this condition are r_patron_id, r_rtype_id
 		--valid outputs is borrow_id_nextval, r_libname_of_pick_up
 	
+			--I am not checking if the camera is available here coz this API is called
+			-- after listing only the available cameras
+			--In the following queries are comparing just to see that he can check out the camera only
+			--that friday of reservation
 			SELECT MIN(R.rid), W.reservation_start, W.reservation_end, COUNT(*), L.lib_name
-			INTO rid_to_checkout, room_cam_checkout_time, room_cam_return_time, reservation_available, r_libname_of_pick_up
+			INTO rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time, reservation_available, r_libname_of_pick_up
 			FROM athoma12.Resources R, athoma12.waitlist W, athoma12.library L
 			WHERE R.rtype_id = r_rtype_id AND W.patron_id = r_patron_id AND R.rtype_id = W.rtype_id AND W.reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
 					AND NOT (W.reservation_start + interval '14' hour > CURRENT_TIMESTAMP)
 					AND L.lib_id = R.lib_id;
 			
-			IF reservation_available > 0	
+			IF reservation_available > 0	THEN
 			borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 				
 			INSERT INTO athoma12.borrows (borrow_id, patron_id, rid, checkout_time, due_time) VALUES
-	      (borrow_id_nextval, r_patron_id, rid_to_checkout, room_cam_checkout_time, room_cam_return_time);
+	      (borrow_id_nextval, r_patron_id, rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time);
 		  	
+			--Updating the status of the camera rid as checked out
+			UPDATE athoma12.Resources
+			SET status = 'CheckedOut'
+			WHERE rid = rid_to_checkout;
+			  
 			-- clearing the waitlist for the given rtype_id and patron_id after the checkout
 			DELETE FROM athoma12.waitlist
 			WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id;
@@ -181,8 +189,8 @@ IF r_type = 'C' THEN
 		--valid inputs for this condition are r_patron_id, r_rtype_id
 		--valid outputs is borrow_id_nextval
 		
-			--Check if the same user has already requested the same pub
-			SELECT COUNT(*) INTO he_already_has_requested_it, r_no_in_waitlist
+			--Check if the same user has already requested the same cam
+			SELECT COUNT(*), no_in_waitlist INTO he_already_has_requested_it, r_no_in_waitlist
 			FROM athoma12.waitlist
 			WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id
 				AND reservation_start > CURRENT_TIMESTAMP;
@@ -192,18 +200,18 @@ IF r_type = 'C' THEN
       		select (TO_TIMESTAMP( NEXT_DAY (CURRENT_TIMESTAMP, 'FRI')) + INTERVAL '0 10' DAY TO HOUR)
 			into room_cam_checkout_time from dual;
       		select (room_cam_checkout_time + INTERVAL '6 8' DAY to HOUR)
-			into room_cam_return_time from dual;	
+			into room_return_cam_due_time from dual;	
 
 				SELECT COUNT(*) INTO r_no_in_waitlist FROM athoma12.waitlist
 				WHERE rtype_id = r_rtype_id;
 				
 				IF r_no_in_waitlist = 0 THEN
 				INSERT INTO athoma12.waitlist(patron_id, rtype_id, no_in_waitlist, reservation_start, reservation_end)
-				VALUES(r_patron_id, r_rtype_id, 1, room_cam_checkout_time, room_cam_return_time);
+				VALUES(r_patron_id, r_rtype_id, 1, room_cam_checkout_time, room_return_cam_due_time);
 				ELSE
 				INSERT INTO athoma12.waitlist(patron_id, rtype_id, no_in_waitlist, reservation_start, reservation_end) 
-				SELECT r_patron_id, r_rtype_id, max(no_in_waitlist)+1, room_cam_checkout_time, room_cam_return_time
-				FROM waitlist where rtype_id = r_rtype_id;
+				SELECT r_patron_id, r_rtype_id, max(no_in_waitlist)+1, room_cam_checkout_time, room_return_cam_due_time
+				FROM athoma12.waitlist where rtype_id = r_rtype_id;
 				END IF;
 			
 			r_no_in_waitlist := r_no_in_waitlist+1;	
@@ -221,21 +229,21 @@ ELSIF r_type = 'R_' THEN
 			--valid outputs is borrow_id_nextval
 		
 			SELECT R.rid, W.reservation_start, W.reservation_end, COUNT(*)
-			INTO rid_to_checkout, room_cam_checkout_time, room_cam_return_time, reservation_available
+			INTO rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time, reservation_available
 			FROM athoma12.Resources R, athoma12.waitlist W
 			WHERE R.rtype_id = r_rtype_id AND W.patron_id = r_patron_id AND R.rtype_id = W.rtype_id AND W.reservation_start <= CURRENT_TIMESTAMP
 					AND NOT (W.reservation_start < CURRENT_TIMESTAMP + interval '1' hour);
 			
-			IF reservation_available > 0	
+			IF reservation_available > 0	THEN
 			borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 				
 			INSERT INTO athoma12.borrows (borrow_id, patron_id, rid, checkout_time, return_time) VALUES
-	      (borrow_id_nextval, r_patron_id, rid_to_checkout, room_cam_checkout_time, room_cam_return_time);
+	      (borrow_id_nextval, r_patron_id, rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time);
 		  	
 			-- clearing the waitlist for the given rtype_id and patron_id after the checkout
 			DELETE FROM athoma12.waitlist
 			WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id
-					AND (CURRENT_TIMESTAMP BETWEEN room_cam_checkout_time AND room_cam_return_time);
+					AND (CURRENT_TIMESTAMP BETWEEN room_cam_checkout_time AND room_return_cam_due_time);
 			  
 			END IF;
 	
@@ -243,11 +251,22 @@ ELSIF r_type = 'R_' THEN
 	
 			--valid inputs for this condition are r_patron_id, r_rtype_id, room_reservation_start, room_reservation_end
 			--valid outputs is r_due_time
+			--will return some reasonable value if the reservation took place
+			--otherwise TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF') will be returned
+			--The above odd timestamp is set as default value for r_due_time
+			--reservation may be cancelled in one common scenario where they try to reserve a room for
+			--more than 3 hours
 			
+				IF (room_reservation_end - room_reservation_start <= interval '3' hour AND
+					room_reservation_end - room_reservation_start > interval '0' hour) THEN
 				INSERT INTO athoma12.waitlist(patron_id, rtype_id, no_in_waitlist, reservation_start, reservation_end)
 				VALUES(r_patron_id, r_rtype_id, NULL, room_reservation_start, room_reservation_end);
 				
-				r_due_time := reservation_start + interval '1' hour;
+				select reservation_start + interval '1' hour into r_due_time
+        FROM athoma12.waitlist WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id
+        AND reservation_start = room_reservation_start;
+				
+				END IF;			
 
 	END IF;
 
@@ -296,7 +315,7 @@ ELSIF r_type = 'P_' THEN
 				VALUES(r_patron_id, r_rtype_id, 1);
 			ELSE
 				INSERT INTO athoma12.waitlist(patron_id, rtype_id, no_in_waitlist) 
-				SELECT r_patron_id, r_rtype_id, max(no_in_waitlist)+1 FROM waitlist where rtype_id = r_rtype_id;
+				SELECT r_patron_id, r_rtype_id, max(no_in_waitlist)+1 FROM athoma12.waitlist where rtype_id = r_rtype_id;
 			END IF;
 			r_no_in_waitlist := r_no_in_waitlist+1;
 				
@@ -348,20 +367,27 @@ ELSIF r_type = 'P_' THEN
 			WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id;
 			
 		END IF;
-			
+-------------------------------------------------------------------------------			
 	ELSE
 
 	      --dbms_output.put_line('EE  '||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
 		-- If the publication is an ecopy then checkout happens with the MIN(rid) for that rtype
+		-- A non-zero borrow_id_nextval is returned if the ecopy was successfully checked out
+		-- else zero will be returned if an ecopy is not availbale for the given rtype_id
+				
+			SELECT COUNT(*) INTO ecopy_available FROM athoma12.ePublications WHERE rtype_id = r_rtype_id;
+			
+			IF ecopy_available > 0 THEN
 				SELECT MIN(rid) INTO rid_to_checkout FROM athoma12.Resources
 				WHERE rtype_id = r_rtype_id;
 				
 				borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 				
-	      r_due_time := TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF');
+	     		 r_due_time := TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF');
 				INSERT INTO athoma12.borrows (borrow_id, patron_id, rid, checkout_time, due_time) VALUES
-	      (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF')); 
+	      		(borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF')); 
 				--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
+			END IF;
 
 	END IF;
 END IF;
