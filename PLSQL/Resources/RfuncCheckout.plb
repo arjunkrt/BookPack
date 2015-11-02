@@ -25,7 +25,7 @@ is available the r_lib_num will be coded as follows --
 Actual checkout is performed by pubCheckoutFunc2
 */
 
--- pubCheckoutFunc1 working for scenarios 1, 3 & 6 -- yet to be tested for 2, 4, 5
+-- pubCheckoutFunc1 working for scenarios 1, 3, 6 -- yet to be tested for 2, 4, 5
 FUNCTION pubCheckoutFunc1(
 					r_rtype_id 		IN			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type
@@ -110,7 +110,7 @@ BEGIN
 						
 	RETURN r_action;			
 END pubCheckoutFunc1;
-					
+			
 FUNCTION pubCheckoutFunc2(
 					r_rtype_id 		IN 			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
@@ -196,13 +196,17 @@ IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 		borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 		
 		IF pub_is_journal_or_conf > 0 THEN
-		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '12' hour);
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+    	(borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '12' hour);
 		ELSIF pub_is_reserved > 0 THEN
-		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '4' hour);
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+    	(borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '4' hour);
 		ELSIF is_he_faculty > 0 THEN
-		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1' month);
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+    	(borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + interval '1' month);
 		ELSE
-		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + 14);  --the default interval is days
+		INSERT INTO pkattep.borrows(borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+    (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + 14);  --the default interval is days
 		END IF;
     
 		UPDATE pkattep.Resources
@@ -223,7 +227,8 @@ ELSE
 			
 			borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 			
-			INSERT INTO pkattep.borrows VALUES (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, NULL); 
+			INSERT INTO pkattep.borrows (borrow_id, patron_id, rid, checkout_time, due_time) VALUES
+  		    (borrow_id_nextval, r_patron_id, rid_to_checkout, CURRENT_TIMESTAMP, TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF')); 
 			--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
 
 END IF;
@@ -238,3 +243,4 @@ END IF;
 END pubCheckoutFunc2;
 
 END RFUNCCHECKOUT;
+/
