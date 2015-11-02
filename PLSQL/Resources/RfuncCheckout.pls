@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE RFuncCheckout AS
+CREATE OR REPLACE PACKAGE RFuncCheckout AUTHID DEFINER AS
 /* Version Control Comments Block
 
 120.0 	PKATTEP 	Creation
