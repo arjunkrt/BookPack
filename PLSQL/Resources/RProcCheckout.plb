@@ -1,7 +1,7 @@
 CREATE OR REPLACE PACKAGE BODY RProcCheckout AS
 /* Version Control Comments Block
 
-120.0 	PKATTEP 	Creation
+120.0 	pkattep 	Creation
 
 */
 /*
@@ -24,135 +24,16 @@ is available the r_lib_num will be coded as follows --
 
 Actual checkout is performed by pubCheckoutProc2
 */
-
-PROCEDURE pubCheckoutProc1(
-					r_rtype_id 		IN			pkattep.books.rtype_id%type,
-					r_patron_id		IN 			athoma12.patrons.patron_id%type,
-					r_title			OUT 		pkattep.publications.title%type,
-					r_identifier	OUT 		pkattep.books.isbn%type,
-					r_edition 		OUT 		pkattep.books.edition%type,
-					r_publishers 	OUT 		pkattep.books.publishers%type,
-					r_year 		 	OUT 		pkattep.publications.year%type,
-					r_action		OUT 		NUMBER
-					) IS
-r_type pkattep.Resource_types.type%type;
-
-he_already_has_it NUMBER(10) := 0;
-he_already_has_requested_it NUMBER(10) := 0;
-another_has_requested_it NUMBER(10) := 0;
-pub_is_available NUMBER(10) := 0;
-pub_is_reserved NUMBER(10) := 0;
-he_can_have_this_reserved_pub NUMBER(10) := 0;
-
-BEGIN	
-
-	SAVEPOINT beginProc;
-
-				--Check if the same user has already checked out the same pub
-				SELECT COUNT(*) INTO he_already_has_it FROM pkattep.borrows B, pkattep.Resources R
-				WHERE R.rid = B.rid AND B.patron_id = r_patron_id AND R.rtype_id = r_rtype_id
-						AND B.return_time >= CURRENT_TIMESTAMP;
-
-				--Check if the same user has already requested the same pub
-				SELECT COUNT(*) INTO he_already_has_requested_it FROM pkattep.waitlist
-				WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id;
-
-				--Check if the pub is avaiable				
-				SELECT COUNT(*) INTO pub_is_available FROM pkattep.Resources
-				WHERE status = 'Available' AND rtype_id = r_rtype_id;
-				
-				--------------------------------------------------------------------
-				-------------  HANDLING RESERVED BOOKS    --------------------------
-				--------------------------------------------------------------------
-				--Check if the pub is reserved			
-				SELECT COUNT(*) INTO pub_is_reserved FROM pkattep.Books B, pkattep.Resource_types R
-				WHERE R.type = 'PB' AND B.reserved = 1 AND B.rtype_id = R.rtype_id AND B.rtype_id = r_rtype_id;
-				
-				--Check if he can have this reserved pub; setting it to 1 if he can have it		
-				SELECT COUNT(*) INTO he_can_have_this_reserved_pub
-				FROM athoma12.students S, athoma12.patrons P, athoma12.courses_taken CT, athoma12.courses C, athoma12.Books B
-				WHERE pub_is_reserved = 1 AND P.patron_id = r_patron_id AND S.patron_id = P.patron_id
-					 AND S.student_id = CT.student_id AND CT.course_id = C.course_id
-					AND C.course_book_id = B.rtype_id AND B.rtype_id = r_rtype_id;
-					
-				--Check if he can have this reserved pub; setting it to 1 if he is a faculty
-				SELECT COUNT(*) INTO he_can_have_this_reserved_pub
-				FROM athoma12.patrons WHERE patron_type = 'F' AND patron_id = r_patron_id;
-				------------------------------------------------------------------------
-
-	IF he_can_have_this_reserved_pub > 0 OR pub_is_reserved = 0 THEN
-		IF he_already_has_it > 0 THEN
-		
-		--Check if another user has requested it
-				SELECT COUNT(*) INTO another_has_requested_it
-				FROM pkattep.waitlist WHERE rtype_id = r_rtype_id;
-				
-				IF another_has_requested_it > 0 THEN
-					r_action := 4;
-				ELSE
-					r_action := 3;
-				END IF;
-					
-		ELSIF pub_is_available > 0 THEN
-					r_action := 1;
-					
-		ELSIF he_already_has_requested_it > 0 THEN
-					r_action := 5;
-		ELSE 		r_action := 2;
-		END IF;		
-	ELSE
-					r_action := 6;	
-    END IF;		
-				
---Identifying which table the rtype_id belongs to
-
-				SELECT type INTO r_type FROM pkattep.RESOURCE_TYPES WHERE rtype_id = r_rtype_id;
-				
---Put the details from the identified table into OUT variables
-
-		IF r_type = 'PB' THEN
-	    	SELECT P.title, B.ISBN, B.edition, B.publishers, P.year
-			INTO r_title, r_identifier, r_edition, r_publishers, r_year
-			FROM pkattep.publications P, pkattep.Books B
-			WHERE P.rtype_id = r_rtype_id AND P.rtype_id = B.rtype_id;
-	  
-		ELSIF r_type = 'PJ' THEN
-	    	SELECT P.title, J.ISSN, NULL, NULL, P.year
-			INTO r_title, r_identifier, r_edition, r_publishers, r_year
-			FROM pkattep.publications P, pkattep.Journals J
-			WHERE P.rtype_id = r_rtype_id AND P.rtype_id = J.rtype_id;
-	
-		ELSIF r_type = 'PC' THEN
-	    	SELECT P.title, C.conf_no, NULL, NULL, P.year
-			INTO r_title, r_identifier, r_edition, r_publishers, r_year
-			FROM pkattep.publications P, pkattep.Conf_Proceedings C
-			WHERE P.rtype_id = r_rtype_id AND P.rtype_id = C.rtype_id;
-
-		ELSE 
-			r_title := NULL;
-			r_identifier := NULL;
-			r_edition := NULL;
-			r_publishers := NULL;
-			r_year := NULL;
-				
-		END IF;
-		
-	COMMIT;
-	EXCEPTION
-	WHEN OTHERS THEN
-	ROLLBACK TO beginProc;
-									
-END pubCheckoutProc1;
 /*					
 PROCEDURE pubCheckoutProc2(
-					r_rtype_id 		IN 			pkattep.books.rtype_id%type,
+					r_rtype_id 		IN 			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_action		IN	 		NUMBER,
 					r_h_or_e 		IN 			VARCHAR2,
 					r_checkout_time IN	 		DATETIME,
 --					r_return_time 	IN			DATETIME,
 					r_due_time		OUT 		DATETIME,
-					r_lib_num		OUT			pkattep.library.lib_id%type
+					r_lib_num		OUT			athoma12.library.lib_id%type
 					) IS
 BEGIN
 
@@ -170,7 +51,7 @@ BEGIN
 -- This will have to change if more libraries are included
 
 	IF pub_is_available > 0 THEN
-	SELECT COUNT(DISTINCT lib_id) INTO r_lib_num FROM pkattep.Resources R, pkattep.library L
+	SELECT COUNT(DISTINCT lib_id) INTO r_lib_num FROM athoma12.Resources R, athoma12.library L
 	WHERE R.rtype_id = r_rtype_id AND R.lib_id = L.lib_id;
 	
 		IF r_lib_num = 1 THEN
@@ -189,7 +70,7 @@ END pubCheckoutProc2;
 PROCEDURE roomCheckoutProc1(
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_no_occupants	IN			NUMBER,
-					r_libid			IN 			pkattep.publications_authors.aid%type
+					r_libid			IN 			athoma12.publications_authors.aid%type
 					r_checkout_time IN	 		DATETIME,
 --					r_return_time 	IN			DATETIME
 					) IS
@@ -198,7 +79,7 @@ BEGIN
 END roomCheckoutProc1;
 					
 PROCEDURE roomCheckoutProc2(
-					r_rtype_id 		IN 			pkattep.books.rtype_id%type,
+					r_rtype_id 		IN 			athoma12.books.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_checkout_time IN	 		DATETIME,
 --					r_return_time 	IN			DATETIME
@@ -208,7 +89,7 @@ BEGIN
 END roomCheckoutProc2;
 					
 PROCEDURE camCheckoutProc(
-					r_rtype_id 		IN 		pkattep.conf_proceedings.rtype_id%type,
+					r_rtype_id 		IN 		athoma12.conf_proceedings.rtype_id%type,
 					r_patron_id		IN 			athoma12.patrons.patron_id%type,
 					r_checkout_time IN	 	DATETIME,
 					r_borrowed_waitlisted 	OUT		NUMBER,

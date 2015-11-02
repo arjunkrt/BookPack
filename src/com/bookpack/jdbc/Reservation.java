@@ -110,13 +110,13 @@ private static Reservation reservation = new Reservation( );
 				action = "R";
 			else if(act == 0)
 				action = "U";
-			
+			System.out.println(rtype_id);
 			cstmt.setDouble(1, rtype_id);
 			cstmt.setString(2,  action);
 			
 			//System.out.println(cstmt.execute());
 			
-			if(cstmt.execute()){
+			if(cstmt.executeUpdate()>0){
 				if(act == 1){
 					System.out.println(" Book has been successsfully reserved. ");
 				}

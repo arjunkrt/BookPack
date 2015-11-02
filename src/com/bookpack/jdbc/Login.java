@@ -42,7 +42,8 @@ public class Login {
 			profile.display_profile(login);
 			break;
 		case 2:
-			
+			Resource resource = Resource.getInstance();
+			resource.show_resource(login);
 			break;
 		case 3:
 			ResourceCheckout resource_check_out = ResourceCheckout.getInstance();
@@ -57,6 +58,8 @@ public class Login {
 			notifications.display_notifications(login);
 			break;
 		case 6:
+			Due_Balance due_balance = Due_Balance.getInstance();
+			due_balance.display_balance(login);
 			break;
 		case 7:
 			Return_Resource ret_resource = Return_Resource.getInstance();
