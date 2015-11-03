@@ -232,10 +232,12 @@ IF r_type = 'C' THEN
 			INSERT INTO athoma12.borrows (borrow_id, patron_id, rid, checkout_time, due_time) VALUES
 	      (borrow_id_nextval, r_patron_id, rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time);
 		   
-			-- clearing the waitlist for the given rtype_id and patron_id after the checkout
+			/*-- clearing the waitlist for the given rtype_id and patron_id after the checkout
+			--We may not want to delete from waitlist if we want to keep track of people
+			--who did not manage to get the camera
 			DELETE FROM athoma12.waitlist
 			WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id;
-			  
+			 */ 
 			END IF;	
 	
 	ELSIF r_action = 2 THEN
@@ -289,18 +291,28 @@ IF r_type = 'C' THEN
 		END IF;
 	
 -----------------------------------------------------------------------------
-ELSIF r_type = 'R_' THEN
+ELSIF r_type LIKE 'R_' THEN
 
 	IF r_action = 1 THEN
 				
-			--valid inputs for this condition are r_patron_id, r_rtype_id, r_action, room_reservation_start, room_reservation_end
+			--valid inputs for this condition are r_patron_id, r_rtype_id, r_action
 			--valid outputs is borrow_id_nextval
-		
-			SELECT R.rid, W.reservation_start, W.reservation_end, COUNT(*)
-			INTO rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time, reservation_available
+			
+			dbms_output.put_line('R_action_1 entered');	
+					
+      		SELECT COUNT(*)
+			INTO reservation_available
+			FROM athoma12.waitlist
+			WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id AND reservation_start <= CURRENT_TIMESTAMP
+			AND NOT (reservation_start > CURRENT_TIMESTAMP + interval '1' hour);
+					
+			dbms_output.put_line('reservation_available : '|| reservation_available);	
+					
+			SELECT MIN(R.rid), MAX(W.reservation_start), MAX(W.reservation_end)
+			INTO rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time
 			FROM athoma12.Resources R, athoma12.waitlist W
 			WHERE R.rtype_id = r_rtype_id AND W.patron_id = r_patron_id AND R.rtype_id = W.rtype_id AND W.reservation_start <= CURRENT_TIMESTAMP
-					AND NOT (W.reservation_start < CURRENT_TIMESTAMP + interval '1' hour);
+					AND NOT (W.reservation_start > CURRENT_TIMESTAMP + interval '1' hour);
 			
 			IF reservation_available > 0	THEN
 			borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
@@ -308,11 +320,12 @@ ELSIF r_type = 'R_' THEN
 			INSERT INTO athoma12.borrows (borrow_id, patron_id, rid, checkout_time, return_time) VALUES
 	      (borrow_id_nextval, r_patron_id, rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time);
 		  	
+			/* --If we want room cancellations to be logged somewhere we may not delete it from waitlist 
 			-- clearing the waitlist for the given rtype_id and patron_id after the checkout
 			DELETE FROM athoma12.waitlist
 			WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id
 					AND (CURRENT_TIMESTAMP BETWEEN room_cam_checkout_time AND room_return_cam_due_time);
-			  
+			  */
 			END IF;
 	
 	ELSIF r_action = 2 THEN
@@ -328,18 +341,18 @@ ELSIF r_type = 'R_' THEN
 				IF (room_reservation_end - room_reservation_start <= interval '3' hour AND
 					room_reservation_end - room_reservation_start > interval '0' hour) THEN
 				INSERT INTO athoma12.waitlist(patron_id, rtype_id, no_in_waitlist, reservation_start, reservation_end)
-				VALUES(r_patron_id, r_rtype_id, NULL, room_reservation_start, room_reservation_end);
+				VALUES(r_patron_id, r_rtype_id, 0, room_reservation_start, room_reservation_end);
 				
 				select reservation_start + interval '1' hour into r_due_time
-        FROM athoma12.waitlist WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id
-        AND reservation_start = room_reservation_start;
+        		FROM athoma12.waitlist WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id
+        		AND reservation_start = room_reservation_start;
 				
 				END IF;			
 
 	END IF;
 
 -----------------------------------------------------------------------------
-ELSIF r_type = 'P_' THEN
+ELSIF r_type LIKE 'P_' THEN
 	IF r_h_or_e = 'H' OR r_h_or_e = 'h' THEN
 
 	  --dbms_output.put_line('IN --'||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
