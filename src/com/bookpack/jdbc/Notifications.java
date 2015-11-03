@@ -32,7 +32,7 @@ public class Notifications {
 		PreparedStatement cstmt=null;
 		ResultSet rs1,rs2,rs3 = null;
 		String message1 = null, message2 = null, message3 = null;
-		login.patron_id = 1021;
+		//login.patron_id = 1021;
 		try {
 			cstmt = DBConnection.conn.prepareStatement(sql1);
 			cstmt.setDouble(1,login.patron_id);//1021
