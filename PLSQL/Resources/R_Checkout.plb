@@ -559,24 +559,32 @@ BEGIN
 	SAVEPOINT beginProc;
 
 	UPDATE athoma12.waitlist
-	SET reservation_status = 'Cancelled'
+	SET reservation_status = 'RCancelled'
 	WHERE reservation_start + interval '1' hour < CURRENT_TIMESTAMP
-		AND rtype_id IN (SELECT rtype_id FROM athoma12.Resource_types WHERE type LIKE 'R_');
-
+		AND rtype_id IN (SELECT rtype_id FROM athoma12.Resource_types WHERE type LIKE 'R_')
+		AND (patron_id, reservation_start) NOT IN
+						(SELECT patron_id, checkout_time FROM athoma12.borrows
+						WHERE rid IN (SELECT rid from athoma12.Resources R, athoma12.Resource_types RT
+						WHERE RT.rtype_id = R.rtype_id AND RT.type LIKE 'R_'));
+/*
 	UPDATE athoma12.waitlist
-	SET reservation_status = 'Cancelled'
+	SET reservation_status = 'CCancelled'
 	WHERE reservation_start < CURRENT_TIMESTAMP
 		AND no_in_waitlist = 1
-		AND rtype_id IN (SELECT rtype_id FROM athoma12.Resource_types WHERE type LIKE 'C');
+		AND rtype_id IN (SELECT rtype_id FROM athoma12.Resource_types WHERE type LIKE 'C')
+		AND NOT (B.patron_id = W.patron_id AND B.checkout_time = W.reservation_start);
 		
 	UPDATE athoma12.waitlist
-	SET reservation_status = 'Cancelled'
+	SET reservation_status = 'WCancelled'
 	WHERE reservation_start + interval '14' hour < CURRENT_TIMESTAMP
 		AND no_in_waitlist <> 1
-		AND rtype_id IN (SELECT rtype_id FROM athoma12.Resource_types WHERE type LIKE 'C');
-
+		AND rtype_id IN (SELECT rtype_id FROM athoma12.Resource_types WHERE type LIKE 'C')
+		AND NOT (B.patron_id = W.patron_id AND B.checkout_time = W.reservation_start);
+*/
 		COMMIT;	
 		
+		all_is_well := 1;
+				
 		EXCEPTION
 		WHEN OTHERS THEN
 		ROLLBACK TO beginFunc;
