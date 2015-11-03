@@ -469,7 +469,7 @@ ELSIF r_type LIKE 'P_' THEN
 -------------------------------------------------------------------------------			
 	ELSE
 
-	      --dbms_output.put_line('EE  '||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
+	      dbms_output.put_line('EE  ');
 		-- If the publication is an ecopy then checkout happens with the MIN(rid) for that rtype
 		-- A non-zero borrow_id_nextval is returned if the ecopy was successfully checked out
 		-- else zero will be returned if an ecopy is not availbale for the given rtype_id
@@ -479,10 +479,14 @@ ELSIF r_type LIKE 'P_' THEN
 				
 			SELECT COUNT(*) INTO ecopy_available FROM athoma12.ePublications WHERE rtype_id = r_rtype_id;
 			
+			dbms_output.put_line('ecopy_available:  '||ecopy_available);
+			
 			IF ecopy_available > 0 THEN
 			
 				SELECT COUNT(*) INTO he_already_has_it FROM athoma12.eborrows
 				WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id;
+				
+				dbms_output.put_line('he_already_has_it:  '||he_already_has_it);
 				
 				IF he_already_has_it = 0 THEN
 				--here, borrow_id_nextval itself is used in order to make less changes to code
@@ -490,8 +494,8 @@ ELSIF r_type LIKE 'P_' THEN
 				borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 				
 
-				INSERT INTO athoma12.eborrows (borrow_id, patron_id, rtype_id, checkout_time, due_time) VALUES
-	      		(borrow_id_nextval, r_patron_id, r_rtype_id, CURRENT_TIMESTAMP, TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF')); 
+				INSERT INTO athoma12.eborrows (borrow_id, patron_id, rtype_id, checkout_time) VALUES
+	      		(borrow_id_nextval, r_patron_id, r_rtype_id, CURRENT_TIMESTAMP); 
 				--NEW: putting due_date as infinity.
 				--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
 				END IF;
