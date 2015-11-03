@@ -16,7 +16,7 @@ public class ResourceRequest {
 		return resource_request;
 	}
 
-	public void checkout(double rtype_id,Login login)
+	public void checkout(String r_type,double rtype_id,Login login)
 	{
 
 		String sql = "{call athoma12.R_CHECKOUT.Checkout_or_waitlist(?,?,?,?,?,?,?,?,?,?,?)}";
@@ -58,18 +58,17 @@ public class ResourceRequest {
 				}
 			}
 		}
-		
+
 		requested_resources_details(login);
-//		System.out.println("<Menu>");	
-//		System.out.println("1. GO back");
-//		System.out.print("Enter your Choice >> ");
 	}
 	public void requested_resources_details(Login login)
 	{
+		System.out.println("Display Requested resources");
 		String sql = "select * from athoma12.user_waitlist_summary where patron_id = ?";
 		PreparedStatement cstmt=null;
 		ResultSet rs = null;
 		int index = 0;
+		String r_type = null;
 
 		try {
 
@@ -77,7 +76,7 @@ public class ResourceRequest {
 			cstmt.setDouble(1, login.patron_id);
 
 			rs = cstmt.executeQuery();
-			
+
 			System.out.println("Waitlist Queue");
 			System.out.print("Sl. no		");
 			System.out.print("Resource Type    	");
@@ -88,7 +87,7 @@ public class ResourceRequest {
 				index++;
 				System.out.print(index);
 				System.out.print(" 		");
-				String r_type = rs.getString("TYPE");
+				r_type = rs.getString("TYPE");
 				System.out.print(r_type);
 				System.out.print(" 		");
 				String desc = rs.getString("DESCRIPTION");
@@ -111,7 +110,7 @@ public class ResourceRequest {
 		{
 			func = stdin.nextInt();
 			stdin.nextLine();
-			
+
 			switch (func) {
 			case 1:
 				System.out.println("<Menu>");	
@@ -143,38 +142,15 @@ public class ResourceRequest {
 						}
 					}
 				}
-				checkout(rtype_id,login);
+				checkout(r_type,rtype_id,login);
 				break;
 			case 2:
-				display_requested_resources(login);
-				break;
-			default:
-				System.out.println("Wrong input. Try again!");
-			}
-		}while(func!=999);
-	}
-
-	public void display_requested_resources(Login login)
-	{
-		System.out.println("Display Requested resources");
-		requested_resources_details(login);
-		int func;
-		do
-		{
-			System.out.println("<Menu>");
-			System.out.println("1. GO back");
-			System.out.print("Enter your Choice >> ");
-
-			func = stdin.nextInt();
-			stdin.nextLine();
-			switch (func) {
-			case 1:
 				login.home_screen(login);
 				break;
 			default:
 				System.out.println("Wrong input. Try again!");
 			}
-		}
-		while(func!=1);
+		}while(func!=2);
 	}
+
 }
