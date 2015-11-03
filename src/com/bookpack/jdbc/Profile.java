@@ -131,7 +131,7 @@ public class Profile {
 				default:
 					System.out.println("Wrong input. Try again!");
 				}
-			}while(func!=8);
+			}while(func!=999);
 		}
 		/*
 		 * If the logged in user is a Faculty
@@ -162,7 +162,7 @@ public class Profile {
 				default:
 					System.out.println("Wrong input. Try again!");
 				}
-			}while(func!=3);
+			}while(func!=999);
 		}
 
 	}

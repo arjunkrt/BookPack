@@ -13,6 +13,7 @@ public class Main {
 		
 		Login login = Login.getObject();
 		login.main_screen();
+		System.out.println("Thank you for using Bookpack!!!! See you again");
 		
 		try {
 			DBConnection.conn.close();

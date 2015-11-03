@@ -88,14 +88,15 @@ l_libname_of_pick_up athoma12.library.lib_name%type;
 l_no_in_waitlist NUMBER;
 l_due_time TIMESTAMP;
 l_borrow_id_nextval NUMBER;
-
+l_present_in_borrows NUMBER;
 Begin
+--select return_time,rid into l_return_time,l_rid from ATHOMA12.BORROWS where BORROW_ID=p_borrow_id;
+select count(*) into l_present_in_borrows from ATHOMA12.BORROWS where BORROW_ID=p_borrow_id;
+if l_present_in_borrows=1 then
 select return_time,rid into l_return_time,l_rid from ATHOMA12.BORROWS where BORROW_ID=p_borrow_id;
 if l_return_time is NULL then
 l_due_balance := athoma12.RESOURCE_DUE_BALANCE.get_due_balance(p_borrow_id);
-UPDATE ATHOMA12.BORROWS SET DUES_COLLECTED=l_due_balance where BORROW_ID=p_borrow_id;
-UPDATE ATHOMA12.BORROWS SET RETURN_TIME=current_timestamp where BORROW_ID=p_borrow_id;
-UPDATE ATHOMA12.BORROWS SET CLEAR_DUES='Y' where BORROW_ID=p_borrow_id;
+UPDATE ATHOMA12.BORROWS SET DUES_COLLECTED=l_due_balance,CLEAR_DUES='Y',RETURN_TIME=current_timestamp where BORROW_ID=p_borrow_id;
 select rtype_id into l_rtype_id from ATHOMA12.RESOURCES where rid=l_rid;
 UPDATE ATHOMA12.RESOURCES SET STATUS='Available' where rid=l_rid;
 select count(*) into l_waitlist_count from ATHOMA12.WAITLIST where RTYPE_ID=l_rtype_id;
@@ -105,9 +106,11 @@ ATHOMA12.RFUNCCHECKOUT.pubCheckoutFunc2(l_rtype_id,l_patron_id,1,'h',1,l_libname
 ATHOMA12.notification_mgmt.waitListNotification(l_borrow_id_nextval);
 end if;
 end if;
+else
+UPDATE ATHOMA12.EBORROWS SET DUES_COLLECTED=0,RETURN_TIME=current_timestamp,CLEAR_DUES='Y' where BORROW_ID=p_borrow_id;
+end if;
 commit;
 END return_resource;
-
 
 
 END RESOURCE_DUE_BALANCE;
