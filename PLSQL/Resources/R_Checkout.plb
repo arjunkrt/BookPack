@@ -187,7 +187,7 @@ IF r_type = 'C' THEN
 			AND reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
 				AND NOT (reservation_start + interval '14' hour < CURRENT_TIMESTAMP);				
 	
-			SELECT no_in_waitlist INTO his_no_in_waitlist_c
+			SELECT MIN(no_in_waitlist) INTO his_no_in_waitlist_c
 			FROM athoma12.waitlist
 			WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id
 			AND reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
@@ -209,17 +209,23 @@ IF r_type = 'C' THEN
 			
 			SELECT MIN(R.rid)
 			INTO rid_to_checkout
-			FROM athoma12.Resources R, athoma12.waitlist W, athoma12.library L
-			WHERE R.rtype_id = r_rtype_id AND W.patron_id = r_patron_id AND R.rtype_id = W.rtype_id AND W.reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
-			AND NOT (W.reservation_start + interval '14' hour < CURRENT_TIMESTAMP)
-			AND L.lib_id = R.lib_id;
+			FROM athoma12.Resources R, athoma12.waitlist W, athoma12.borrows B
+			WHERE R.rtype_id = r_rtype_id AND W.patron_id = r_patron_id AND R.rtype_id = W.rtype_id
+				AND (B.rid <> R.rid OR B.due_time < CURRENT_TIMESTAMP)
+				AND W.reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
+				AND NOT (W.reservation_start + interval '14' hour < CURRENT_TIMESTAMP);
 			
-			SELECT MIN(R.rid), W.reservation_start, W.reservation_end, L.lib_name
-			INTO rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time, r_libname_of_pick_up
-			FROM athoma12.Resources R, athoma12.waitlist W, athoma12.library L
-			WHERE R.rtype_id = r_rtype_id AND W.patron_id = r_patron_id AND R.rtype_id = W.rtype_id AND W.reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
-			AND NOT (W.reservation_start + interval '14' hour < CURRENT_TIMESTAMP)
-			AND L.lib_id = R.lib_id;			
+			--well.. following was hard to get..
+			--The MAX was used to get one row. For some reason, may be due to joins
+			--the same row was being printed multiple times
+			SELECT MAX(W.reservation_start), MAX(W.reservation_end), MAX(L.lib_name)
+			INTO room_cam_checkout_time, room_return_cam_due_time, r_libname_of_pick_up
+			FROM athoma12.Resources R, athoma12.waitlist W, athoma12.borrows B, athoma12.library L
+			WHERE W.rtype_id = r_rtype_id AND W.patron_id = r_patron_id AND R.rtype_id = W.rtype_id
+				AND (B.rid <> R.rid OR B.due_time < CURRENT_TIMESTAMP)
+				AND W.reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
+				AND NOT (W.reservation_start + interval '14' hour < CURRENT_TIMESTAMP)
+				AND L.lib_id = R.lib_id;
 			
 			borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 				
@@ -244,15 +250,15 @@ IF r_type = 'C' THEN
 			WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id;
 			
 			IF he_already_has_requested_it > 0 THEN
-			SELECT no_in_waitlist INTO r_no_in_waitlist
+			SELECT MIN(no_in_waitlist) INTO r_no_in_waitlist
 			FROM athoma12.waitlist
-			WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id;
-				--AND reservation_start > CURRENT_TIMESTAMP;
+			WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id
+				AND reservation_start > CURRENT_TIMESTAMP;
 			END IF;
 				
 			dbms_output.put_line('he_already_has_requested_it : '|| he_already_has_requested_it);
 			
-			--IF he_already_has_requested_it = 0 THEN
+			IF he_already_has_requested_it = 0 THEN
 			
       		select (TO_TIMESTAMP( NEXT_DAY (CURRENT_TIMESTAMP, 'FRI')) + INTERVAL '0 10' DAY TO HOUR)
 			into room_cam_checkout_time from dual;
@@ -278,7 +284,7 @@ IF r_type = 'C' THEN
 				
 				dbms_output.put_line('r_no_in_waitlist : '|| r_no_in_waitlist);	
 			
-			
+			END IF;
 
 		END IF;
 	
