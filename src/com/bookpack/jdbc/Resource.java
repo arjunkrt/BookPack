@@ -119,8 +119,8 @@ private static Resource resource = new Resource( );
 					lobj.patron_id + "AND rtype_id = " + rtype_id;
 		Statement stmt = null;
 		int choice=0, type=0;
-		String r_title="", r_isbn="", r_publishers="", type_pub="";
-		double r_edition=-999, r_year, r_action=0, lib_choice=0 ;
+		String r_title="", r_isbn="", r_publishers="", type_pub="", r_year="";
+		double r_edition=-999, r_action=0, lib_choice=0 ;
 		ResultSet rs;
 		double option=0;
 		
@@ -130,16 +130,16 @@ private static Resource resource = new Resource( );
 			rs = stmt.executeQuery(sql);
 			
 			while(rs.next()){
-				r_title = rs.getString("title");
-				r_isbn = rs.getString("ISBN");
-				r_edition = rs.getDouble("edition");
-				r_publishers = rs.getString("publishers");
-				r_year = rs.getDouble("year");
-				r_action = rs.getDouble("r_action");
+				r_title = rs.getString(1);
+				r_isbn = rs.getString(2);
+				r_edition = rs.getDouble(3);
+				r_publishers = rs.getString(4);
+				r_year = rs.getString(5);
+				r_action = rs.getDouble(6);
 				
 				System.out.println("Title: " + r_title);
 				System.out.println("ISBN/ISSN/Conf No.: " + r_isbn);
-				if(r_publishers!="JUNK"){
+				if(!"JUNK".equalsIgnoreCase(r_publishers)){
 					System.out.println("Author(s): " + r_publishers);
 				}
 				if(r_edition!=-999){
@@ -150,15 +150,23 @@ private static Resource resource = new Resource( );
 			
 			if(r_action==3){
 				System.out.println("This publication is already present with you. Please follow the renew procedure to renew the book.");
+				System.out.println(" Enter 2 for soft copy. ");
+				type = stdin.nextInt();	
 			}
 			else if(r_action==4){
 				System.out.println("You have renewed this publication once. You Must return the publication.");
+				System.out.println(" Enter 2 for soft copy. ");
+				type = stdin.nextInt();	
 			}
 			else if(r_action==5){
 				System.out.println("You have already requested this book. You will be notified when available.");
+				System.out.println(" Enter 2 for soft copy. ");
+				type = stdin.nextInt();	
 			}
 			else if(r_action==6){
 				System.out.println("This publication is reserved. Cannot be checked out.");
+				System.out.println(" Enter 2 for soft copy. ");
+				type = stdin.nextInt();	
 			}
 			else{
 				System.out.println(" Enter 1 for hard copy, 2 for soft copy. ");
