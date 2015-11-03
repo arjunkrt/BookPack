@@ -243,6 +243,7 @@ PROCEDURE createNotification(
                 np.template_name = 'FIRST_REMINDER' and ngp.attribute_name = 'BORROW_ID'
                 and to_number(ngp.attribute_value) = ucs.borrow_id)
 				;
+		l_grp_attribute_number NUMBER(20) := 0;
 	BEGIN
 		SAVEPOINT beginProc;
 		FOR patronsRec in findPatrons
@@ -259,8 +260,9 @@ PROCEDURE createNotification(
 
 			FOR borrowsRec in findBorrowRecs(patronsRec.patron_id)
 			LOOP
+				l_grp_attribute_number:= l_grp_attribute_number+1;
 				athoma12.notification_mgmt.createNotificationGrpParams(
-							p_grp_attribute_number => 1,
+							p_grp_attribute_number => l_grp_attribute_number,
 							p_notification_id => l_notification_id,
 							p_attribute0 => borrowsRec.borrow_id,
 							p_name0 => 'BORROW_ID',
@@ -294,6 +296,7 @@ PROCEDURE createNotification(
                 np.template_name = 'SECOND_DUE_REMINDER' and ngp.attribute_name = 'BORROW_ID'
                 and to_number(ngp.attribute_value) = ucs.borrow_id)
 				;
+		l_grp_attribute_number NUMBER(20) := 0;
 	BEGIN
 		SAVEPOINT beginProc;
 		FOR patronsRec in findPatrons
@@ -310,8 +313,9 @@ PROCEDURE createNotification(
 
 			FOR borrowsRec in findBorrowRecs(patronsRec.patron_id)
 			LOOP
+				l_grp_attribute_number:= l_grp_attribute_number+1;
 				athoma12.notification_mgmt.createNotificationGrpParams(
-							p_grp_attribute_number => 1,
+							p_grp_attribute_number => l_grp_attribute_number,
 							p_notification_id => l_notification_id,
 							p_attribute0 => borrowsRec.borrow_id,
 							p_name0 => 'BORROW_ID',
