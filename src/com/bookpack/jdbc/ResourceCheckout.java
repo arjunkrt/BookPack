@@ -648,7 +648,7 @@ public class ResourceCheckout {
 	{
 		System.out.println("Display Checked out resources");
 
-		String sql = "select BORROW_ID,rid,TYPE, ATHOMA12.resource_due_balance.get_due_balance(BORROW_ID) as due_balance, DESCRIPTION, due_time from athoma12.user_checkout_summary where patron_id = ?";
+		String sql = "select BORROW_ID,rid, E_OR_H, TYPE, ATHOMA12.resource_due_balance.get_due_balance(BORROW_ID) as due_balance, DESCRIPTION, due_time, checkout_time from athoma12.user_checkout_summary where patron_id = ?";
 
 		PreparedStatement cstmt=null;
 		ResultSet rs = null;
@@ -662,6 +662,8 @@ public class ResourceCheckout {
 			System.out.print("Sl.No    ");
 			System.out.print("Borrow ID    ");
 			System.out.print("Resource Type      	 ");
+			System.out.print("Resource Category      	 ");
+			System.out.print("Checkout date          ");
 			System.out.print("Due date          ");
 			System.out.print("Due Balance       ");
 			System.out.println("Resource Description    ");
@@ -673,7 +675,13 @@ public class ResourceCheckout {
 				sl_no++;
 				int borrow_id = rs.getInt("BORROW_ID");
 				String r_type = rs.getString("TYPE");
+				String e_or_h = rs.getString("E_OR_H") != null ? rs.getString("E_OR_H") : "";
+				if(e_or_h.equals("H"))
+					e_or_h = "Hard Copy";
+				else if(e_or_h.equals("E"))
+					e_or_h = "Electronic Copy";
 				int due_balance = rs.getInt("DUE_BALANCE");
+				Timestamp checkout_date = rs.getTimestamp("CHECKOUT_TIME");
 				Timestamp due_date = rs.getTimestamp("DUE_TIME");
 				String desc = rs.getString("DESCRIPTION");
 				System.out.print(sl_no);
@@ -681,6 +689,8 @@ public class ResourceCheckout {
 				System.out.print(borrow_id);
 				System.out.print("          ");
 				System.out.print(r_type);
+				System.out.print("             ");
+				System.out.print(checkout_date);
 				System.out.print("             ");
 				System.out.print(due_date);
 				System.out.print("             ");
