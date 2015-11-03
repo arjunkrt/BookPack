@@ -135,6 +135,7 @@
 	r_type athoma12.resource_types.type%type := NULL;
 	
 	he_already_has_requested_it NUMBER := 0;
+	he_already_has_it NUMBER := 0;
 	room_cam_checkout_time TIMESTAMP := NULL;
 	room_return_cam_due_time TIMESTAMP := NULL;
 	reservation_available NUMBER := 0;
@@ -362,6 +363,8 @@ ELSIF r_type LIKE 'R_' THEN
         		FROM athoma12.waitlist WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id
         		AND reservation_start = room_reservation_start;
 				
+				r_no_in_waitlist := 1;
+				
 				END IF;			
 
 	END IF;
@@ -466,7 +469,7 @@ ELSIF r_type LIKE 'P_' THEN
 -------------------------------------------------------------------------------			
 	ELSE
 
-	      --dbms_output.put_line('EE  '||r_rtype_id||' '||r_patron_id||' '||r_action||' '||r_h_or_e||' '||r_lib_of_preference);
+	      dbms_output.put_line('EE  ');
 		-- If the publication is an ecopy then checkout happens with the MIN(rid) for that rtype
 		-- A non-zero borrow_id_nextval is returned if the ecopy was successfully checked out
 		-- else zero will be returned if an ecopy is not availbale for the given rtype_id
@@ -476,18 +479,26 @@ ELSIF r_type LIKE 'P_' THEN
 				
 			SELECT COUNT(*) INTO ecopy_available FROM athoma12.ePublications WHERE rtype_id = r_rtype_id;
 			
+			dbms_output.put_line('ecopy_available:  '||ecopy_available);
+			
 			IF ecopy_available > 0 THEN
+			
+				SELECT COUNT(*) INTO he_already_has_it FROM athoma12.eborrows
+				WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id;
 				
+				dbms_output.put_line('he_already_has_it:  '||he_already_has_it);
+				
+				IF he_already_has_it = 0 THEN
 				--here, borrow_id_nextval itself is used in order to make less changes to code
 				--but actually eborrow_id sequence is used, so its basically eborrow_id
 				borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 				
 
-				INSERT INTO athoma12.eborrows (borrow_id, patron_id, rtype_id, checkout_time, due_time) VALUES
-	      		(borrow_id_nextval, r_patron_id, r_rtype_id, CURRENT_TIMESTAMP, TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF')); 
+				INSERT INTO athoma12.eborrows (borrow_id, patron_id, rtype_id, checkout_time) VALUES
+	      		(borrow_id_nextval, r_patron_id, r_rtype_id, CURRENT_TIMESTAMP); 
 				--NEW: putting due_date as infinity.
 				--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
-
+				END IF;
 			END IF;
 
 	END IF;
@@ -558,10 +569,7 @@ END IF;
 	END Renew;		
 -----------------------------------------------------------------------------
 
-PROCEDURE Cancels_and_notifs(
-	all_is_well OUT NUMBER
-)
-IS
+PROCEDURE Cancels_and_notifs IS
 BEGIN
 
 	SAVEPOINT beginProc;
@@ -583,7 +591,7 @@ BEGIN
 		AND (patron_id, reservation_start) NOT IN
 						(SELECT patron_id, checkout_time FROM athoma12.borrows
 						WHERE rid IN (SELECT rid from athoma12.Resources R, athoma12.Resource_types RT
-						WHERE RT.rtype_id = R.rtype_id AND RT.type LIKE 'R_'));
+						WHERE RT.rtype_id = R.rtype_id AND RT.type LIKE 'C'));
 		
 	UPDATE athoma12.waitlist
 	SET reservation_status = 'WCancelled'
@@ -593,11 +601,9 @@ BEGIN
 		AND (patron_id, reservation_start) NOT IN
 						(SELECT patron_id, checkout_time FROM athoma12.borrows
 						WHERE rid IN (SELECT rid from athoma12.Resources R, athoma12.Resource_types RT
-						WHERE RT.rtype_id = R.rtype_id AND RT.type LIKE 'R_'));
+						WHERE RT.rtype_id = R.rtype_id AND RT.type LIKE 'C'));
 
 		COMMIT;	
-		
-		all_is_well := 1;
 				
 		EXCEPTION
 		WHEN OTHERS THEN

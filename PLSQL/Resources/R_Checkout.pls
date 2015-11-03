@@ -30,9 +30,7 @@ PROCEDURE Renew(
 					r_due_time    	OUT   		TIMESTAMP
 					) ;
 
-PROCEDURE Cancels_and_notifs(
-	all_is_well OUT NUMBER
-);
+PROCEDURE Cancels_and_notifs;
 					
 
 END R_CHECKOUT;
@@ -112,18 +110,18 @@ PROCEDURE Checkout_or_waitlist(
 -------------------------------------------------------------------------------------
 Checkout_or_waitlist API for publications
 
-for reservation -- r_action = 2 --
+for waitisting -- r_action = 2 --
 
 PROCEDURE Checkout_or_waitlist(
 						r_rtype_id 			IN 		 -----------  	REQUIRED
 						r_patron_id			IN 		 -----------	REQUIRED
 						r_action		  	IN	 	 -----------	REQUIRED
-						r_h_or_e 		  	IN 		 -----------	NA
-						r_lib_of_preference IN	 	 -----------	NA
+						r_h_or_e 		  	IN 		 -----------	REQUIRED
+						r_lib_of_preference IN	 	 -----------	REQUIRED
 						room_reservation_start 	IN	 -----------	NA
 						room_reservation_end 	IN	 -----------	NA
 						r_libname_of_pick_up 	OUT	 -----------	NA
-						r_no_in_waitlist 		OUT  -----------	NA
+						r_no_in_waitlist 		OUT  -----------	VALID
 	          			r_due_time    			OUT  -----------	NA
 	          			borrow_id_nextval 		OUT  -----------	VALID
 						  );
@@ -134,31 +132,33 @@ PROCEDURE Checkout_or_waitlist(
 						r_rtype_id 			IN 		 -----------  	REQUIRED
 						r_patron_id			IN 		 -----------	REQUIRED
 						r_action		  	IN	 	 -----------	REQUIRED
-						r_h_or_e 		  	IN 		 -----------	NA
-						r_lib_of_preference IN	 	 -----------	NA
-						room_reservation_start 	IN	 -----------	REQUIRED
-						room_reservation_end 	IN	 -----------	REQUIRED
-						r_libname_of_pick_up 	OUT	 -----------	NA
+						r_h_or_e 		  	IN 		 -----------	REQUIRED
+						r_lib_of_preference IN	 	 -----------	REQUIRED
+						room_reservation_start 	IN	 -----------	NA
+						room_reservation_end 	IN	 -----------	NA
+						r_libname_of_pick_up 	OUT	 -----------	VALID
 						r_no_in_waitlist 		OUT  -----------	NA
 	          			r_due_time    			OUT  -----------	VALID
-	          			borrow_id_nextval 		OUT  -----------	NA
+	          			borrow_id_nextval 		OUT  -----------	VALID
 						  );
 						  
 -------------------------------------------------------------------------------------
 Checkout_or_waitlist API for epublications
 
+for checking out epublications
+
 PROCEDURE Checkout_or_waitlist(
 						r_rtype_id 			IN 		 -----------  	REQUIRED
 						r_patron_id			IN 		 -----------	REQUIRED
-						r_action		  	IN	 	 -----------	REQUIRED
-						r_h_or_e 		  	IN 		 -----------	NA
+						r_action		  	IN	 	 -----------	NA
+						r_h_or_e 		  	IN 		 -----------	REQUIRED
 						r_lib_of_preference IN	 	 -----------	NA
-						room_reservation_start 	IN	 -----------	REQUIRED
-						room_reservation_end 	IN	 -----------	REQUIRED
+						room_reservation_start 	IN	 -----------	NA
+						room_reservation_end 	IN	 -----------	NA
 						r_libname_of_pick_up 	OUT	 -----------	NA
 						r_no_in_waitlist 		OUT  -----------	NA
-	          			r_due_time    			OUT  -----------	VALID
-	          			borrow_id_nextval 		OUT  -----------	NA
+	          			r_due_time    			OUT  -----------	NA
+	          			borrow_id_nextval 		OUT  -----------	VALID
 						  );
 						  
 -------------------------------------------------------------------------------------

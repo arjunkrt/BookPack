@@ -2,15 +2,15 @@
 --------------------------------------------------------------------------------------
 --VIEW FOR WAITLIST DISPLAY OF A USER
 create or replace view athoma12.user_waitlist_summary as 
-SELECT RT.type, P.title AS DESCRIPTION, NULL AS LIBRARY, W.patron_id
+SELECT RT.rtype_id, RT.type, P.title AS DESCRIPTION, NULL AS LIBRARY, W.patron_id
 FROM athoma12.Publications P, athoma12.Resource_types RT, athoma12.waitlist W
 WHERE W.rtype_id = P.rtype_id AND W.rtype_id = RT.rtype_id
 UNION
-SELECT RT.type, C.make||' '||C.model AS DESCRIPTION, NULL AS LIBRARY, W.patron_id
+SELECT RT.rtype_id, RT.type, C.make||' '||C.model AS DESCRIPTION, NULL AS LIBRARY, W.patron_id
 FROM athoma12.cameras C, athoma12.Resource_types RT, athoma12.waitlist W
 WHERE W.rtype_id = C.rtype_id AND W.rtype_id = RT.rtype_id
 UNION
-SELECT RT.type, RO.room_id||' '||RO.position AS DESCRIPTION, L.lib_name AS LIBRARY, W.patron_id
+SELECT RT.rtype_id, RT.type, RO.room_id||' '||RO.position AS DESCRIPTION, L.lib_name AS LIBRARY, W.patron_id
 FROM athoma12.rooms RO, athoma12.Resource_types RT, athoma12.waitlist W, athoma12.library L, athoma12.Resources R
 WHERE W.rtype_id = RO.rtype_id AND W.rtype_id = RT.rtype_id AND RT.rtype_id = R.rtype_id AND R.lib_id = L.lib_id;
 
@@ -51,7 +51,7 @@ select * from athoma12.PUB_CHECKOUT_VIEW where patron_id = usr_patron_id AND rty
 
 --I believe a view cannot be created for this query
 /*
-  SELECT RO.room_id, RO.position
+  SELECT RO.rtype_id, RO.room_id, RO.position
  FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R
  WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id
         AND RO.capacity = r_capacity AND RO.roomtype = r_roomtype AND L.lib_id = r_lib_id
@@ -59,14 +59,14 @@ select * from athoma12.PUB_CHECKOUT_VIEW where patron_id = usr_patron_id AND rty
                         WHERE (reservation_start BETWEEN r_time_in AND r_time_out)
                         AND (reservation_end BETWEEN r_time_in AND r_time_out))
 UNION
-  SELECT RO.room_id, RO.position
+  SELECT RO.rtype_id, RO.room_id, RO.position
  FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R
  WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id
         AND RO.capacity >= r_capacity AND RO.roomtype = r_roomtype AND L.lib_id = r_lib_id
         AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist
                         WHERE (reservation_start BETWEEN r_time_in AND r_time_out)
                         AND (reservation_end BETWEEN r_time_in AND r_time_out))
-		AND NOT EXISTS (  SELECT RO.room_id, RO.position
+		AND NOT EXISTS (  SELECT RO.rtype_id, RO.room_id, RO.position
  		FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R
  		WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id
         AND RO.capacity = r_capacity AND RO.roomtype = r_roomtype AND L.lib_id = r_lib_id
