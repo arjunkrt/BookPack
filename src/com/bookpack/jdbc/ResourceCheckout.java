@@ -14,7 +14,7 @@ public class ResourceCheckout {
 	static Scanner stdin = new Scanner(System.in);
 	private static ResourceCheckout resource_check_out = new ResourceCheckout( );
 
-	public static ResourceCheckout getInstance( ) {
+	public static ResourceCheckout getObject( ) {
 		return resource_check_out;
 	}
 	public void display_pub_books(Login login,int rid)
