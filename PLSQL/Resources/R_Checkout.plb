@@ -266,7 +266,7 @@ IF r_type = 'C' THEN
 			into room_cam_checkout_time from dual;
       		select (room_cam_checkout_time + INTERVAL '6 8' DAY to HOUR)
 			into room_return_cam_due_time from dual;	
-			
+
 			dbms_output.put_line('room_cam_checkout_time : '|| room_cam_checkout_time);
 			dbms_output.put_line('room_return_cam_due_time : '|| room_return_cam_due_time);
 
@@ -283,6 +283,7 @@ IF r_type = 'C' THEN
 				END IF;
 			
 				r_no_in_waitlist := r_no_in_waitlist+1;
+				r_due_time := room_cam_checkout_time;
 				
 				dbms_output.put_line('r_no_in_waitlist : '|| r_no_in_waitlist);	
 			
@@ -455,6 +456,9 @@ ELSIF r_type LIKE 'P_' THEN
 		-- If the publication is an ecopy then checkout happens with the MIN(rid) for that rtype
 		-- A non-zero borrow_id_nextval is returned if the ecopy was successfully checked out
 		-- else zero will be returned if an ecopy is not availbale for the given rtype_id
+		
+			--valid inputs for this condition are r_patron_id, r_rtype_id, r_action, room_reservation_start, room_reservation_end
+			--valid outputs is r_due_time
 				
 			SELECT COUNT(*) INTO ecopy_available FROM athoma12.ePublications WHERE rtype_id = r_rtype_id;
 			
@@ -473,11 +477,11 @@ ELSIF r_type LIKE 'P_' THEN
 END IF;
 -----------------------------------------------------------------------------		
 		COMMIT;
-	/*	
+	
 		EXCEPTION
 		WHEN OTHERS THEN
 		ROLLBACK TO beginFunc;
-	*/	
+		
 	END Checkout_or_waitlist;
 	
 -----------------------------------------------------------------------------	
@@ -535,6 +539,30 @@ END IF;
 		ROLLBACK TO beginFunc;
 			
 	END Renew;		
+-----------------------------------------------------------------------------
+
+PROCEDURE Cancels_and_notifs(
+	all_is_well OUT NUMBER
+)
+IS
+BEGIN
+
+	SAVEPOINT beginProc;
+
+	UPDATE athoma12.waitlist
+	SET status = 'Cancelled'
+	WHERE reservation_start + interval '1' hour < CURRENT_TIMESTAMP
+		AND rtype_id IN (SELECT rtype_id FROM athoma12.Resource_types WHERE type LIKE 'C');
+
+
+		COMMIT;	
+		
+		EXCEPTION
+		WHEN OTHERS THEN
+		ROLLBACK TO beginFunc;
+
+END Cancels_and_notifs;
+
 
 END R_CHECKOUT;
 -----------------------------------------------------------------------------	

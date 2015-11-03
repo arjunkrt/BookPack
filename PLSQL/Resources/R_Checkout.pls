@@ -11,7 +11,7 @@ FUNCTION Validate_actions(
 					) 
 RETURN NUMBER;
 			
-	PROCEDURE Checkout_or_waitlist(
+PROCEDURE Checkout_or_waitlist(
 						r_rtype_id 		IN 			athoma12.books.rtype_id%type,
 						r_patron_id		IN 			athoma12.patrons.patron_id%type,
 						r_action		  IN	 		NUMBER,
@@ -30,5 +30,153 @@ PROCEDURE Renew(
 					r_due_time    	OUT   		TIMESTAMP
 					) ;
 
+PROCEDURE Cancels_and_notifs();
+					
+
 END R_CHECKOUT;
 /
+
+/*
+-------------------------------------------------------------------------------------
+Checkout_or_waitlist API for camera
+
+for reservation -- r_action = 2 --
+
+PROCEDURE Checkout_or_waitlist(
+						r_rtype_id 			IN 		 -----------  	REQUIRED
+						r_patron_id			IN 		 -----------	REQUIRED
+						r_action		  	IN	 	 -----------	REQUIRED
+						r_h_or_e 		  	IN 		 -----------	NA
+						r_lib_of_preference IN	 	 -----------	NA
+						room_reservation_start 	IN	 -----------	NA
+						room_reservation_end 	IN	 -----------	NA
+						r_libname_of_pick_up 	OUT	 -----------	NA
+						r_no_in_waitlist 		OUT  -----------	VALID
+	          			r_due_time    			OUT  -----------	VALID
+	          			borrow_id_nextval 		OUT  -----------	NA
+						  );
+					
+for checkout -- r_action = 1 --
+
+PROCEDURE Checkout_or_waitlist(
+						r_rtype_id 			IN 		 -----------  	REQUIRED
+						r_patron_id			IN 		 -----------	REQUIRED
+						r_action		  	IN	 	 -----------	REQUIRED
+						r_h_or_e 		  	IN 		 -----------	NA
+						r_lib_of_preference IN	 	 -----------	NA
+						room_reservation_start 	IN	 -----------	NA
+						room_reservation_end 	IN	 -----------	NA
+						r_libname_of_pick_up 	OUT	 -----------	VALID
+						r_no_in_waitlist 		OUT  -----------	NA
+	          			r_due_time    			OUT  -----------	NA
+	          			borrow_id_nextval 		OUT  -----------	VALID
+						  );
+						  
+-------------------------------------------------------------------------------------						  
+Checkout_or_waitlist API for rooms
+
+for reservation -- r_action = 2 --
+
+PROCEDURE Checkout_or_waitlist(
+						r_rtype_id 			IN 		 -----------  	REQUIRED
+						r_patron_id			IN 		 -----------	REQUIRED
+						r_action		  	IN	 	 -----------	REQUIRED
+						r_h_or_e 		  	IN 		 -----------	NA
+						r_lib_of_preference IN	 	 -----------	NA
+						room_reservation_start 	IN	 -----------	NA
+						room_reservation_end 	IN	 -----------	NA
+						r_libname_of_pick_up 	OUT	 -----------	NA
+						r_no_in_waitlist 		OUT  -----------	NA
+	          			r_due_time    			OUT  -----------	NA
+	          			borrow_id_nextval 		OUT  -----------	VALID
+						  );
+					
+for checkout -- r_action = 1 --
+
+PROCEDURE Checkout_or_waitlist(
+						r_rtype_id 			IN 		 -----------  	REQUIRED
+						r_patron_id			IN 		 -----------	REQUIRED
+						r_action		  	IN	 	 -----------	REQUIRED
+						r_h_or_e 		  	IN 		 -----------	NA
+						r_lib_of_preference IN	 	 -----------	NA
+						room_reservation_start 	IN	 -----------	REQUIRED
+						room_reservation_end 	IN	 -----------	REQUIRED
+						r_libname_of_pick_up 	OUT	 -----------	NA
+						r_no_in_waitlist 		OUT  -----------	NA
+	          			r_due_time    			OUT  -----------	VALID
+	          			borrow_id_nextval 		OUT  -----------	NA
+						  );
+
+-------------------------------------------------------------------------------------
+Checkout_or_waitlist API for publications
+
+for reservation -- r_action = 2 --
+
+PROCEDURE Checkout_or_waitlist(
+						r_rtype_id 			IN 		 -----------  	REQUIRED
+						r_patron_id			IN 		 -----------	REQUIRED
+						r_action		  	IN	 	 -----------	REQUIRED
+						r_h_or_e 		  	IN 		 -----------	NA
+						r_lib_of_preference IN	 	 -----------	NA
+						room_reservation_start 	IN	 -----------	NA
+						room_reservation_end 	IN	 -----------	NA
+						r_libname_of_pick_up 	OUT	 -----------	NA
+						r_no_in_waitlist 		OUT  -----------	NA
+	          			r_due_time    			OUT  -----------	NA
+	          			borrow_id_nextval 		OUT  -----------	VALID
+						  );
+					
+for checkout -- r_action = 1 --
+
+PROCEDURE Checkout_or_waitlist(
+						r_rtype_id 			IN 		 -----------  	REQUIRED
+						r_patron_id			IN 		 -----------	REQUIRED
+						r_action		  	IN	 	 -----------	REQUIRED
+						r_h_or_e 		  	IN 		 -----------	NA
+						r_lib_of_preference IN	 	 -----------	NA
+						room_reservation_start 	IN	 -----------	REQUIRED
+						room_reservation_end 	IN	 -----------	REQUIRED
+						r_libname_of_pick_up 	OUT	 -----------	NA
+						r_no_in_waitlist 		OUT  -----------	NA
+	          			r_due_time    			OUT  -----------	VALID
+	          			borrow_id_nextval 		OUT  -----------	NA
+						  );
+						  
+-------------------------------------------------------------------------------------
+Checkout_or_waitlist API for publications
+
+for reservation -- r_action = 2 --
+
+PROCEDURE Checkout_or_waitlist(
+						r_rtype_id 			IN 		 -----------  	REQUIRED
+						r_patron_id			IN 		 -----------	REQUIRED
+						r_action		  	IN	 	 -----------	REQUIRED
+						r_h_or_e 		  	IN 		 -----------	NA
+						r_lib_of_preference IN	 	 -----------	NA
+						room_reservation_start 	IN	 -----------	NA
+						room_reservation_end 	IN	 -----------	NA
+						r_libname_of_pick_up 	OUT	 -----------	NA
+						r_no_in_waitlist 		OUT  -----------	NA
+	          			r_due_time    			OUT  -----------	NA
+	          			borrow_id_nextval 		OUT  -----------	VALID
+						  );
+					
+for checkout -- r_action = 1 --
+
+PROCEDURE Checkout_or_waitlist(
+						r_rtype_id 			IN 		 -----------  	REQUIRED
+						r_patron_id			IN 		 -----------	REQUIRED
+						r_action		  	IN	 	 -----------	REQUIRED
+						r_h_or_e 		  	IN 		 -----------	NA
+						r_lib_of_preference IN	 	 -----------	NA
+						room_reservation_start 	IN	 -----------	REQUIRED
+						room_reservation_end 	IN	 -----------	REQUIRED
+						r_libname_of_pick_up 	OUT	 -----------	NA
+						r_no_in_waitlist 		OUT  -----------	NA
+	          			r_due_time    			OUT  -----------	VALID
+	          			borrow_id_nextval 		OUT  -----------	NA
+						  );
+						  
+-------------------------------------------------------------------------------------
+
+*/
