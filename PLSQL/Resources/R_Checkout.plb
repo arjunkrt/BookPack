@@ -144,6 +144,7 @@
 	reservation_start_c TIMESTAMP;
 
 	l_qty_resources NUMBER (10) := 0;
+	cam_available NUMBER := 0;
 
 	BEGIN
 		SAVEPOINT beginFunc;
@@ -199,6 +200,19 @@ IF r_type = 'C' THEN
 			WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id
 			AND reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
 				AND NOT (reservation_start + interval '14' hour < CURRENT_TIMESTAMP);	
+			
+			SELECT COUNT(*) INTO cam_available FROM athoma12.Resources
+			WHERE rtype_id = r_rtype_id AND status = 'Available';
+		
+		-------------------------------------------------------------------------------	
+			IF reservation_available = 0 THEN borrow_id_nextval := -1;
+			ELSIF cam_available = 0 THEN borrow_id_nextval := -2;
+			ELSIF ((his_no_in_waitlist_c <= l_qty_resources
+					AND reservation_start_c >= CURRENT_TIMESTAMP) OR
+				(his_no_in_waitlist_c > l_qty_resources
+					AND reservation_start_c < CURRENT_TIMESTAMP)) THEN borrow_id_nextval := -3;
+			END IF;
+		------------------------------------------------------------------------------------
 				
 				dbms_output.put_line('reservation_available : '||reservation_available);
 				dbms_output.put_line('min_no_in_waitlist_c : '||min_no_in_waitlist_c);
@@ -492,7 +506,6 @@ ELSIF r_type LIKE 'P_' THEN
 				--here, borrow_id_nextval itself is used in order to make less changes to code
 				--but actually eborrow_id sequence is used, so its basically eborrow_id
 				borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
-				
 
 				INSERT INTO athoma12.eborrows (borrow_id, patron_id, rtype_id, checkout_time) VALUES
 	      		(borrow_id_nextval, r_patron_id, r_rtype_id, CURRENT_TIMESTAMP); 
