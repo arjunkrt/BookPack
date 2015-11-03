@@ -141,6 +141,9 @@
 	his_no_in_waitlist_c NUMBER:= 0;
 	min_no_in_waitlist_c NUMBER:= 0;
 	reservation_start_c TIMESTAMP;
+
+	l_qty_resources NUMBER (10) := 0;
+
 	BEGIN
 		SAVEPOINT beginFunc;
 	  
@@ -154,6 +157,9 @@
 	select type INTO r_type FROM athoma12.Resource_types WHERE rtype_id = r_rtype_id;
 	
 	dbms_output.put_line('r_type : '||r_type);
+
+	select count(*) into l_qty_resources 
+	from resources r where r.rtype_id = r_rtype_id;
 
 -----------------------------------------------------------------------------
 IF r_type = 'C' THEN	
@@ -199,9 +205,9 @@ IF r_type = 'C' THEN
 				dbms_output.put_line('reservation_start_c : '||reservation_start_c);
 	
 			
-			IF reservation_available > 0 AND ((his_no_in_waitlist_c = min_no_in_waitlist_c
+			IF reservation_available > 0 AND ((his_no_in_waitlist_c <= l_qty_resources
 					AND reservation_start_c >= CURRENT_TIMESTAMP) OR
-				(his_no_in_waitlist_c <> min_no_in_waitlist_c
+				(his_no_in_waitlist_c > l_qty_resources
 					AND reservation_start_c < CURRENT_TIMESTAMP))
 			THEN
 			
