@@ -472,11 +472,14 @@ ELSIF r_type LIKE 'P_' THEN
 				
 				--here, borrow_id_nextval itself is used in order to make less changes to code
 				--but actually eborrow_id sequence is used, so its basically eborrow_id
-				borrow_id_nextval :=  EBORROW_ID_SEQ.nextval;
+				borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 				
-				INSERT INTO athoma12.eborrows (borrow_id, patron_id, rtype_id, checkout_time) VALUES
-	      		(borrow_id_nextval, r_patron_id, r_rtype_id, CURRENT_TIMESTAMP); 
+
+				INSERT INTO athoma12.eborrows (borrow_id, patron_id, rtype_id, checkout_time, due_time) VALUES
+	      		(borrow_id_nextval, r_patron_id, r_rtype_id, CURRENT_TIMESTAMP, TO_TIMESTAMP('4712-12-31 00:00:00', 'YYYY-MM-DD HH24:MI:SS.FF')); 
+				--NEW: putting due_date as infinity.
 				--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
+
 			END IF;
 
 	END IF;
