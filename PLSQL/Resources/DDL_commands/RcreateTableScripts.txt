@@ -1,7 +1,7 @@
 
 --Create TABLE Commands
 
-create table pkattep.Rooms
+create table athoma12.Rooms
 ( rtype_id NUMBER(20) NOT NULL,
  room_id VARCHAR2(20) NOT NULL,
  position VARCHAR2(50) NOT NULL,
@@ -9,7 +9,7 @@ create table pkattep.Rooms
  roomtype VARCHAR2(50) NOT NULL
 );
 
-create table pkattep.cameras
+create table athoma12.cameras
 (rtype_id NUMBER(20) NOT NULL,
  cam_id VARCHAR2(20) NOT NULL,
  model VARCHAR2(20) NOT NULL,
@@ -18,24 +18,24 @@ create table pkattep.cameras
  make VARCHAR2(50) NOT NULL
 );
 
-create table pkattep.publications
+create table athoma12.publications
 (rtype_id NUMBER(20) NOT NULL,
  year VARCHAR2(20) NOT NULL,
  title VARCHAR2(300) NOT NULL
 );
 
 ------------------------------------------------
-create table pkattep.Publications_Authors
+create table athoma12.Publications_Authors
 (rtype_id NUMBER(20) NOT NULL,
  aid NUMBER(20) NOT NULL
 );
 
-create table pkattep.authors
+create table athoma12.authors
 (Aid NUMBER(20) NOT NULL,
 Author_name VARCHAR2(50) NOT NULL
 );
 
-create table pkattep.Books
+create table athoma12.Books
 (rtype_id NUMBER(20) NOT NULL,
  ISBN VARCHAR2(20) NOT NULL,
  edition NUMBER(10),
@@ -43,19 +43,19 @@ create table pkattep.Books
  publishers VARCHAR2(50)
 );
 
-create table pkattep.journals
+create table athoma12.journals
 (rtype_id NUMBER(20) NOT NULL,
  ISSN VARCHAR2(20) NOT NULL
 );
 
-create table pkattep.Conf_Proceedings
+create table athoma12.Conf_Proceedings
 (rtype_id NUMBER(20) NOT NULL,
  conf_no VARCHAR(20) NOT NULL,
  conf_name VARCHAR2(50)
 );
 
 ------------------------------------------------
-create table pkattep.Resources
+create table athoma12.Resources
 (rid NUMBER(20) NOT NULL,
  rtype_id NUMBER(20) NOT NULL,
  status VARCHAR(10) NOT NULL,
@@ -63,23 +63,23 @@ create table pkattep.Resources
  lib_id NUMBER(10) NOT NULL
 );
 
-create table pkattep.Resource_types
+create table athoma12.Resource_types
 (rtype_id NUMBER(20) NOT NULL,
  type VARCHAR2(2) NOT NULL
 );
 
-create table pkattep.library
+create table athoma12.library
 (lib_id NUMBER(10),
  lib_name VARCHAR2(50)
 );
 
-create table pkattep.ePublications
+create table athoma12.ePublications
 (rtype_id NUMBER(20) NOT NULL,
  lib_id NUMBER(20)
  );
  
  ------------------------------------------------
- create table pkattep.borrows
+ create table athoma12.borrows
  (borrow_id NUMBER(20) NOT NULL,
  patron_id NUMBER(20) NOT NULL,
  rid NUMBER(20) NOT NULL,
@@ -90,10 +90,17 @@ create table pkattep.ePublications
  dues_collected NUMBER(20)
  ); 
  
- create table pkattep.waitlist
+ create table athoma12.waitlist
  (patron_id NUMBER(20) NOT NULL,
  rtype_id NUMBER(20) NOT NULL,
  no_in_waitlist NUMBER(10) NOT NULL,
  reservation_start TIMESTAMP,
  reservation_end TIMESTAMP
  );
+ 
+  create table athoma12.eborrows
+ (eborrow_id NUMBER(20) NOT NULL,
+ patron_id NUMBER(20) NOT NULL,
+ rtype_id NUMBER(20) NOT NULL,
+ checkout_time TIMESTAMP NOT NULL,
+ ); 
