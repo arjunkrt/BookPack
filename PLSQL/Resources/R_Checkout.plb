@@ -207,12 +207,19 @@ IF r_type = 'C' THEN
 			
 			dbms_output.put_line('Complex IF block entered');
 			
+			SELECT MIN(R.rid)
+			INTO rid_to_checkout
+			FROM athoma12.Resources R, athoma12.waitlist W, athoma12.library L
+			WHERE R.rtype_id = r_rtype_id AND W.patron_id = r_patron_id AND R.rtype_id = W.rtype_id AND W.reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
+			AND NOT (W.reservation_start + interval '14' hour < CURRENT_TIMESTAMP)
+			AND L.lib_id = R.lib_id;
+			
 			SELECT MIN(R.rid), W.reservation_start, W.reservation_end, L.lib_name
 			INTO rid_to_checkout, room_cam_checkout_time, room_return_cam_due_time, r_libname_of_pick_up
 			FROM athoma12.Resources R, athoma12.waitlist W, athoma12.library L
 			WHERE R.rtype_id = r_rtype_id AND W.patron_id = r_patron_id AND R.rtype_id = W.rtype_id AND W.reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
 			AND NOT (W.reservation_start + interval '14' hour < CURRENT_TIMESTAMP)
-			AND L.lib_id = R.lib_id;
+			AND L.lib_id = R.lib_id;			
 			
 			borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
 				
@@ -438,7 +445,7 @@ ELSIF r_type = 'P_' THEN
 				--but actually eborrow_id sequence is used, so its basically eborrow_id
 				borrow_id_nextval :=  EBORROW_ID_SEQ.nextval;
 				
-				INSERT INTO athoma12.eborrows (borrow_id, patron_id, rtype_id, checkout_time) VALUES
+				INSERT INTO athoma12.eborrows (eborrow_id, patron_id, rtype_id, checkout_time) VALUES
 	      		(borrow_id_nextval, r_patron_id, r_rtype_id, CURRENT_TIMESTAMP); 
 				--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
 			END IF;
