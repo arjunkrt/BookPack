@@ -52,7 +52,7 @@ public class ResourceCheckout {
 				System.out.print("			");
 				int year = rs.getInt("YEAR");
 				System.out.print(year);
-				System.out.print("			");
+				System.out.print("		  ");
 				String title = rs.getString("TITLE");
 				System.out.println(title);
 			}
@@ -305,7 +305,7 @@ public class ResourceCheckout {
 
 		try {
 			cstmt = DBConnection.conn.prepareStatement(sql);
-			cstmt.setDouble(1, 1019/*login.patron_id*/);
+			cstmt.setDouble(1, login.patron_id);
 
 			rs = cstmt.executeQuery();
 
