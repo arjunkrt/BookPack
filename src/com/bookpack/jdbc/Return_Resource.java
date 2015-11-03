@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Return_Resource {
 
 	private static Return_Resource return_resource = new Return_Resource( );
-	public static Return_Resource getInstance( ) {
+	public static Return_Resource getObject( ) {
 		return return_resource;	
 	}	
 	Login lobj;

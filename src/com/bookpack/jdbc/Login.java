@@ -47,11 +47,11 @@ public class Login {
 				resource.show_resource(login);
 				break;
 			case 3:
-				ResourceCheckout resource_check_out = ResourceCheckout.getInstance();
+				ResourceCheckout resource_check_out = ResourceCheckout.getObject();
 				resource_check_out.display_checked_out_resources(login);
 				break;
 			case 4:
-				ResourceRequest resource_request = ResourceRequest.getInstance();
+				ResourceRequest resource_request = ResourceRequest.getObject();
 				resource_request.display_requested_resources(login);
 				break;
 			case 5:
@@ -63,7 +63,7 @@ public class Login {
 				due_balance.display_balance(login);
 				break;
 			case 7:
-				Return_Resource ret_resource = Return_Resource.getInstance();
+				Return_Resource ret_resource = Return_Resource.getObject();
 				ret_resource.display_resource(login);
 				break;
 			case 8:
@@ -77,16 +77,14 @@ public class Login {
 				login.user_password = "";
 				main_screen();
 				break;
-				
 			default:
 				System.out.println("Wrong input. Try again!");
-				login.home_screen(login);
 			}
 		}while(func!=-999);
 	}
 	public void main_screen()
 	{
-		int func;
+		int func = 0;
 
 		do {
 			System.out.println();
@@ -106,8 +104,6 @@ public class Login {
 				}
 				break;
 			case 2:
-				System.out.println("Bye!!!!!!!!!!!!!!!!!!!!!!!");
-				System.out.println("Thank you for visiting bookpack");
 				break;
 			default:
 				System.out.println("Wrong input. Try again!");
