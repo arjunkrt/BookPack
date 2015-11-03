@@ -30,9 +30,7 @@ PROCEDURE Renew(
 					r_due_time    	OUT   		TIMESTAMP
 					) ;
 
-PROCEDURE Cancels_and_notifs(
-	all_is_well OUT NUMBER
-);
+PROCEDURE Cancels_and_notifs;
 					
 
 END R_CHECKOUT;
