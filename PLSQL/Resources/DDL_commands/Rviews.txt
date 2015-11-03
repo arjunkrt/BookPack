@@ -1,22 +1,3 @@
---Following views are for the first layer of request to view each of the resources
-
---VIEWS FOR PUBLICATIONS
-
-CREATE OR REPLACE VIEW athoma12.PUB_VIEW AS
-SELECT rtype_id, title
-FROM athoma12.publications;
-
---VIEWS FOR CAMERAS
-
-CREATE OR REPLACE VIEW athoma12.CAM_VIEW AS
-SELECT rtype_id, model
-FROM athoma12.cameras;
-
-CREATE OR REPLACE VIEW athoma12.CAM_VIEW2 AS
-SELECT rtype_id, model, memory, lens_config, make
-FROM athoma12.cameras;
---WHERE rtypeid = usr_selection;
-
 
 --------------------------------------------------------------------------------------
 --VIEW FOR WAITLIST DISPLAY OF A USER
@@ -99,16 +80,16 @@ UNION
 --To list all avilable cameras
 
 CREATE OR REPLACE VIEW athoma12.CAM_CHECKOUT_VIEW AS
-SELECT R.rtype_id AS UNIQUE_CAMERA_ID, C.make||' '||C.model AS DESCRIPTION, L.lib_name
+SELECT R.rid, R.rtype_id, C.make||' '||C.model AS DESCRIPTION, lens_config, memory, L.lib_name
 FROM athoma12.cameras C, athoma12.Resources R, athoma12.library L
-WHERE R.rtype_id = C.rtype_id AND R.lib_id = L.lib_id AND R.status = 'Available';
+WHERE R.rtype_id = C.rtype_id AND R.lib_id = L.lib_id;
 
 --Query to be used for displaying the list of all available cameras
---select * from athoma12.CAM_CHECKOUT_VIEW;
+--select rtype_id, DESCRIPTION from athoma12.CAM_CHECKOUT_VIEW;
 
 --Query to be used for displaying the details of a camera given
 --its UNIQUE_CAMERA_ID which is an alias of rid 
---select * from athoma12.CAM_CHECKOUT_VIEW WHERE UNIQUE_CAMERA_ID = usr_entered_id ;
+--select * from athoma12.CAM_CHECKOUT_VIEW WHERE rtype_id = usr_entered_id ;
 
 --------------------------------------------------------------------------------------
 --View to check resources checked out by user
