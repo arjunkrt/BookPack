@@ -77,16 +77,14 @@ public class Login {
 				login.user_password = "";
 				main_screen();
 				break;
-				
 			default:
 				System.out.println("Wrong input. Try again!");
-				///login.home_screen(login);
 			}
 		}while(func!=-999);
 	}
 	public void main_screen()
 	{
-		int func;
+		int func = 0;
 
 		do {
 			System.out.println();

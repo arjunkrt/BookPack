@@ -16,23 +16,23 @@ public class DBConnection {
 			String passwd = "200109405";
 
 
-				conn = DriverManager.getConnection(jdbcURL, user, passwd);
-				conn.setAutoCommit(false);
-				
+			conn = DriverManager.getConnection(jdbcURL, user, passwd);
+			conn.setAutoCommit(false);
+
 		} catch(Throwable oops) {
 			oops.printStackTrace();
 		}
 	}
-	
+
 	protected void finalize() throws Throwable {
-	     try {
-	         if(!conn.isClosed())
-	         {
-	        	 conn.commit();
-	        	 conn.close();        
-	         }
-	     } finally {
-	         super.finalize();
-	     }
-	 }
+		try {
+			if(!conn.isClosed())
+			{
+				conn.commit();
+				conn.close();        
+			}
+		} finally {
+			super.finalize();
+		}
+	}
 }
