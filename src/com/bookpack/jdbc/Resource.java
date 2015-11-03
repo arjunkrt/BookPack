@@ -617,13 +617,17 @@ public class Resource {
 					}
 				}
 				
-				else if(choice == 2){
+				else if(choice == 3){
 					cstmt.setDouble(3, 1);
 					cstmt.registerOutParameter(11, java.sql.Types.DOUBLE);
 					
 					cstmt.execute();
 					
-					System.out.println(" You have checked out the camera. ");
+					borrow_id_next = cstmt.getDouble(11);
+					if(borrow_id_next > 0)
+						System.out.println(" You have checked out the camera. ");
+					else
+						System.out.println(" The camera could not be checked out. ");
 				}
 				
 			}catch(SQLException e){
