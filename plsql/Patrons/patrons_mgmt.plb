@@ -17,8 +17,8 @@ CREATE OR REPLACE PACKAGE BODY PATRONS_MGMT AS
 						p_patron_type   IN 		athoma12.patrons.patron_type%type) IS
 	BEGIN
 		p_patron_id := patrons_seq.nextval;
-		INSERT INTO ATHOMA12.PATRONS(patron_id, first_name, last_name, date_of_birth, sex, nationality, department, username, password_hash, patron_type)
-		VALUES (p_patron_id, p_fName,p_lName,p_dob,p_sex,p_nationality,p_department,p_username,p_password, p_patron_type);
+		INSERT INTO ATHOMA12.PATRONS(patron_id, first_name, last_name, date_of_birth, sex, nationality, department, username, password_hash, patron_type, acct_deact)
+		VALUES (p_patron_id, p_fName,p_lName,p_dob,p_sex,p_nationality,p_department,p_username,p_password, p_patron_type, 'N');
 		
 	END addPatron;
 
@@ -86,6 +86,7 @@ CREATE OR REPLACE PACKAGE BODY PATRONS_MGMT AS
 
 		l_dup_count NUMBER := 0;
 		duplicateuser EXCEPTION;
+		invalidprogram EXCEPTION;
 		l_patron_id NUMBER := 0;
 		l_student_program_id NUMBER := 0;
 		l_phone_id NUMBER := 0;
@@ -93,6 +94,8 @@ CREATE OR REPLACE PACKAGE BODY PATRONS_MGMT AS
 		l_address_id NUMBER :=0;
 		l_program_id NUMBER := 0;
 	BEGIN
+		SAVEPOINT beginProc;
+
 		SELECT COUNT(*) INTO l_dup_count FROM athoma12.patrons WHERE
 		username = p_username;
 		if (l_dup_count <> 0) THEN
@@ -147,7 +150,9 @@ CREATE OR REPLACE PACKAGE BODY PATRONS_MGMT AS
 				addStudentProgram(l_program_id, p_degree_program, p_st_classification, p_st_category);*/
 			WHEN OTHERS THEN
 				--Exception occurred.. either too many rows, or no rows. Proceed without updating l_program_id
-				l_program_id := -1;
+				--l_program_id := -1;
+				ROLLBACK to beginProc;
+				raise invalidprogram;
 		END;
 		--p_student_id := STUDENTS_SEQ.nextval;
 		INSERT INTO athoma12.students(student_id, patron_id, program_id, phone_id, alt_phone_id, address_id)
@@ -155,6 +160,8 @@ CREATE OR REPLACE PACKAGE BODY PATRONS_MGMT AS
 
 	EXCEPTION
 		WHEN duplicateuser THEN
+			p_student_id := -1;
+		WHEN invalidprogram THEN
 			p_student_id := -1;
 
 	END addStudent;
