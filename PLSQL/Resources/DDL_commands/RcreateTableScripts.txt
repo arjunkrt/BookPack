@@ -99,6 +99,7 @@ create table athoma12.ePublications
  reservation_status VARCHAR2(50)
  );
 
+
  create table athoma12.eborrows
  (borrow_id NUMBER(20) NOT NULL,
  patron_id NUMBER(20) NOT NULL,
