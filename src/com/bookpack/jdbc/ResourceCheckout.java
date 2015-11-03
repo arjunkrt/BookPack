@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Scanner;
 
@@ -386,7 +387,145 @@ public class ResourceCheckout {
 			}
 		}while(func!=2);
 
+
 	}
+	
+	public void renew_procedure(Login lobj, double rid, String r_type, double borrow_id, double rtype_id){
+		
+		String sql = "select * from athoma12.PUB_CHECKOUT_VIEW where patron_id = " + 
+					lobj.patron_id + "AND rtype_id = " + rtype_id;
+		
+		String sql1 = "{call athoma12.R_CHECKOUT.Renew(?,?,?)}";
+		CallableStatement cstmt = null;
+		
+		Statement stmt = null;
+		String ret_date = "";
+		java.sql.Timestamp ts2=null;
+		
+		double r_action=0 ;
+		ResultSet rs;
+		
+		try{
+		
+			stmt = DBConnection.conn.prepareCall(sql);
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()){
+				r_action = rs.getDouble(6);
+			}
+			
+			System.out.println(" RACTION =" + r_action);
+			
+			if(r_action==4){
+				System.out.println("You have renewed this publication once. You Must return the publication.");
+			}
+			
+			else if(r_action==3){
+				try{
+					cstmt = DBConnection.conn.prepareCall(sql1);
+					
+					cstmt.setDouble(1, borrow_id);
+					cstmt.setDouble(2, lobj.patron_id);
+					cstmt.registerOutParameter(3, java.sql.Types.TIMESTAMP);
+					
+					cstmt.execute();
+					
+					ts2 = cstmt.getTimestamp(3);
+					ret_date = ts2.toString();
+					System.out.println(" Congrats, you have renewed it. Your return date is: "+ ret_date);
+					
+				}catch (SQLException e) {
+					e.printStackTrace();
+				} finally {
+					if(cstmt != null)
+					{
+						try{cstmt.close();}
+						catch(SQLException e){
+						}
+					}
+				}
+				
+			}
+					
+		}catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if(stmt != null)
+			{
+				try{stmt.close();}
+				catch(SQLException e){
+				}
+			}
+		}
+
+		
+	}
+	
+	public void renew_resources(Login login)
+	{
+		
+		double func, sl_no=0, rid=0, rtype_id=0, borrow_id=0;
+		String r_type = "";
+		PreparedStatement pstmt = null;
+
+		String sql = "select * from athoma12.user_checkout_summary where patron_id = ?";
+
+		ResultSet rs = null;
+
+		try {
+			pstmt = DBConnection.conn.prepareStatement(sql);
+			pstmt.setDouble(1, login.patron_id/*login.patron_id*/);
+
+			rs = pstmt.executeQuery();
+
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("<Menu>");	
+		System.out.println("Enter the serial no to renew the resource");
+		System.out.print("Enter your Choice >> ");
+
+		func = stdin.nextDouble();
+		stdin.nextLine();
+		try {
+
+			while(rs.next())
+			{
+				sl_no++;
+				if(sl_no == func)
+				{	
+					rtype_id = rs.getDouble("RTYPE_ID");
+					borrow_id = rs.getDouble("BORROW_ID");
+					r_type = rs.getString("TYPE");
+					rid = rs.getDouble("RID");
+					break;
+				}
+			}
+			
+			if(r_type.equals("PB") || r_type.equals("PC") || r_type.equals("PJ")){
+
+				renew_procedure(login, rid, r_type, borrow_id, rtype_id);
+
+			}
+			else{
+				System.out.println(" This resource is non renewable. ");
+			}			
+		} 	
+		catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if(pstmt != null)
+			{
+				try{pstmt.close();}
+				catch(SQLException e){
+				}
+			}
+		}
+
+	}
+	
 	public void return_resources(Login login)
 	{
 		
@@ -479,6 +618,7 @@ public class ResourceCheckout {
 			}
 		}while(func!=2);
 	}
+	
 	public void display_checked_out_resources(Login login)
 	{
 		System.out.println("Display Checked out resources");
@@ -490,8 +630,9 @@ public class ResourceCheckout {
 
 		try {
 			cstmt = DBConnection.conn.prepareStatement(sql);
-			cstmt.setDouble(1, 1019/*login.patron_id*/);
-
+			//cstmt.setDouble(1, 1019/*login.patron_id*/);
+			cstmt.setDouble(1, login.patron_id/*login.patron_id*/);
+			
 			rs = cstmt.executeQuery();
 
 			System.out.print("Sl.No    ");
@@ -540,7 +681,8 @@ public class ResourceCheckout {
 			System.out.println("<Menu>");	
 			System.out.println("1. View the details");
 			System.out.println("2. Return the resource");
-			System.out.println("3. GO back");
+			System.out.println("3. Renew the resource");
+			System.out.println("4. GO back");
 			System.out.print("Enter your Choice >> ");
 
 			func = stdin.nextInt();
@@ -553,6 +695,9 @@ public class ResourceCheckout {
 				return_resources(login);
 				break;
 			case 3:
+				renew_resources(login);
+				break;
+			case 4:
 				login.home_screen(login);
 				break;
 			default:

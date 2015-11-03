@@ -150,15 +150,23 @@ private static Resource resource = new Resource( );
 			
 			if(r_action==3){
 				System.out.println("This publication is already present with you. Please follow the renew procedure to renew the book.");
+				System.out.println(" Enter 2 for soft copy. ");
+				type = stdin.nextInt();	
 			}
 			else if(r_action==4){
 				System.out.println("You have renewed this publication once. You Must return the publication.");
+				System.out.println(" Enter 2 for soft copy. ");
+				type = stdin.nextInt();	
 			}
 			else if(r_action==5){
 				System.out.println("You have already requested this book. You will be notified when available.");
+				System.out.println(" Enter 2 for soft copy. ");
+				type = stdin.nextInt();	
 			}
 			else if(r_action==6){
 				System.out.println("This publication is reserved. Cannot be checked out.");
+				System.out.println(" Enter 2 for soft copy. ");
+				type = stdin.nextInt();	
 			}
 			else{
 				System.out.println(" Enter 1 for hard copy, 2 for soft copy. ");
