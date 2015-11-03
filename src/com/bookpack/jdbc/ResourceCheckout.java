@@ -82,6 +82,7 @@ public class ResourceCheckout {
 
 			rs = cstmt.executeQuery();
 
+			System.out.print("RID			");
 			System.out.print("LIB_NAME		");
 			System.out.print("CONF NO		");
 			System.out.print("CONF NAME		");
@@ -137,6 +138,7 @@ public class ResourceCheckout {
 
 			rs = cstmt.executeQuery();
 
+			System.out.print("RID			");
 			System.out.print("LIB_NAME		");
 			System.out.print("ISSN		");
 			System.out.print("STATUS		");
@@ -457,7 +459,6 @@ public class ResourceCheckout {
 				}
 			}
 		}
-
 		
 	}
 	
@@ -523,6 +524,23 @@ public class ResourceCheckout {
 				}
 			}
 		}
+		int i = 0;
+		
+		do
+		{
+			System.out.println("1. GO back");
+			System.out.print("Enter your Choice >> ");
+
+			i = stdin.nextInt();
+			stdin.nextLine();
+			switch (i) {
+			case 1:
+				display_checked_out_resources(login);
+				break;
+			default:
+				System.out.println("Wrong input. Try again!");
+			}
+		}while(i!=999);
 
 	}
 	
@@ -616,7 +634,7 @@ public class ResourceCheckout {
 			default:
 				System.out.println("Wrong input. Try again!");
 			}
-		}while(func!=2);
+		}while(func!=999);
 	}
 	
 	public void display_checked_out_resources(Login login)
@@ -703,6 +721,6 @@ public class ResourceCheckout {
 			default:
 				System.out.println("Wrong input. Try again!");
 			}
-		}while(func!=3);
+		}while(func!=999);
 	}
 }
