@@ -232,7 +232,7 @@ public class Resource {
 		String library_name = "", ret = "";
 		java.sql.Timestamp ts2=null, ts3=null;
 		CallableStatement cstmt = null;
-		double wait_list_no=0, dummy=0;
+		double wait_list_no=0, borrow_id=0;
 
 		try{
 
@@ -255,13 +255,17 @@ public class Resource {
 			library_name = cstmt.getString(8);
 			wait_list_no = cstmt.getDouble(9);
 			ts2 = cstmt.getTimestamp(10);
-
+			borrow_id = cstmt.getDouble(11);
+			
 			ret = ts2.toString();
 			if(r_action == 1){
 				if(ts2 != null && type_pub!="E"){			
 					System.out.println("Congrats, you have checked it out. Return Date is : " + ret);
 				}
-				else if(type_pub == "E"){
+				else if(type_pub == "E" && borrow_id == 0){
+					System.out.println("You already have the Soft copy of this publication. ");
+				}
+				else if(type_pub == "E" && borrow_id > 0){
 					System.out.println("Congrats, you have checked it out. ");
 				}
 			}
@@ -290,18 +294,17 @@ public class Resource {
 	public void show_study_rooms(){
 
 		int choice;
-		double r_no_occupants, r_libid, room_id, rtype_id;
-		java.sql.Timestamp ts2;
+		double r_no_occupants, r_libid, room_id, rtype_id, floor;
+		java.sql.Timestamp ts2, ts3;
 
 		List<Double> rtype_ids = new ArrayList<Double>();
-		String checkout = "";
+		String checkout_time = "", return_time = "";
 
-		String sql = "{call athoma12.user_auth.roomCheckout1(?,?,?,?)}";
-		String sql1 = "SELECT * FROM <view_name>";
+		String sql = "";
 		CallableStatement cstmt = null;
 		Statement stmt = null;
 		ResultSet rs;
-
+		String room_type = "Study Room";
 		int option=0;
 
 		System.out.println("Enter Required capacity. ");
@@ -310,44 +313,63 @@ public class Resource {
 		System.out.println("Enter Lib ID ( Hill = 1, Hunt=2)");
 		r_libid = stdin.nextDouble();
 
-		System.out.print("Enter Checkout Time");		//Correct format required
-		checkout = stdin.nextLine();
+		stdin.nextLine();
+		System.out.print("Enter Checkout Time");		//Correct format required 2015-11-03 07:00:00 [.000000000] 03-NOV-15 07.17.21.917423000 AM
+		checkout_time = "2005-04-06 09:01:10";//stdin.nextLine();
+		
+		System.out.print("Enter Return Time");		//Correct format required
+		return_time = "2005-04-06 09:01:10";//stdin.nextLine();
 
-		ts2 = java.sql.Timestamp.valueOf(checkout);
-
+		ts2 = java.sql.Timestamp.valueOf(checkout_time);
+		ts3 = java.sql.Timestamp.valueOf(return_time);
+		
+		sql = "SELECT RO.rtype_id, RO.room_id, RO.position" +
+		" FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R" +
+		" WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id" +
+		"        AND RO.capacity = "+ r_no_occupants +" AND RO.roomtype = "+ room_type +" AND L.lib_id = "+ r_libid +"" +
+		"        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist" +
+		"                        WHERE (reservation_start BETWEEN "+ ts2 +" AND "+ ts3 +")" +
+		"                        AND (reservation_end BETWEEN "+ ts2 +" AND "+ ts3 +"))" +
+		" UNION " +
+		"  SELECT RO.rtype_id, RO.room_id, RO.position" +
+		" FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R" +
+		" WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id" +
+		"        AND RO.capacity >= "+ r_no_occupants +" AND RO.roomtype = "+ room_type +" AND L.lib_id = "+ r_libid +"" +
+		"        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist" +
+		"                        WHERE (reservation_start BETWEEN "+ ts2 +" AND "+ ts3 +")" +
+		"                        AND (reservation_end BETWEEN "+ ts2 +" AND "+ ts3 +"))" +
+		"		AND NOT EXISTS (  SELECT  RO.rtype_id, RO.room_id, RO.position" +
+		" 		FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R" +
+		" 		WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id" +
+		"        AND RO.capacity = "+ r_no_occupants +" AND RO.roomtype = "+ room_type +" AND L.lib_id = "+ r_libid +"" +
+		"        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist" +
+		"                        WHERE (reservation_start BETWEEN "+ ts2 +" AND "+ ts3 +")" +
+		"                        AND (reservation_end BETWEEN "+ ts2 +" AND "+ ts3 +")));";		
+			
 		try{
-			cstmt = DBConnection.conn.prepareCall(sql);
-
-			cstmt.setDouble(1, lobj.patron_id);
-			cstmt.setDouble(2, r_no_occupants);
-			cstmt.setDouble(3, r_libid);
-			cstmt.setTimestamp(4, ts2);
-
-			cstmt.execute();
-
-			System.out.println(" Select the room number. List of all the rooms as per requirement : \n");
-
 			stmt = DBConnection.conn.createStatement();
+
 			rs = stmt.executeQuery(sql);
-
+			
 			while(rs.next()){
-				room_id = rs.getDouble("room_id");
 				rtype_id = rs.getDouble("rtype_id");
-				System.out.println( option + ". Room no.: \t" + room_id);
 				rtype_ids.add(rtype_id);
-				option++;
+				floor = rs.getDouble("position");
+				System.out.println( ++option + ". Floor: " + floor);
 			}
-
-			System.out.println(" Choose any option. -999 to go back. ");
-
+			
+			System.out.println(" Choose one of the serial numbers. -999 to go back. ");
 			choice = stdin.nextInt();
-			if(choice == 999){
+			
+			System.out.println("1. Reserve");
+			
+			if(choice == -999){
 				;
 			}
-			else{
-				rtype_id = rtype_ids.get(choice);
-				reserve_room(rtype_id, ts2);
-			}			
+			else if(choice < option){
+				rtype_id = rtype_ids.get(choice-1);
+				reserve_room(rtype_id);
+			}
 
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -355,12 +377,6 @@ public class Resource {
 			if(stmt != null)
 			{
 				try{stmt.close();}
-				catch(SQLException e){
-				}
-			}
-			if(cstmt != null)
-			{
-				try{cstmt.close();}
 				catch(SQLException e){
 				}
 			}
@@ -371,61 +387,81 @@ public class Resource {
 	public void show_conf_rooms(){
 
 		int choice;
-		double r_no_occupants, r_libid = 2, room_id, rtype_id;
-		java.sql.Timestamp ts2;
+		double r_no_occupants, r_libid, room_id, rtype_id, floor;
+		java.sql.Timestamp ts2, ts3;
 
 		List<Double> rtype_ids = new ArrayList<Double>();
-		String checkout = "";
+		String checkout_time = "", return_time = "";
 
-		String sql = "{call athoma12.user_auth.roomCheckout1(?,?,?,?)}";
+		String sql = "";
 		String sql1 = "SELECT * FROM <view_name>";
 		CallableStatement cstmt = null;
 		Statement stmt = null;
 		ResultSet rs;
-
+		String room_type = "Conference Room";
 		int option=0;
 
 		System.out.println("Enter Required capacity. ");
 		r_no_occupants = stdin.nextDouble();
 
+		System.out.println("Enter Lib ID ( Hill = 1, Hunt=2)");
+		r_libid = stdin.nextDouble();
+
 		System.out.print("Enter Checkout Time");		//Correct format required
-		checkout = stdin.nextLine();
+		checkout_time = stdin.nextLine();
+		
+		System.out.print("Enter Return Time");		//Correct format required
+		return_time = stdin.nextLine();
 
-		ts2 = java.sql.Timestamp.valueOf(checkout);
+		ts2 = java.sql.Timestamp.valueOf(checkout_time);
+		ts3 = java.sql.Timestamp.valueOf(return_time);
+		
 
+		sql = "SELECT RO.rtype_id, RO.room_id, RO.position FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R "
+				+ "WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id"
+        + "AND RO.capacity = " + r_no_occupants + " AND RO.roomtype = " + room_type + " AND L.lib_id = " + r_libid        + "AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist +"
+        + " WHERE (reservation_start BETWEEN " + ts2 + " AND " +  ts3 +  ") "
+        + " AND (reservation_end BETWEEN " + ts2 + " AND " + ts3 + " ))"
+        + "UNION "
+        + "SELECT RO.rtype_id, RO.room_id, RO.position "
+        + " FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R "
+        + " WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id "
+        + "AND RO.capacity >= " + r_no_occupants + " AND RO.roomtype = " + room_type + " AND L.lib_id = r_lib_id "
+        + "AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist "
+        + "WHERE (reservation_start BETWEEN " + ts2 + " AND " + ts3 + ") "
+        + "AND (reservation_end BETWEEN " + ts2 + " AND " + ts3 + ")) "
+        + "AND NOT EXISTS (  SELECT RO.rtype_id, RO.room_id, RO.position "
+        + "FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R "
+        + "WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id "
+        + "AND RO.capacity = " + r_no_occupants + " AND RO.roomtype = " + room_type + " AND L.lib_id = r_lib_id "
+        + "AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist"
+        + "WHERE (reservation_start BETWEEN " + ts2 + " AND " + ts3 + ") "
+        + "AND (reservation_end BETWEEN " + ts2 + " AND " + ts3 + ")));";
+		
 		try{
-			cstmt = DBConnection.conn.prepareCall(sql);
-
-			cstmt.setDouble(1, lobj.patron_id);
-			cstmt.setDouble(2, r_no_occupants);
-			cstmt.setDouble(3, r_libid);
-			cstmt.setTimestamp(4, ts2);
-
-			cstmt.execute();
-
-			System.out.println(" Select the room number. List of all the rooms as per requirement : \n");
-
 			stmt = DBConnection.conn.createStatement();
+
 			rs = stmt.executeQuery(sql);
-
+			
 			while(rs.next()){
-				room_id = rs.getDouble("room_id");
 				rtype_id = rs.getDouble("rtype_id");
-				System.out.println( option + ". Room no.: \t" + room_id);
 				rtype_ids.add(rtype_id);
-				option++;
+				floor = rs.getDouble("position");
+				System.out.println( ++option + ". Floor: " + floor);
 			}
-
-			System.out.println(" Choose any option. -999 to go back. ");
-
+			
+			System.out.println(" Choose one of the serial numbers. -999 to go back. ");
 			choice = stdin.nextInt();
+			
+			System.out.println("1. Reserve");
+			
 			if(choice == -999){
 				;
 			}
-			else{
-				rtype_id = rtype_ids.get(choice);
-				reserve_room(rtype_id, ts2);
-			}			
+			else if(choice < option){
+				rtype_id = rtype_ids.get(choice-1);
+				reserve_room(rtype_id);
+			}
 
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -436,38 +472,44 @@ public class Resource {
 				catch(SQLException e){
 				}
 			}
-			if(cstmt != null)
-			{
-				try{cstmt.close();}
-				catch(SQLException e){
-				}
-			}
 		}
-
 	}
-	public void reserve_room(double rtype_id, java.sql.Timestamp ts2){
+	public void reserve_room(double rtype_id){
 
-		String sql = "{call athoma12.user_auth.roomCheckout2(?,?,?)}";
-		CallableStatement cstmt = null ;		
-
+		String sql = "{call athoma12.R_CHECKOUT.Checkout_or_waitlist(?,?,?,?,?,?,?,?,?,?,?)}";
+		CallableStatement cstmt = null;
+		double wait_list_no=0, borrow_id_next = 0;
+		java.sql.Timestamp ts2 = null;
+		
 		try{
 			cstmt = DBConnection.conn.prepareCall(sql);
 
 			cstmt.setDouble(1, rtype_id);
 			cstmt.setDouble(2, lobj.patron_id);
-			cstmt.setTimestamp(3, ts2);	
-
-			System.out.println(" Room has been reserved successfully.");
-
-		}catch (SQLException e) {
+			cstmt.setString(4, "");
+			cstmt.setString(5, "");
+			cstmt.setTimestamp(6, ts2);
+			cstmt.setTimestamp(7, ts2);
+			cstmt.registerOutParameter(8, java.sql.Types.VARCHAR);
+			cstmt.registerOutParameter(9, java.sql.Types.DOUBLE);
+			cstmt.registerOutParameter(10, java.sql.Types.TIMESTAMP);
+			
+			cstmt.setDouble(3, 2);
+			cstmt.registerOutParameter(11, java.sql.Types.DOUBLE);
+			
+			cstmt.execute();
+			
+			wait_list_no = cstmt.getDouble(11);
+			
+			if(wait_list_no != 0){
+				System.out.println(" You have successfully reserved the room. Your check out date is friday 9am ");
+			}
+		
+			
+		}catch(SQLException e){
 			e.printStackTrace();
 		} finally {
-			if(cstmt != null)
-			{
-				try{cstmt.close();}
-				catch(SQLException e){
-				}
-			}
+			
 		}
 	}
 
