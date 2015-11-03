@@ -30,7 +30,9 @@ PROCEDURE Renew(
 					r_due_time    	OUT   		TIMESTAMP
 					) ;
 
-PROCEDURE Cancels_and_notifs();
+PROCEDURE Cancels_and_notifs(
+	all_is_well OUT NUMBER
+);
 					
 
 END R_CHECKOUT;
@@ -143,25 +145,7 @@ PROCEDURE Checkout_or_waitlist(
 						  );
 						  
 -------------------------------------------------------------------------------------
-Checkout_or_waitlist API for publications
-
-for reservation -- r_action = 2 --
-
-PROCEDURE Checkout_or_waitlist(
-						r_rtype_id 			IN 		 -----------  	REQUIRED
-						r_patron_id			IN 		 -----------	REQUIRED
-						r_action		  	IN	 	 -----------	REQUIRED
-						r_h_or_e 		  	IN 		 -----------	NA
-						r_lib_of_preference IN	 	 -----------	NA
-						room_reservation_start 	IN	 -----------	NA
-						room_reservation_end 	IN	 -----------	NA
-						r_libname_of_pick_up 	OUT	 -----------	NA
-						r_no_in_waitlist 		OUT  -----------	NA
-	          			r_due_time    			OUT  -----------	NA
-	          			borrow_id_nextval 		OUT  -----------	VALID
-						  );
-					
-for checkout -- r_action = 1 --
+Checkout_or_waitlist API for epublications
 
 PROCEDURE Checkout_or_waitlist(
 						r_rtype_id 			IN 		 -----------  	REQUIRED
