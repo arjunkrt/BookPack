@@ -11,7 +11,7 @@ public class ResourceRequest {
 	static Scanner stdin = new Scanner(System.in);
 	private static ResourceRequest resource_request = new ResourceRequest( );
 	
-	public static ResourceRequest getInstance( ) {
+	public static ResourceRequest getObject( ) {
 		return resource_request;
 	}
 	public void requested_resources_details(Login login)

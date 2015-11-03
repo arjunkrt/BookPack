@@ -14,7 +14,7 @@ public class ResourceCheckout {
 	static Scanner stdin = new Scanner(System.in);
 	private static ResourceCheckout resource_check_out = new ResourceCheckout( );
 
-	public static ResourceCheckout getInstance( ) {
+	public static ResourceCheckout getObject( ) {
 		return resource_check_out;
 	}
 	public void display_pub_books(Login login,int rid)
@@ -82,6 +82,7 @@ public class ResourceCheckout {
 
 			rs = cstmt.executeQuery();
 
+			System.out.print("RID			");
 			System.out.print("LIB_NAME		");
 			System.out.print("CONF NO		");
 			System.out.print("CONF NAME		");
@@ -137,6 +138,7 @@ public class ResourceCheckout {
 
 			rs = cstmt.executeQuery();
 
+			System.out.print("RID			");
 			System.out.print("LIB_NAME		");
 			System.out.print("ISSN		");
 			System.out.print("STATUS		");
@@ -174,7 +176,7 @@ public class ResourceCheckout {
 			}
 		}
 	}
-	
+
 	public void display_camera_details(Login login,int rid)
 	{
 		String sql = "SELECT * FROM athoma12.journal_rid_details where rid = ?";
@@ -187,7 +189,7 @@ public class ResourceCheckout {
 			cstmt.setInt(1, rid);
 
 			rs = cstmt.executeQuery();
-			
+
 			System.out.print("RESOURCE ID		");
 			System.out.print("LIB_NAME		");
 			System.out.print("CAM ID		");
@@ -234,7 +236,7 @@ public class ResourceCheckout {
 			}
 		}
 	}
-	
+
 	public void display_room_details(Login login,int rid)
 	{
 		String sql = "SELECT * FROM athoma12.rooms_rid_details where rid = ?";
@@ -247,7 +249,7 @@ public class ResourceCheckout {
 			cstmt.setInt(1, rid);
 
 			rs = cstmt.executeQuery();
-			
+
 			System.out.print("RESOURCE ID		");
 			System.out.print("LIB_NAME		");
 			System.out.print("ROOM ID		");
@@ -290,7 +292,7 @@ public class ResourceCheckout {
 			}
 		}
 	}
-	
+
 	public void checked_out_resources_details(Login login)
 	{	
 		int func,sl_no=0,rid = 0;
@@ -345,30 +347,30 @@ public class ResourceCheckout {
 
 		cstmt = null;
 		rs = null;
-		
+
 		if(r_type.equals("PB"))
 		{
-		display_pub_books(login,rid);
+			display_pub_books(login,rid);
 		}
 		else if(r_type.equals("PC"))
 		{
-		display_pub_conf(login,rid);
+			display_pub_conf(login,rid);
 		}
 		else if(r_type.equals("PJ"))
 		{
-		display_pub_journal(login,rid);
+			display_pub_journal(login,rid);
 		}
 		else if(r_type.equals("C"))
 		{
-		display_camera_details(login,rid);
+			display_camera_details(login,rid);
 		}
 		else if(r_type.equals("RC"))
 		{
-		display_room_details(login,rid);
+			display_room_details(login,rid);
 		}
 		else if(r_type.equals("RS"))
 		{
-		display_room_details(login,rid);
+			display_room_details(login,rid);
 		}
 
 		do
@@ -385,55 +387,55 @@ public class ResourceCheckout {
 			default:
 				System.out.println("Wrong input. Try again!");
 			}
-		}while(func!=2);
+		}while(func!=999);
 
 
 	}
-	
+
 	public void renew_procedure(Login lobj, double rid, String r_type, double borrow_id, double rtype_id){
-		
+
 		String sql = "select * from athoma12.PUB_CHECKOUT_VIEW where patron_id = " + 
-					lobj.patron_id + "AND rtype_id = " + rtype_id;
-		
+				lobj.patron_id + "AND rtype_id = " + rtype_id;
+
 		String sql1 = "{call athoma12.R_CHECKOUT.Renew(?,?,?)}";
 		CallableStatement cstmt = null;
-		
+
 		Statement stmt = null;
 		String ret_date = "";
 		java.sql.Timestamp ts2=null;
-		
+
 		double r_action=0 ;
 		ResultSet rs;
-		
+
 		try{
-		
+
 			stmt = DBConnection.conn.prepareCall(sql);
 			rs = stmt.executeQuery(sql);
-			
+
 			while(rs.next()){
 				r_action = rs.getDouble(6);
 			}
-			
+
 			System.out.println(" RACTION =" + r_action);
-			
+
 			if(r_action==4){
 				System.out.println("You have renewed this publication once. You Must return the publication.");
 			}
-			
+
 			else if(r_action==3){
 				try{
 					cstmt = DBConnection.conn.prepareCall(sql1);
-					
+
 					cstmt.setDouble(1, borrow_id);
 					cstmt.setDouble(2, lobj.patron_id);
 					cstmt.registerOutParameter(3, java.sql.Types.TIMESTAMP);
-					
+
 					cstmt.execute();
-					
+
 					ts2 = cstmt.getTimestamp(3);
 					ret_date = ts2.toString();
 					System.out.println(" Congrats, you have renewed it. Your return date is: "+ ret_date);
-					
+
 				}catch (SQLException e) {
 					e.printStackTrace();
 				} finally {
@@ -444,9 +446,9 @@ public class ResourceCheckout {
 						}
 					}
 				}
-				
+
 			}
-					
+
 		}catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -458,12 +460,11 @@ public class ResourceCheckout {
 			}
 		}
 
-		
 	}
-	
+
 	public void renew_resources(Login login)
 	{
-		
+
 		double func, sl_no=0, rid=0, rtype_id=0, borrow_id=0;
 		String r_type = "";
 		PreparedStatement pstmt = null;
@@ -474,7 +475,7 @@ public class ResourceCheckout {
 
 		try {
 			pstmt = DBConnection.conn.prepareStatement(sql);
-			pstmt.setDouble(1, login.patron_id/*login.patron_id*/);
+			pstmt.setDouble(1, login.patron_id);
 
 			rs = pstmt.executeQuery();
 
@@ -482,7 +483,7 @@ public class ResourceCheckout {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("<Menu>");	
 		System.out.println("Enter the serial no to renew the resource");
 		System.out.print("Enter your Choice >> ");
@@ -503,7 +504,7 @@ public class ResourceCheckout {
 					break;
 				}
 			}
-			
+
 			if(r_type.equals("PB") || r_type.equals("PC") || r_type.equals("PJ")){
 
 				renew_procedure(login, rid, r_type, borrow_id, rtype_id);
@@ -523,12 +524,29 @@ public class ResourceCheckout {
 				}
 			}
 		}
+		int i = 0;
+
+		do
+		{
+			System.out.println("1. GO back");
+			System.out.print("Enter your Choice >> ");
+
+			i = stdin.nextInt();
+			stdin.nextLine();
+			switch (i) {
+			case 1:
+				display_checked_out_resources(login);
+				break;
+			default:
+				System.out.println("Wrong input. Try again!");
+			}
+		}while(i!=999);
 
 	}
-	
+
 	public void return_resources(Login login)
 	{
-		
+
 		int func,sl_no=0,rid = 0;
 		String r_type = "";
 		PreparedStatement pstmt = null;
@@ -539,7 +557,7 @@ public class ResourceCheckout {
 
 		try {
 			pstmt = DBConnection.conn.prepareStatement(sql);
-			pstmt.setDouble(1, 1019/*login.patron_id*/);
+			pstmt.setDouble(1, login.patron_id);
 
 			rs = pstmt.executeQuery();
 
@@ -547,7 +565,7 @@ public class ResourceCheckout {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("<Menu>");	
 		System.out.println("Enter the serial no to return the resource");
 		System.out.print("Enter your Choice >> ");
@@ -577,31 +595,38 @@ public class ResourceCheckout {
 				}
 			}
 		}
-		
-		System.out.println(borrow_id);
-		
-		sql = "{call athoma12.resource_due_balance.return_resource(?)}";
-		CallableStatement cstmt=null;
 
-		try {
-			cstmt = DBConnection.conn.prepareCall(sql);
-
-			cstmt.setInt(1,borrow_id);
-
-			cstmt.execute();
+		if(sl_no == 0)
+		{
+			System.out.println("Currently you dont have any resource to return");
 
 		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if(cstmt != null)
-			{
-				try{cstmt.close();}
-				catch(SQLException e){
+
+		else
+		{
+			sql = "{call athoma12.resource_due_balance.return_resource(?)}";
+			CallableStatement cstmt=null;
+
+			try {
+				cstmt = DBConnection.conn.prepareCall(sql);
+
+				cstmt.setInt(1,borrow_id);
+
+				cstmt.execute();
+
+			}
+			catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if(cstmt != null)
+				{
+					try{cstmt.close();}
+					catch(SQLException e){
+					}
 				}
 			}
 		}
-		
+
 		do
 		{
 			System.out.println("1. GO back");
@@ -616,9 +641,9 @@ public class ResourceCheckout {
 			default:
 				System.out.println("Wrong input. Try again!");
 			}
-		}while(func!=2);
+		}while(func!=999);
 	}
-	
+
 	public void display_checked_out_resources(Login login)
 	{
 		System.out.println("Display Checked out resources");
@@ -630,9 +655,8 @@ public class ResourceCheckout {
 
 		try {
 			cstmt = DBConnection.conn.prepareStatement(sql);
-			//cstmt.setDouble(1, 1019/*login.patron_id*/);
-			cstmt.setDouble(1, login.patron_id/*login.patron_id*/);
-			
+			cstmt.setDouble(1, login.patron_id);
+
 			rs = cstmt.executeQuery();
 
 			System.out.print("Sl.No    ");
@@ -703,6 +727,6 @@ public class ResourceCheckout {
 			default:
 				System.out.println("Wrong input. Try again!");
 			}
-		}while(func!=3);
+		}while(func!=999);
 	}
 }

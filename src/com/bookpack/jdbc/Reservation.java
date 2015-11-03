@@ -10,32 +10,32 @@ import java.util.Scanner;
 
 public class Reservation {
 
-private static Reservation reservation = new Reservation( );
-	
+	private static Reservation reservation = new Reservation( );
+
 	public static Reservation getInstance( ) {
 		return reservation;
 	}
-	
+
 	Login lobj;
 	double patron_id;
-	
+
 	String user_type;
-	
+
 	static Scanner stdin = new Scanner(System.in);
 	static final String jdbcURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
-	
+
 	public void reservation_publications(Login l1){
-		
+
 		int choice; 
-		
+
 		lobj = l1;
 		System.out.println("1. Reserve a Book for your students. ");
 		System.out.println("2. Unreserve a book reserved by you. ");
-		
+
 		choice = stdin.nextInt();
 		display(choice);		
 	}
-	
+
 	public void display(int choice){
 		int option=0;
 		String sql1 = "SELECT * FROM athoma12.FAC_COURSE_BOOKS WHERE PATRON_ID = "+ lobj.patron_id 
@@ -47,7 +47,7 @@ private static Reservation reservation = new Reservation( );
 		ResultSet rs;
 		List<Double> rtype_ids = new ArrayList<Double>();
 		double rtype_id;		
-		
+
 		try{
 			stmt = DBConnection.conn.createStatement();
 			if(choice == 1)
@@ -59,7 +59,7 @@ private static Reservation reservation = new Reservation( );
 					System.out.println( ++option + title);
 					rtype_ids.add(rtype_id);
 				}
-				
+
 				if(option == 0)
 					System.out.println("You have no books to reserve. ");
 				else{
@@ -82,10 +82,10 @@ private static Reservation reservation = new Reservation( );
 					System.out.println("Enter your choice. ");
 					choice = stdin.nextInt();
 					update_table(rtype_ids.get(choice-1), 0);
-		
+
 				}
 			}
-				
+
 		}catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -97,13 +97,13 @@ private static Reservation reservation = new Reservation( );
 			}
 		}
 	}
-	
+
 	public void update_table(double rtype_id, int act){
-		
+
 		String sql = "{call athoma12.faculty_books.updateBookReservation(?,?)}";
 		CallableStatement cstmt = null;
 		String action = "";
-		
+
 		try{
 			cstmt = DBConnection.conn.prepareCall(sql);
 			if(act == 1)
@@ -113,9 +113,9 @@ private static Reservation reservation = new Reservation( );
 			System.out.println(rtype_id);
 			cstmt.setDouble(1, rtype_id);
 			cstmt.setString(2,  action);
-			
+
 			//System.out.println(cstmt.execute());
-			
+
 			if(cstmt.executeUpdate()>0){
 				if(act == 1){
 					System.out.println(" Book has been successsfully reserved. ");
@@ -127,7 +127,7 @@ private static Reservation reservation = new Reservation( );
 			{
 				System.out.println(" Update Failed. ");
 			}
-			
+
 		}catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -138,8 +138,8 @@ private static Reservation reservation = new Reservation( );
 				}
 			}
 		}
-		
-		
+
+
 	}
-	
+
 }

@@ -1,0 +1,35 @@
+Query 1:
+
+select p.first_name, qrst.numTimesNotReturned from patrons p, (
+select patron_id, count(*) AS numTimesNotReturned from borrows where return_time > due_time
+and due_time between '05-OCT-2015' and '05-NOV-2015'
+group by patron_id) qrst
+where p.patron_id = qrst.patron_id;
+
+
+Query 2:
+
+select count(*) from waitlist w, rooms r where w.rtype_id = r.rtype_id
+and w.reservation_start between to_date('30-OCT-2015 00:00:00','DD-MON-YYYY HH24:MI:SS') 
+                                and to_date('06-NOV-2015 23:59:59', 'DD-MON-YYYY HH24:MI:SS');
+
+Query 3:
+
+select sum(dues_collected) from borrows b where clear_dues = 'Y' 
+and return_time between to_date('05-OCT-2015 00:00:00','DD-MON-YYYY HH24:MI:SS') 
+                        and to_date('05-NOV-2015 23:59:59','DD-MON-YYYY HH24:MI:SS');
+
+Query 4:
+
+select max(capacity) keep (dense_rank last order by capfrequency) as capacity,
+max(capfrequency) as capfrequency
+from (
+	select qrst.capacity, ((select count(*) from borrows b, resources r, rooms ro
+	where b.rid = r.rid
+	and r.rtype_id = ro.rtype_id
+	and ro.CAPACITY = qrst.capacity) + 
+	(select count(*) from waitlist w, rooms ro where w.rtype_id = ro.rtype_id and ro.capacity=qrst.capacity)) AS capfrequency
+	from (
+	select distinct capacity from rooms ro
+) qrst
+);                        

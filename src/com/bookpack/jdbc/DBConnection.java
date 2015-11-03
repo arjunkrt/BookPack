@@ -12,27 +12,27 @@ public class DBConnection {
 		try{
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			String user = "ghanams";	
-			String passwd = "200109966";
+			String user = "akarat";	
+			String passwd = "200109405";
 
 
-				conn = DriverManager.getConnection(jdbcURL, user, passwd);
-				conn.setAutoCommit(false);
-				
+			conn = DriverManager.getConnection(jdbcURL, user, passwd);
+			conn.setAutoCommit(false);
+
 		} catch(Throwable oops) {
 			oops.printStackTrace();
 		}
 	}
-	
+
 	protected void finalize() throws Throwable {
-	     try {
-	         if(!conn.isClosed())
-	         {
-	        	 conn.commit();
-	        	 conn.close();        
-	         }
-	     } finally {
-	         super.finalize();
-	     }
-	 }
+		try {
+			if(!conn.isClosed())
+			{
+				conn.commit();
+				conn.close();        
+			}
+		} finally {
+			super.finalize();
+		}
+	}
 }

@@ -77,7 +77,7 @@ select * from athoma12.PUB_CHECKOUT_VIEW where patron_id = usr_patron_id AND rty
         AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist
                         WHERE (reservation_start BETWEEN r_time_in AND r_time_out)
                         AND (reservation_end BETWEEN r_time_in AND r_time_out))
-
+UNION
   SELECT RO.room_id, RO.position
  FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R
  WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id
@@ -99,7 +99,7 @@ select * from athoma12.PUB_CHECKOUT_VIEW where patron_id = usr_patron_id AND rty
 --To list all avilable cameras
 
 CREATE OR REPLACE VIEW athoma12.CAM_CHECKOUT_VIEW AS
-SELECT R.rid AS UNIQUE_CAMERA_ID, C.make||' '||C.model AS DESCRIPTION, L.lib_name
+SELECT R.rtype_id AS UNIQUE_CAMERA_ID, C.make||' '||C.model AS DESCRIPTION, L.lib_name
 FROM athoma12.cameras C, athoma12.Resources R, athoma12.library L
 WHERE R.rtype_id = C.rtype_id AND R.lib_id = L.lib_id AND R.status = 'Available';
 
