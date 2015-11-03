@@ -20,7 +20,7 @@ procedure get_total_balance(
             l_due_balance NUMBER;
             l_type        ATHOMA12.USER_CHECKOUT_SUMMARY.TYPE%type;
             l_borrow_id   ATHOMA12.USER_CHECKOUT_SUMMARY.BORROW_ID%type;
-            l_overdue_time interval day to second := null;
+            l_overdue_time interval day(9) to second := null;
            cursor c1 is select RID,TYPE,BORROW_ID from ATHOMA12.USER_CHECKOUT_SUMMARY where PATRON_ID=p_patron_id and RETURN_TIME is null;	
             BEGIN
             l_total_balance := 0;
@@ -45,7 +45,7 @@ function get_due_balance(
             RETURN NUMBER
             IS --,
             l_due_balance NUMBER(20);
-            l_overdue_time interval day to second;
+            l_overdue_time interval day(9) to second;
             l_return_time   ATHOMA12.USER_CHECKOUT_SUMMARY.RETURN_TIME%type;
             l_due_time   ATHOMA12.USER_CHECKOUT_SUMMARY.DUE_TIME%type;
             l_time_overdue number := 0;
