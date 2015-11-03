@@ -25,8 +25,9 @@ public class Notifications {
 		String sql2 = "select * from athoma12.notification_attributes na "
 				+ "where notification_id = ? order by attribute_number";
 		
-		String sql3 = "select * from notification_grp_params ngp "
-				+ "where ngp.notification_id = ?";//1018
+		String sql3 = "select * from athoma12.notification_grp_params ngp "
+				+ "where ngp.notification_id = ?"
+				+ "order by grp_attribute_number, ind_attribute_number";//1018
 		
 		PreparedStatement cstmt=null;
 		ResultSet rs1,rs2,rs3 = null;
@@ -44,25 +45,65 @@ public class Notifications {
 			while(rs1.next())
 			{
 				message1 = rs1.getString("TEMPLATE_BODY");
-
+				double notif_id = rs1.getDouble("NOTIFICATION_ID");
 				cstmt = DBConnection.conn.prepareStatement(sql2);
-				cstmt.setInt(1,1019/*login.patron_id*/);//1019
+				cstmt.setDouble(1,notif_id);//currently hardcoded the notification_id
 
 				rs2 = cstmt.executeQuery();
 				while(rs2.next())
 				{
-//					if(rs2.getInt("ATTRIBUTE_NUMBER") == 1)
-//					{
-//						message2 = message1.replace("|ARG|",rs2.getString("ATTRIBUTE_VALUE"));
-//					}
-//					else if(rs2.getInt("ATTRIBUTE_NUMBER") == 2)
-//					{
-//						message2 = message2.replace("|ARG|",rs2.getString("ATTRIBUTE_VALUE"));
-//					}
-					System.out.println(rs2.getString("ATTRIBUTE_VALUE"));
-					message2 = message1.replace("|ARG|",rs2.getString("ATTRIBUTE_VALUE"));
+					message1 = message1.replace("|"+rs2.getString("ATTRIBUTE_NAME")+"|",rs2.getString("ATTRIBUTE_VALUE"));
 				}
-				System.out.println(message2);
+				
+				int aftergargbegin = message1.indexOf("|GARG|")+6;
+				int gargend = message1.lastIndexOf("|GARG|");
+				//System.out.println(message1.subSequence(aftergargbegin, gargend));
+				//for (int i=0; i<temp.length; i++)
+				//	System.out.println(i+"."+temp[i]);
+				
+				//System.out.println("Afergargbegin: "+aftergargbegin);
+				if (aftergargbegin > 5)
+				{
+					cstmt = DBConnection.conn.prepareStatement(sql3);
+					cstmt.setDouble(1,notif_id);//currently hardcoded the notification_id
+										
+					rs3 = cstmt.executeQuery();
+					
+					
+					int sno=0;
+					String gargtext = "";
+					String tempLines = "";
+					double old_grp_attribute_number=0 ;
+					double new_grp_attribute_number;
+					while(rs3.next())
+					{
+						new_grp_attribute_number= rs3.getDouble("GRP_ATTRIBUTE_NUMBER");
+						if (new_grp_attribute_number != old_grp_attribute_number)
+						{
+							//Adding previous group to tempLines
+							tempLines=tempLines+gargtext+'\n';
+							
+							//Setting gargtext to default template
+							gargtext = (String) message1.subSequence(aftergargbegin, gargend);
+							++sno;
+							
+							gargtext = gargtext.replace("|SNO|",""+sno);
+
+						}	
+						
+						gargtext = gargtext.replace("|"+rs3.getString("ATTRIBUTE_NAME")+"|",rs3.getString("ATTRIBUTE_VALUE"));
+						
+						old_grp_attribute_number = new_grp_attribute_number;
+					}
+					tempLines=tempLines+gargtext+'\n'; //Adding last line to gargtext
+					String[] temp = message1.split("\\|[G][A][R][G]\\|.*\\|[G][A][R][G]\\|");
+					message1 = temp[0]+tempLines+temp[1];
+				}
+				
+				message1 = message1.replace("|\\t|", "\t");
+				System.out.println(message1);
+				System.out.println("----------------------------------");
+				
 			}
 		}
 		catch (SQLException e) {
