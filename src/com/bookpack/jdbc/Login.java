@@ -113,7 +113,7 @@ public class Login {
 				System.out.println("Wrong input. Try again!");
 			}
 		}
-		while (func != 2);
+		while (func != 999);
 	}
 	public void login_screen()
 	{
