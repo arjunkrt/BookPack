@@ -540,7 +540,7 @@ END IF;
 			
 	END Renew;		
 -----------------------------------------------------------------------------
-
+/*
 PROCEDURE Cancels_and_notifs(
 	all_is_well OUT NUMBER
 )
@@ -562,7 +562,7 @@ BEGIN
 		ROLLBACK TO beginFunc;
 
 END Cancels_and_notifs;
-
+*/
 
 END R_CHECKOUT;
 -----------------------------------------------------------------------------	
