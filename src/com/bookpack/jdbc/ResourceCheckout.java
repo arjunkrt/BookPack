@@ -347,30 +347,36 @@ public class ResourceCheckout {
 
 		cstmt = null;
 		rs = null;
-
-		if(r_type.equals("PB"))
+		if(sl_no == 0)
 		{
-			display_pub_books(login,rid);
+			System.out.print("You dont have any resource to view the details");
 		}
-		else if(r_type.equals("PC"))
+		else
 		{
-			display_pub_conf(login,rid);
-		}
-		else if(r_type.equals("PJ"))
-		{
-			display_pub_journal(login,rid);
-		}
-		else if(r_type.equals("C"))
-		{
-			display_camera_details(login,rid);
-		}
-		else if(r_type.equals("RC"))
-		{
-			display_room_details(login,rid);
-		}
-		else if(r_type.equals("RS"))
-		{
-			display_room_details(login,rid);
+			if(r_type.equals("PB"))
+			{
+				display_pub_books(login,rid);
+			}
+			else if(r_type.equals("PC"))
+			{
+				display_pub_conf(login,rid);
+			}
+			else if(r_type.equals("PJ"))
+			{
+				display_pub_journal(login,rid);
+			}
+			else if(r_type.equals("C"))
+			{
+				display_camera_details(login,rid);
+			}
+			else if(r_type.equals("RC"))
+			{
+				display_room_details(login,rid);
+			}
+			else if(r_type.equals("RS"))
+			{
+				display_room_details(login,rid);
+			}
 		}
 
 		do
@@ -504,15 +510,22 @@ public class ResourceCheckout {
 					break;
 				}
 			}
-
-			if(r_type.equals("PB") || r_type.equals("PC") || r_type.equals("PJ")){
-
-				renew_procedure(login, rid, r_type, borrow_id, rtype_id);
-
+			if(sl_no == 0)
+			{
+				System.out.print("You dont have any resource to renew");
 			}
-			else{
-				System.out.println(" This resource is non renewable. ");
-			}			
+			else
+			{
+
+				if(r_type.equals("PB") || r_type.equals("PC") || r_type.equals("PJ")){
+
+					renew_procedure(login, rid, r_type, borrow_id, rtype_id);
+
+				}
+				else{
+					System.out.println(" This resource is non renewable. ");
+				}			
+			}
 		} 	
 		catch (SQLException e) {
 			e.printStackTrace();
@@ -661,11 +674,11 @@ public class ResourceCheckout {
 
 			System.out.print("Sl.No    ");
 			System.out.print("Borrow ID    ");
-			System.out.print("Resource Type      	 ");
-			System.out.print("Resource Category      	 ");
-			System.out.print("Checkout date          ");
-			System.out.print("Due date          ");
-			System.out.print("Due Balance       ");
+			System.out.print("Resource Type      ");
+			System.out.print("Resource Category       ");
+			System.out.print("Checkout date          		");
+			System.out.print("Due date         	 	");
+			System.out.print("Due Balance       	");
 			System.out.println("Resource Description    ");
 
 			int sl_no = 0;
@@ -690,10 +703,12 @@ public class ResourceCheckout {
 				System.out.print("          ");
 				System.out.print(r_type);
 				System.out.print("             ");
+				System.out.print(e_or_h);
+				System.out.print("             ");
 				System.out.print(checkout_date);
 				System.out.print("             ");
 				System.out.print(due_date);
-				System.out.print("             ");
+				System.out.print("            	 ");
 				System.out.print(due_balance);
 				System.out.print("             ");
 				System.out.println(desc);
