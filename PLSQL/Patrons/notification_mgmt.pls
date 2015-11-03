@@ -82,6 +82,10 @@ PROCEDURE runFirstFeeReminder;
 PROCEDURE runSecondFeeReminder;
 PROCEDURE runLastFeeReminder;
 PROCEDURE suspendAccount;
+PROCEDURE cameraReservationCancelled(
+							p_rtype_id 		IN 		athoma12.resource_types.rtype_id%type,						
+							p_reservation_start IN 	athoma12.waitlist.reservation_start%type
+	);
 
 END NOTIFICATION_MGMT;
 /

@@ -484,5 +484,42 @@ PROCEDURE createNotification(
 		COMMIT;
 	END suspendAccount;		
 
+		PROCEDURE cameraReservationCancelled(
+							p_rtype_id 		IN 		athoma12.resource_types.rtype_id%type,						
+							p_reservation_start IN 	athoma12.waitlist.reservation_start%type
+	) IS
+		l_notification_id athoma12.notification_patrons.notification_id%type;
+		l_patron_id 	athoma12.patrons.patron_id%type;
+		l_description athoma12.user_checkout_summary.description%type;
+		l_first_name athoma12.patrons.first_name%type;
+
+		CURSOR findPatrons IS
+			select p.patron_id, p.first_name, p.last_name, p.username, c.model, c.memory, c.make, c.lens_config 
+			from waitlist w, cameras c, patrons p where w.rtype_id = c.rtype_id
+			and p.patron_id = w.patron_id and reservation_start = p_reservation_start and reservation_status <> 'CCancelled'
+			and c.rtype_id = p_rtype_id;
+	BEGIN
+		SAVEPOINT beginProc;
+		FOR patronsRec in findPatrons
+		LOOP
+			
+			athoma12.notification_mgmt.createNotification(
+							p_notification_id => l_notification_id,
+							p_template_name => 'CAM_RESERV_CANCEL',
+							p_patron_id => patronsRec.patron_id,
+							p_attribute0 => p_reservation_start,
+							p_name0 => 'RESERVATION_START',
+							p_attribute1 => patronsRec.first_name,
+							p_name1 => 'FIRST_NAME',
+							p_attribute2 => patronsRec.model,
+							p_name2 => 'C_MODEL',							
+							p_attribute3 => patronsRec.make,
+							p_name3 => 'C_MAKE',														
+							p_attr_count => 4);
+
+		END LOOP;
+		COMMIT;
+	END cameraReservationCancelled;	
+
 END NOTIFICATION_MGMT;
 /

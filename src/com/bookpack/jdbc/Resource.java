@@ -462,6 +462,96 @@ public class Resource {
 				}
 			}
 		}
+<<<<<<< HEAD
+		public void show_cameras(){
+			
+			String sql = "select * from athoma12.CAM_CHECKOUT_VIEW";
+			Statement stmt = null;
+			ResultSet rs;
+			double option=0, rid=0, rtype_id=0;
+			String model = "", lib_name = "";
+			List<Double> rids = new ArrayList<Double>();
+			List<Double> rtype_ids = new ArrayList<Double>();
+			int choice;
+			
+			try{
+				stmt = DBConnection.conn.createStatement();
+				rs = stmt.executeQuery(sql);
+				
+				while(rs.next()){
+					rid = rs.getDouble("UNIQUE_CAMERA_ID");
+					//rtype_id = rs.getDouble("RTYPE_ID");
+					model = rs.getString("DESCRIPTION");
+					lib_name = rs.getString("lib_name");
+					System.out.println( ++option + ". Model: \t" + model);
+					rids.add(rid);
+					//rtype_ids.add(rtype_id);
+				}
+			
+				System.out.println(" Choose any option. -999 to go back. ");
+				choice = stdin.nextInt();
+			
+				if(choice == -999){
+					;
+				}
+				else{
+					rid = rids.get(choice-1);						
+					show_details_cam(rid);
+				}
+				
+			}catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if(stmt != null)
+				{
+					try{stmt.close();}
+					catch(SQLException e){
+					}
+				}
+			}
+		}
+		/* rid, model, memory, lens_config, make */
+		public void show_details_cam(double rid){
+			
+			Statement stmt = null;
+			String sql = "select * from athoma12.CAM_RID_DETAILS WHERE RID =" + rid;
+			ResultSet rs;
+			String memory = "", model = "", lens_config = "", make = "";
+			int choice=0;
+			double rtype_id = 0;
+			
+			try{
+				stmt = DBConnection.conn.createStatement();
+				rs = stmt.executeQuery(sql);
+				
+				while(rs.next()){
+					memory = rs.getString("memory");
+					model = rs.getString("model");
+					lens_config = rs.getString("lens_config");
+					make = rs.getString("make");
+					rtype_id = rs.getDouble("rtype_id");
+					
+					System.out.println(" Memory: " + memory);
+					System.out.println(" Lens Configuration: " + lens_config);
+					System.out.println(" Model: " + model);
+					System.out.println(" Make: " + make);
+				}
+				
+				System.out.println(" Press 1 to Reserve for upcoming friday. 2 for cancel. 3. Checkout the Camera. ");
+				choice = stdin.nextInt();
+				
+				if(choice == 1 || choice == 3)
+					cam_checkout(rid, rtype_id, choice);
+				
+			}catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if(stmt != null)
+				{
+					try{stmt.close();}
+					catch(SQLException e){
+					}
+=======
 
 	}
 	public static void show_cameras(){
@@ -496,9 +586,139 @@ public class Resource {
 			{
 				try{stmt.close();}
 				catch(SQLException e){
+>>>>>>> 62d7ec6645b653e940db842d80433b8f60d4aaf9
 				}
 			}
+			
+			
 		}
+<<<<<<< HEAD
+		/*Checkout_or_waitlist(
+						r_rtype_id 			IN 		 -----------  	REQUIRED
+						r_patron_id			IN 		 -----------	REQUIRED
+						r_action		  	IN	 	 -----------	REQUIRED
+						r_h_or_e 		  	IN 		 -----------	NA
+						r_lib_of_preference IN	 	 -----------	NA
+						room_reservation_start 	IN	 -----------	NA
+						room_reservation_end 	IN	 -----------	NA
+						r_libname_of_pick_up 	OUT	 -----------	NA
+						r_no_in_waitlist 		OUT  -----------	VALID
+	          			r_due_time    			OUT  -----------	NA
+	          			borrow_id_nextval 		OUT  -----------	NA
+						  );
+					*/
+		public void cam_checkout(double rid, double rtype_id, int choice){
+			
+			String sql = "{call athoma12.R_CHECKOUT.Checkout_or_waitlist(?,?,?,?,?,?,?,?,?,?,?)}";
+			CallableStatement cstmt = null;
+			double wait_list_no=0, borrow_id_next = 0;
+			java.sql.Timestamp ts2 = null;
+			
+			try{
+				cstmt = DBConnection.conn.prepareCall(sql);
+
+				cstmt.setDouble(1, rtype_id);
+				cstmt.setDouble(2, lobj.patron_id);
+				cstmt.setDouble(3, 0);
+				cstmt.setString(4, "");
+				cstmt.setString(5, "");
+				cstmt.setTimestamp(6, ts2);
+				cstmt.setTimestamp(7, ts2);
+				cstmt.registerOutParameter(8, java.sql.Types.VARCHAR);
+				cstmt.registerOutParameter(9, java.sql.Types.DOUBLE);
+				cstmt.registerOutParameter(10, java.sql.Types.TIMESTAMP);
+				cstmt.registerOutParameter(11, java.sql.Types.DOUBLE);
+				
+				if(choice == 1){
+					cstmt.setDouble(3, 2);
+					cstmt.registerOutParameter(9, java.sql.Types.DOUBLE);
+					
+					cstmt.execute();
+					
+					wait_list_no = cstmt.getDouble(9);
+					
+					if(wait_list_no == 1){
+						System.out.println(" You have successfully reserved the camera. Your check out date is friday 9am ");
+					}
+					else if(wait_list_no > 1){
+						System.out.println(" Camera is not available. You have been added to queue. ");
+					}
+				}
+				
+				else if(choice == 2){
+					cstmt.setDouble(3, 1);
+					cstmt.registerOutParameter(11, java.sql.Types.DOUBLE);
+					
+					cstmt.execute();
+					
+					System.out.println(" You have checked out the camera. ");
+				}
+				
+			}catch(SQLException e){
+				e.printStackTrace();
+			} finally {
+				
+			}
+		}
+		public void show_details_pub1(double rtype_id, int type){
+			
+			String sql = "{call athoma12.user_auth.pubCheckoutProc1(?,?,?,?,?,?,?,?)}";
+			CallableStatement cstmt = null;
+			//Statement stmt = null;
+			int choice=0;
+			String r_title, r_isbn, r_publishers;
+			double r_edition, r_year, r_action;
+			
+			try{
+			
+				cstmt = DBConnection.conn.prepareCall(sql);
+				
+				cstmt.setDouble(1,rtype_id);
+				if(type==1)
+					cstmt.setString(2,"h");
+				else
+					cstmt.setString(2,"e");
+				cstmt.registerOutParameter(3, java.sql.Types.VARCHAR);
+				cstmt.registerOutParameter(4, java.sql.Types.VARCHAR);
+				cstmt.registerOutParameter(5, java.sql.Types.DOUBLE);
+				cstmt.registerOutParameter(6, java.sql.Types.VARCHAR);
+				cstmt.registerOutParameter(7, java.sql.Types.DOUBLE);
+				cstmt.registerOutParameter(8, java.sql.Types.DOUBLE);
+
+				cstmt.execute();
+				
+				r_title = cstmt.getString(3);
+				r_isbn = cstmt.getString(4);
+				r_edition = cstmt.getDouble(5);
+				r_publishers = cstmt.getString(6);
+				r_year = cstmt.getDouble(7);
+				r_action = cstmt.getDouble(8);
+				
+				System.out.println("Title: " + r_title);
+				System.out.println("ISBN: " + r_isbn);
+				System.out.println("Author: " + r_publishers);
+				System.out.println("Edition: " + r_edition);
+				System.out.println("Year: " + r_year);
+				
+				if(r_action==1){
+					System.out.println("This book is available for issue. Press 1 to issue. ");
+					choice = stdin.nextInt();
+				}
+				else if(r_action==2){
+					System.out.println("This book is not currently available. Press 1 to be added to wait list. ");
+					choice = stdin.nextInt();
+				}
+				else if(r_action==3){
+					System.out.println("This book is already present with you. Press 1 to renew the book.");
+					choice = stdin.nextInt();
+				}
+				else if(r_action==4){
+					System.out.println("You have renewed this book once. You Must return the book.");
+				}
+				
+				if(choice == 1)
+					//pub_checkout(rtype_id, r_action);
+=======
 	}
 
 	public void show_details_pub1(double rtype_id, int type){
@@ -559,6 +779,7 @@ public class Resource {
 
 			if(choice == 1)
 				//pub_checkout(rtype_id, r_action);
+>>>>>>> 62d7ec6645b653e940db842d80433b8f60d4aaf9
 				//else
 				System.out.println("Invalid Choice.");
 

@@ -94,7 +94,7 @@ WHERE R.rtype_id = C.rtype_id AND R.lib_id = L.lib_id;
 --------------------------------------------------------------------------------------
 --View to check resources checked out by user
 create or replace view athoma12.user_checkout_summary as 
- select B.borrow_id, B.patron_id, B.checkout_time, B.due_time, B.return_time, RT.type, L.LIB_NAME, L.lib_id, R.rid, RT.rtype_id, P.title AS DESCRIPTION
+select B.borrow_id, B.patron_id, B.checkout_time, B.due_time, B.return_time, RT.type, L.LIB_NAME, L.lib_id, R.rid, RT.rtype_id, P.title AS DESCRIPTION, 'H' as E_OR_H
  from athoma12.borrows B, athoma12.resources R, athoma12.resource_types RT, athoma12.library L, athoma12.publications P
  where B.rid = R.rid
  and R.rtype_id = RT.rtype_id
@@ -103,7 +103,7 @@ create or replace view athoma12.user_checkout_summary as
  and B.return_time is null
  and P.rtype_id = RT.rtype_id
  UNION
- select B.borrow_id, B.patron_id, B.checkout_time, B.due_time, B.return_time, RT.type, L.LIB_NAME, L.lib_id, R.rid, RT.rtype_id, RO.room_id
+ select B.borrow_id, B.patron_id, B.checkout_time, B.due_time, B.return_time, RT.type, L.LIB_NAME, L.lib_id, R.rid, RT.rtype_id, RO.room_id, null
  from athoma12.borrows B, athoma12.resources R, athoma12.resource_types RT, athoma12.library L, athoma12.rooms RO
  where B.rid = R.rid
  and R.rtype_id = RT.rtype_id
@@ -112,7 +112,7 @@ create or replace view athoma12.user_checkout_summary as
  and B.return_time is null
  and RO.rtype_id = RT.rtype_id
  UNION
-  select B.borrow_id, B.patron_id, B.checkout_time, B.due_time, B.return_time, RT.type, L.LIB_NAME, L.lib_id, R.rid, RT.rtype_id, C.make||' '||C.model
+  select B.borrow_id, B.patron_id, B.checkout_time, B.due_time, B.return_time, RT.type, L.LIB_NAME, L.lib_id, R.rid, RT.rtype_id, C.make||' '||C.model, null
  from athoma12.borrows B, athoma12.resources R, athoma12.resource_types RT, athoma12.library L, athoma12.cameras C
  where B.rid = R.rid
  and R.rtype_id = RT.rtype_id
@@ -120,6 +120,14 @@ create or replace view athoma12.user_checkout_summary as
  --and systimestamp > B.checkout_time
  and B.return_time is null
  and C.rtype_id = RT.rtype_id
+ UNION
+  select E.borrow_id, E.patron_id, E.checkout_time, E.due_time, E.return_time, RT.type, L.LIB_NAME, L.lib_id, null, RT.rtype_id, P.title, 'E'
+ from athoma12.eborrows E, athoma12.epublications EP, athoma12.resource_types RT, athoma12.library L, athoma12.publications P
+ where E.rtype_id = RT.rtype_id
+ and EP.rtype_id = RT.rtype_id
+ and L.lib_id = EP.lib_id
+ and E.return_time is null
+ and P.rtype_id = RT.rtype_id  
  ;
 
 
