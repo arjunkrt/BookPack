@@ -155,6 +155,7 @@ public class Resource {
 		
 			if(type == 2){
 				type_pub = "E";
+				r_action = 1;
 				pub_checkout(rtype_id, r_action, type_pub, lib_choice);	
 			}
 			
@@ -599,10 +600,10 @@ public class Resource {
 					System.out.println(" Description: " + description);
 				}
 				
-				System.out.println(" Press 1 to Reserve for upcoming friday. 2 for cancel. 3. Checkout the Camera. ");
+				System.out.println(" Press 1 to Reserve for upcoming friday. 2. Go Back. ");
 				choice = stdin.nextInt();
 				
-				if(choice == 1 || choice == 3)
+				if(choice == 1)
 					cam_checkout(rtype_id, choice);
 				
 			}catch (SQLException e) {
@@ -670,7 +671,7 @@ public class Resource {
 					}
 				}
 				
-				else if(choice == 3){
+/*				else if(choice == 3){
 					cstmt.setDouble(3, 1);
 					cstmt.registerOutParameter(11, java.sql.Types.DOUBLE);
 					
@@ -681,7 +682,7 @@ public class Resource {
 						System.out.println(" You have checked out the camera. ");
 					else
 						System.out.println(" The camera could not be checked out. ");
-				}
+				}*/
 				
 			}catch(SQLException e){
 				e.printStackTrace();
