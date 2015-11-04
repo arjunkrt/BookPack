@@ -83,12 +83,12 @@ PROCEDURE Checkout_or_waitlist(
 						r_action		  	IN	 	 -----------	REQUIRED
 						r_h_or_e 		  	IN 		 -----------	NA
 						r_lib_of_preference IN	 	 -----------	NA
-						room_reservation_start 	IN	 -----------	NA
-						room_reservation_end 	IN	 -----------	NA
+						room_reservation_start 	IN	 -----------	REQUIRED
+						room_reservation_end 	IN	 -----------	REQUIRED
 						r_libname_of_pick_up 	OUT	 -----------	NA
 						r_no_in_waitlist 		OUT  -----------	NA
-	          			r_due_time    			OUT  -----------	NA
-	          			borrow_id_nextval 		OUT  -----------	VALID
+	          			r_due_time    			OUT  -----------	VALID
+	          			borrow_id_nextval 		OUT  -----------	NA
 						  );
 					
 for checkout -- r_action = 1 --
@@ -99,12 +99,12 @@ PROCEDURE Checkout_or_waitlist(
 						r_action		  	IN	 	 -----------	REQUIRED
 						r_h_or_e 		  	IN 		 -----------	NA
 						r_lib_of_preference IN	 	 -----------	NA
-						room_reservation_start 	IN	 -----------	REQUIRED
-						room_reservation_end 	IN	 -----------	REQUIRED
+						room_reservation_start 	IN	 -----------	NA
+						room_reservation_end 	IN	 -----------	NA
 						r_libname_of_pick_up 	OUT	 -----------	NA
 						r_no_in_waitlist 		OUT  -----------	NA
-	          			r_due_time    			OUT  -----------	VALID
-	          			borrow_id_nextval 		OUT  -----------	NA
+	          			r_due_time    			OUT  -----------	NA
+	          			borrow_id_nextval 		OUT  -----------	VALID
 						  );
 
 -------------------------------------------------------------------------------------
