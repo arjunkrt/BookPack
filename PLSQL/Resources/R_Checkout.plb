@@ -11,7 +11,7 @@
 	1 - Checkout
 	2 - Resource Request
 	3 - Renew
-	4 - Cannot renew
+	4 - Cannot renew, people waiting in waitlist
 	5 - already requested, will be notified when available
 	6 - Reserved, cannnot checkout
 
@@ -501,7 +501,8 @@ ELSIF r_type LIKE 'P_' THEN
 			IF ecopy_available > 0 THEN
 			
 				SELECT COUNT(*) INTO he_already_has_it FROM athoma12.eborrows
-				WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id;
+				WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id
+						AND return_time IS NULL;
 				
 				dbms_output.put_line('he_already_has_it:  '||he_already_has_it);
 				
