@@ -1,4 +1,4 @@
-CREATE OR REPLACE PACKAGE RESOURCES_MGMT DEFINER CURRENT_USER AS
+CREATE OR REPLACE PACKAGE RESOURCES_MGMT AUTHID DEFINER AS
 /* Version Control Comments Block
 
 120.0 	ATHOMA12 	Creation
@@ -66,7 +66,11 @@ PROCEDURE getResourceDetailsCursor(
 					p_borrow_id		IN 		athoma12.borrows.borrow_id%type,
 					p_resource_type OUT	 	athoma12.resource_types.type%type,
 					p_resources_cursor OUT 	SYS_REFCURSOR
-					);											
+					);	
+
+FUNCTION findAuthors(
+					p_rtype_id 		IN
+					) RETURN VARCHAR2;															
 
 END RESOURCES_MGMT;
 /

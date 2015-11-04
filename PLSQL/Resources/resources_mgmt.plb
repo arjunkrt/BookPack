@@ -216,5 +216,22 @@ BEGIN
 	END IF;
 END getResourceDetailsCursor;
 
+FUNCTION findAuthors(
+					p_rtype_id 		IN
+					) RETURN VARCHAR2 IS
+
+	l_authors  VARCHAR2(200) := '';
+
+BEGIN
+	select LISTAGG(qrst.author_name, ', ') WITHIN GROUP (ORDER BY qrst.author_name) into l_authors
+	from (
+		select pa.rtype_id, a.* from publications_authors pa, authors a
+		where pa.aid = a.aid) QRST
+	where qrst.rtype_id = p_rtype_id
+	group by qrst.rtype_id
+	;
+	return l_authors;
+
+END findAuthors;
 END RESOURCES_MGMT;
 /
