@@ -45,16 +45,22 @@ public class ResourceRequest {
 
 			borrow_id_next = cstmt.getDouble(11);
 			
-			if(r_type.equals("C") || r_type.equals("RC") || r_type.equals("RS"))
+			if(r_type.equals("C"))
 			{
-			if(borrow_id_next > 1000)
-				System.out.println(" You have checked out the resource. ");
+			if(borrow_id_next > 0)
+				System.out.println(" You have successfully checked out the resource. ");
+			else if(borrow_id_next == -1)
+				System.out.println(" Reservation not available");
+			else if(borrow_id_next == -2)
+				System.out.println(" Camera not available ");
+			else if(borrow_id_next == -3)
+				System.out.println(" Time to check out has passed");
 			else
 				System.out.println(" User cannot checkout  the resource");
 			}
 			else
 			{
-				System.out.println("Please go to notificatins for any updates. You cannot checkout resources other than rooms/camera");
+				System.out.println("Please go to notificatins for any updates. You cannot checkout resources other than camera");
 			}
 
 

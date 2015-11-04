@@ -426,10 +426,10 @@ public class ResourceCheckout {
 				r_action = rs.getDouble(6);
 			}
 
-			System.out.println(" RACTION =" + r_action);
+			//System.out.println(" RACTION =" + r_action);
 
 			if(r_action==4){
-				System.out.println("You have renewed this publication once. You Must return the publication.");
+				System.out.println("You cannot renew this resource, there are people waiting in the queue for this resource.");
 			}
 
 			else if(r_action==3){
@@ -539,7 +539,8 @@ public class ResourceCheckout {
 			r_type = rtypes.get(func-1);
 			rtype_id = rtypeids.get(func-1);
 
-			if(r_type.equals("PB") || r_type.equals("PC") || r_type.equals("PJ")){
+			if(r_type.equals("PB") || r_type.equals("PC") || r_type.equals("PJ"))
+			{
 
 				renew_procedure(login, rid, r_type, borrow_id, rtype_id);
 
@@ -616,7 +617,6 @@ public class ResourceCheckout {
 				}
 			}
 		}
-
 
 		if(sl_no == 0)
 		{
