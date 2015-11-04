@@ -11,16 +11,15 @@
 	1 - Checkout
 	2 - Resource Request
 	3 - Renew
-	4 - Cannot renew
+	4 - Cannot renew, people waiting in waitlist
 	5 - already requested, will be notified when available
 	6 - Reserved, cannnot checkout
 
-	Once we calculate the libraries at which the current r_rtype_id
-	is available the r_lib_num will be coded as follows --
-	0 - not available
-	1 - available only in DH Hill
-	2 - available only in Hunt
-	3 - available in both libraries
+	Checkout_or_waitlist different borrow_id_nextval for Camera checkout fail -
+		 -1 - reservation not available
+		 -2 - camera not available
+		 -3 - time to checkout has passed
+		  0 - camera could not be checked out
 
 	Actual checkout is performed by Checkout_or_waitlist
 	*/
@@ -44,6 +43,10 @@
 	is_he_faculty NUMBER(10):= 0;
 	
 	BEGIN	
+
+	-------------------------
+	--Handling ePublications
+
 
 					--Check if the same user has already checked out the same pub
 					SELECT COUNT(*) INTO he_already_has_it FROM athoma12.borrows B, athoma12.Resources R
@@ -144,6 +147,7 @@
 	reservation_start_c TIMESTAMP;
 
 	l_qty_resources NUMBER (10) := 0;
+	cam_available NUMBER := 0;
 
 	BEGIN
 		SAVEPOINT beginFunc;
@@ -199,6 +203,19 @@ IF r_type = 'C' THEN
 			WHERE rtype_id = r_rtype_id AND patron_id = r_patron_id
 			AND reservation_start - interval '10' hour <= CURRENT_TIMESTAMP
 				AND NOT (reservation_start + interval '14' hour < CURRENT_TIMESTAMP);	
+			
+			SELECT COUNT(*) INTO cam_available FROM athoma12.Resources
+			WHERE rtype_id = r_rtype_id AND status = 'Available';
+		
+		-------------------------------------------------------------------------------	
+			IF reservation_available = 0 THEN borrow_id_nextval := -1;
+			ELSIF cam_available = 0 THEN borrow_id_nextval := -2;
+			ELSIF ((his_no_in_waitlist_c <= l_qty_resources
+					AND reservation_start_c >= CURRENT_TIMESTAMP) OR
+				(his_no_in_waitlist_c > l_qty_resources
+					AND reservation_start_c < CURRENT_TIMESTAMP)) THEN borrow_id_nextval := -3;
+			END IF;
+		------------------------------------------------------------------------------------
 				
 				dbms_output.put_line('reservation_available : '||reservation_available);
 				dbms_output.put_line('min_no_in_waitlist_c : '||min_no_in_waitlist_c);
@@ -484,7 +501,8 @@ ELSIF r_type LIKE 'P_' THEN
 			IF ecopy_available > 0 THEN
 			
 				SELECT COUNT(*) INTO he_already_has_it FROM athoma12.eborrows
-				WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id;
+				WHERE patron_id = r_patron_id AND rtype_id = r_rtype_id
+						AND return_time IS NULL;
 				
 				dbms_output.put_line('he_already_has_it:  '||he_already_has_it);
 				
@@ -492,13 +510,14 @@ ELSIF r_type LIKE 'P_' THEN
 				--here, borrow_id_nextval itself is used in order to make less changes to code
 				--but actually eborrow_id sequence is used, so its basically eborrow_id
 				borrow_id_nextval :=  BORROW_ID_SEQ.nextval;
-				
 
 				INSERT INTO athoma12.eborrows (borrow_id, patron_id, rtype_id, checkout_time) VALUES
 	      		(borrow_id_nextval, r_patron_id, r_rtype_id, CURRENT_TIMESTAMP); 
 				--NEW: putting due_date as infinity.
 				--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
 				END IF;
+			ELSE
+				borrow_id_nextval := -1;
 			END IF;
 
 	END IF;

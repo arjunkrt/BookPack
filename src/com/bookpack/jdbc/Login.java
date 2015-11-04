@@ -51,7 +51,7 @@ public class Login {
 				break;
 			case 4:
 				ResourceRequest resource_request = ResourceRequest.getObject();
-				resource_request.display_requested_resources(login);
+				resource_request.requested_resources_details(login);
 				break;
 			case 5:
 				Notifications notifications = Notifications.getObject();
