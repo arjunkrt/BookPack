@@ -77,7 +77,7 @@ public class ResourceRequest {
 		System.out.println("Display Requested resources");
 		String sql = "select * from athoma12.user_waitlist_summary where patron_id = ?";
 		PreparedStatement cstmt=null;
-		ResultSet rs,resultset = null;
+		ResultSet rs = null;
 		int index = 0;
 		String r_type = null;
 		double r_type_id = 0;
@@ -90,7 +90,6 @@ public class ResourceRequest {
 			cstmt.setDouble(1, login.patron_id);
 
 			rs = cstmt.executeQuery();
-			resultset = rs;
 
 			System.out.println("Waitlist Queue");
 			System.out.print("Sl. no		");
@@ -122,7 +121,7 @@ public class ResourceRequest {
 		System.out.println("2. GO back");
 		System.out.print("Enter your Choice >> ");
 
-		int sl_no = 0,func = 0;
+		int func = 0;
 		double rtype_id = 0;
 		r_type = "";
 		do
