@@ -44,7 +44,7 @@ public class ResourceRequest {
 			cstmt.execute();
 
 			borrow_id_next = cstmt.getDouble(11);
-			
+			System.out.println("----------------------------------");
 			if(r_type.equals("C"))
 			{
 			if(borrow_id_next > 0)
@@ -58,9 +58,16 @@ public class ResourceRequest {
 			else
 				System.out.println(" User cannot checkout  the resource");
 			}
+			else if(r_type.equals("RC") || r_type.equals("RS"))
+			{
+				if(borrow_id_next == 0)
+					System.out.println(" Sorry room could not be checked out. Either you have not made the reservationor your reservation has been cancelled ");
+				else
+					System.out.println(" You have successfully checked out the room. ");
+			}
 			else
 			{
-				System.out.println("Please go to notificatins for any updates. You cannot checkout resources other than camera");
+				System.out.println("Publication is currently checked out. Library will notify you when the waitlist clears");
 			}
 
 
