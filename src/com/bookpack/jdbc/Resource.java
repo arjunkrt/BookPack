@@ -148,59 +148,61 @@ public class Resource {
 				System.out.println("Year: " + r_year);
 			}
 
-			if(r_action==3){
-				System.out.println("This publication is already present with you. Please follow the renew procedure to renew the book.");
-				System.out.println(" Enter 2 for soft copy. ");
-				type = stdin.nextInt();	
+			System.out.println(" 1. Borrow Hard Copy.");
+			System.out.println(" 2. Borrow Soft Copy.");
+			type = stdin.nextInt();
+			
+		
+			if(type == 2){
+				type_pub = "E";
+				pub_checkout(rtype_id, r_action, type_pub, lib_choice);	
 			}
-			else if(r_action==4){
-				System.out.println("You have renewed this publication once. You Must return the publication.");
-				System.out.println(" Enter 2 for soft copy. ");
-				type = stdin.nextInt();	
-			}
-			else if(r_action==5){
-				System.out.println("You have already requested this book. You will be notified when available.");
-				System.out.println(" Enter 2 for soft copy. ");
-				type = stdin.nextInt();	
-			}
-			else if(r_action==6){
-				System.out.println("This publication is reserved. Cannot be checked out.");
-				System.out.println(" Enter 2 for soft copy. ");
-				type = stdin.nextInt();	
-			}
-			else{
-				System.out.println(" Enter 1 for hard copy, 2 for soft copy. ");
-				type = stdin.nextInt();
-
-			}
-
-			if(type == 1)
-			{
-				type_pub = "H";
-				if(r_action==1){
-					System.out.println("This publication is available for issue. Press 1 to issue. ");
-					choice = stdin.nextInt();
-
+			
+			else if(type == 1){
+				if(r_action==3){
+					System.out.println("This publication is already present with you. Please follow the renew procedure to renew the book.");
+				}
+				else if(r_action==4){
+					System.out.println("You have renewed this publication once. You Must return the publication.");
+				}
+				else if(r_action==5){
+					System.out.println("You have already requested this book. You will be notified when available.");
+					System.out.println("Enter 2 for soft copy. Else, press any key.");
+					type = stdin.nextInt();
+					if(type==2){
+						type_pub = "E";
+						pub_checkout(rtype_id, r_action, type_pub, lib_choice);
+					}
+				}
+				else if(r_action==6){
+					System.out.println("This publication is reserved. Cannot be checked out.");
+					System.out.println("Enter 2 for soft copy. Else, press any key.");
+					type = stdin.nextInt();	
+					if(type==2){
+						type_pub = "E";
+						pub_checkout(rtype_id, r_action, type_pub, lib_choice);
+					}
+				}
+				else if(r_action == 1){
 					System.out.println("Enter choice of Lib. 1: D.H. Hill. 2: James B. Hunt Library.");
 					lib_choice = stdin.nextDouble();
+					type_pub = "H";
+					pub_checkout(rtype_id, r_action, type_pub, lib_choice);
 				}
-				else if(r_action==2){
-					System.out.println("This publication is not currently available. Press 1 to be added to wait list. ");
+				else if(r_action == 2){
+					System.out.println("This publication is not currently available. Press 1 to be added to wait list. Press 2 to opt for Soft Copy Instead. ");
 					choice = stdin.nextInt();
-				}				
+					if(choice == 1){
+						type_pub = "H";
+						pub_checkout(rtype_id, r_action, type_pub, lib_choice);
+					}
+					else if(choice == 2){
+						type_pub = "E";
+						pub_checkout(rtype_id, r_action, type_pub, lib_choice);
+					}
+				}
 			}
-			else if(type == 2)
-			{
-				type_pub = "E";
-				r_action = 1;
-				choice = 1;
-
-			}
-			if(choice == 1)
-				pub_checkout(rtype_id, r_action, type_pub, lib_choice);
-			else
-				System.out.println("Invalid Choice.");
-
+			
 
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -258,19 +260,28 @@ public class Resource {
 			borrow_id = cstmt.getDouble(11);
 			
 			ret = ts2.toString();
-			if(r_action == 1){
-				if(ts2 != null && type_pub!="E"){			
-					System.out.println("Congrats, you have checked it out. Return Date is : " + ret);
+			
+			if(type_pub.equalsIgnoreCase("H")){
+				if(r_action == 1){
+					if(ts2 != null){			
+						System.out.println("Congrats, you have checked it out. Return Date is : " + ret);
+					}
 				}
-				else if(type_pub == "E" && borrow_id == 0){
-					System.out.println("You already have the Soft copy of this publication. ");
-				}
-				else if(type_pub == "E" && borrow_id > 0){
-					System.out.println("Congrats, you have checked it out. ");
+				else if(r_action == 2){
+					System.out.println(" Your wait list number is: " + wait_list_no);	
 				}
 			}
-			else if(r_action == 2){
-				System.out.println(" Your wait list number is: " + wait_list_no);
+			
+			else if(type_pub.equalsIgnoreCase("E")){
+				if(borrow_id == 0){
+					System.out.println("You already have the Soft copy of this publication. ");
+				}
+				else if(borrow_id == -1){
+					System.out.println("Soft copy is not present for this publication. ");
+				}
+				else if(borrow_id > 0){
+					System.out.println("Congrats, you have checked it out. ");
+				}
 			}
 
 		}catch (SQLException e) {
