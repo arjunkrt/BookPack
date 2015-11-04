@@ -320,6 +320,7 @@ public class Resource {
 		ResultSet rs;
 		String room_type = "Study Room";
 		int option=0;
+		String year = "", month = "", day = "", hour = "", checkout_date = "", return_date = "";
 
 		System.out.println("Enter Required capacity. ");
 		r_no_occupants = stdin.nextDouble();
@@ -327,15 +328,42 @@ public class Resource {
 		System.out.println("Enter Lib ID ( Hill = 1, Hunt=2)");
 		r_libid = stdin.nextDouble();
 
-		stdin.nextLine();
-		System.out.print("Enter Checkout Time");		//Correct format required 2015-11-03 07:00:00 [.000000000] 03-NOV-15 07.17.21.917423000 AM
-		checkout_time = "2015-11-12 07:01:10";//stdin.nextLine();
+/*		stdin.nextLine();
+		System.out.print("Enter Checkout Time in yyyy-mm-dd hh:mm:ss format");		//Correct format required 2015-11-03 07:00:00 [.000000000] 03-NOV-15 07.17.21.917423000 AM
+		stdin.nextLine();//checkout_time = "2015-11-12 07:01:10";//stdin.nextLine();
 		
-		System.out.print("Enter Return Time");		//Correct format required
-		return_time = "2015-11-12 09:01:10";//stdin.nextLine();
+		System.out.print("Enter Return Time in yyyy-mm-dd hh:mm:ss format");		//Correct format required
+		stdin.nextLine();//return_time = "2015-11-12 09:01:10";//stdin.nextLine();
+*/
+		
+		stdin.nextLine();
+		System.out.println("For Checkout Time. Enter year. Format YYYY" );
+		year = stdin.nextLine();
+		System.out.println("Enter month. Format MM" );
+		month = stdin.nextLine();
+		System.out.println("Enter day. Format DD" );
+		day = stdin.nextLine();
+		System.out.println("Enter hour. Format HH" );
+		hour = stdin.nextLine();
 
-		ts2 = java.sql.Timestamp.valueOf(checkout_time);
-		ts3 = java.sql.Timestamp.valueOf(return_time);
+		checkout_date = year + "-" + month + "-" + day + " " + hour + ":00:00";
+
+		System.out.println("For Return Time. Enter year. Format YYYY" );
+		year = stdin.nextLine();
+		System.out.println("Enter month. Format MM" );
+		month = stdin.nextLine();
+		System.out.println("Enter day. Format DD" );
+		day = stdin.nextLine();
+		System.out.println("Enter hour. Format HH" );
+		hour = stdin.nextLine();
+
+		return_date = year + "-" + month + "-" + day + " " + hour + ":00:00";
+		
+		System.out.println( " date: " + checkout_date);
+		System.out.println( " date: " + return_date);
+		
+		ts2 = java.sql.Timestamp.valueOf(checkout_date);
+		ts3 = java.sql.Timestamp.valueOf(return_date);
 		sql = "SELECT RO.rtype_id, RO.room_id, RO.position"+
 				" FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R"+
 				" WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id"+
@@ -402,7 +430,7 @@ public class Resource {
 			}
 			else{
 				rtype_id = rtype_ids.get(choice-1);
-				reserve_room(rtype_id);
+				reserve_room(rtype_id, ts2, ts3);
 			}
 
 		}catch (SQLException e) {
@@ -421,9 +449,10 @@ public class Resource {
 	public void show_conf_rooms(){
 
 		int choice;
-		double r_no_occupants, r_libid, room_id, rtype_id;
+		double r_no_occupants, r_libid,  rtype_id;
 		String floor = null;
 		java.sql.Timestamp ts2, ts3;
+		String year = "", month = "", day = "", hour = "", checkout_date = "", return_date = "", room_id = "";
 
 		List<Double> rtype_ids = new ArrayList<Double>();
 		String checkout_time = "", return_time = "";
@@ -442,14 +471,40 @@ public class Resource {
 		r_libid = stdin.nextDouble();
 
 		stdin.nextLine();
-		System.out.print("Enter Checkout Time");		//Correct format required 2015-11-03 07:00:00 [.000000000] 03-NOV-15 07.17.21.917423000 AM
-		checkout_time = "2015-11-12 07:01:10";//stdin.nextLine();
-		
-		System.out.print("Enter Return Time");		//Correct format required
-		return_time = "2015-11-12 09:01:10";//stdin.nextLine();
+		System.out.println("For Checkout Time. Enter year. Format YYYY" );
+		year = stdin.nextLine();
+		System.out.println("Enter month. Format MM" );
+		month = stdin.nextLine();
+		System.out.println("Enter day. Format DD" );
+		day = stdin.nextLine();
+		System.out.println("Enter hour. Format HH" );
+		hour = stdin.nextLine();
 
-		ts2 = java.sql.Timestamp.valueOf(checkout_time);
-		ts3 = java.sql.Timestamp.valueOf(return_time);
+		checkout_date = year + "-" + month + "-" + day + " " + hour + ":00:00";
+
+		System.out.println("For Return Time. Enter year. Format YYYY" );
+		year = stdin.nextLine();
+		System.out.println("Enter month. Format MM" );
+		month = stdin.nextLine();
+		System.out.println("Enter day. Format DD" );
+		day = stdin.nextLine();
+		System.out.println("Enter hour. Format HH" );
+		hour = stdin.nextLine();
+
+		return_date = year + "-" + month + "-" + day + " " + hour + ":00:00";
+		
+		System.out.println( " date: " + checkout_date);
+		System.out.println( " date: " + return_date);		
+		
+		/*
+		System.out.print("Enter Checkout Time in yyyy-mm-dd hh:mm:ss format");		//Correct format required 2015-11-03 07:00:00 [.000000000] 03-NOV-15 07.17.21.917423000 AM
+		stdin.nextLine();//checkout_time = "2015-11-12 07:01:10";//stdin.nextLine();
+		
+		System.out.print("Enter Return Time in yyyy-mm-dd hh:mm:ss format");		//Correct format required
+		stdin.nextLine();//return_time = "2015-11-12 09:01:10";//stdin.nextLine();
+*/
+		ts2 = java.sql.Timestamp.valueOf(checkout_date);
+		ts3 = java.sql.Timestamp.valueOf(return_date);
 		sql = "SELECT RO.rtype_id, RO.room_id, RO.position"+
 				" FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R"+
 				" WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id"+
@@ -502,10 +557,10 @@ public class Resource {
 			
 			while(rs.next()){
 				rtype_id = rs.getDouble("rtype_id");
+				room_id = rs.getString("room_id");
 				rtype_ids.add(rtype_id);
 				floor = rs.getString("position");
-				System.out.println("\n" + ++option + ". Floor: " + floor);
-			}
+				System.out.println( "\n" + ++option + ". Floor: " + floor + "Room ID: " + room_id);			}
 			
 			System.out.println(" Choose one of the serial numbers. -999 to go back. ");
 			choice = stdin.nextInt();
@@ -515,7 +570,7 @@ public class Resource {
 			}
 			else{
 				rtype_id = rtype_ids.get(choice-1);
-				reserve_room(rtype_id);
+				reserve_room(rtype_id, ts2, ts3);
 			}
 
 		}catch (SQLException e) {
@@ -529,22 +584,21 @@ public class Resource {
 			}
 		}
 	}
-	public void reserve_room(double rtype_id){
+	public void reserve_room(double rtype_id, java.sql.Timestamp ts2, java.sql.Timestamp ts3){
 
 		String sql = "{call athoma12.R_CHECKOUT.Checkout_or_waitlist(?,?,?,?,?,?,?,?,?,?,?)}";
 		CallableStatement cstmt = null;
 		double wait_list_no=0, borrow_id_next = 0;
-		java.sql.Timestamp ts2 = null, ts3 = null;
-		
+		java.sql.Timestamp ts4 = null;
 		String checkout_time, return_time, date;
 		
-		checkout_time = "2015-11-12 07:01:10";//stdin.nextLine();
+/*		checkout_time = "2015-11-12 07:01:10";//stdin.nextLine();
 		return_time = "2015-11-12 09:01:10";//stdin.nextLine();
 
 		ts2 = java.sql.Timestamp.valueOf(checkout_time);
 		ts3 = java.sql.Timestamp.valueOf(return_time);
-		
-		System.out.println("hello");
+*/		
+		//System.out.println("hello");
 		
 		try{
 			cstmt = DBConnection.conn.prepareCall(sql);
@@ -574,9 +628,9 @@ public class Resource {
 				System.out.println(" Room reservation was unsuccessful. ");
 			}*/
 			
-			ts2 = cstmt.getTimestamp(10);
-			if(ts2!=null){
-				date = ts2.toString();
+			ts4 = cstmt.getTimestamp(10);
+			if(ts4!=null){
+				date = ts4.toString();
 				System.out.println(" Return time: " + date);
 			}
 			else{

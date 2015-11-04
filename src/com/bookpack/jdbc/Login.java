@@ -65,6 +65,10 @@ public class Login {
 				Reservation reservation = Reservation.getInstance();
 				reservation.reservation_publications(login);
 				break;
+/*			case 7:
+				Checkingout_Rooms checkingout_res = Checkingout_Rooms.getObject();
+				checkingout_res.checkout_room(login);
+				break;*/
 			case -999:
 				login.patron_id = 0;
 				login.user_type = "";
