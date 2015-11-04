@@ -144,7 +144,7 @@ public class ResourceCheckout {
 			System.out.print("RID			");
 			System.out.print("LIB_NAME		");
 			System.out.print("ISSN		");
-			System.out.print("STATUS			");
+			System.out.print("STATUS				");
 			System.out.print("YEAR			");
 			System.out.println("TITLE		");
 
