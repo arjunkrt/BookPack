@@ -29,10 +29,9 @@ public class Login {
 			System.out.println("3. Checked­out Resources");
 			System.out.println("4. Resource Request");
 			System.out.println("5. Notifications");
-			System.out.println("6. Due­Balance");
-			System.out.println("7. Return a Resource");
+//			System.out.println("6. Due­Balance");
 			if(login.user_type.equalsIgnoreCase("F"))
-				System.out.println("8. Reserve a publication. ");
+				System.out.println("6. Reserve a publication. ");
 			System.out.println("-999. Logout");
 			System.out.print("Enter your Choice >> ");
 			func = stdin.nextInt();
@@ -58,18 +57,18 @@ public class Login {
 				Notifications notifications = Notifications.getObject();
 				notifications.display_notifications(login);
 				break;
+//			case 6:
+//				Due_Balance due_balance = Due_Balance.getInstance();
+//				due_balance.display_balance(login);
+//				break;
 			case 6:
-				Due_Balance due_balance = Due_Balance.getInstance();
-				due_balance.display_balance(login);
-				break;
-			case 7:
-				Return_Resource ret_resource = Return_Resource.getObject();
-				ret_resource.display_resource(login);
-				break;
-			case 8:
 				Reservation reservation = Reservation.getInstance();
 				reservation.reservation_publications(login);
 				break;
+/*			case 7:
+				Checkingout_Rooms checkingout_res = Checkingout_Rooms.getObject();
+				checkingout_res.checkout_room(login);
+				break;*/
 			case -999:
 				login.patron_id = 0;
 				login.user_type = "";
