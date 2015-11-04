@@ -11,7 +11,9 @@ Query 2:
 
 select count(*) from waitlist w, rooms r where w.rtype_id = r.rtype_id
 and w.reservation_start between to_date('30-OCT-2015 00:00:00','DD-MON-YYYY HH24:MI:SS') 
-                                and to_date('06-NOV-2015 23:59:59', 'DD-MON-YYYY HH24:MI:SS');
+                                and to_date('06-NOV-2015 23:59:59', 'DD-MON-YYYY HH24:MI:SS')
+and w.reservation_status ='RCancelled';
+
 
 Query 3:
 
@@ -20,16 +22,12 @@ and return_time between to_date('05-OCT-2015 00:00:00','DD-MON-YYYY HH24:MI:SS')
                         and to_date('05-NOV-2015 23:59:59','DD-MON-YYYY HH24:MI:SS');
 
 Query 4:
-
 select max(capacity) keep (dense_rank last order by capfrequency) as capacity,
 max(capfrequency) as capfrequency
 from (
-	select qrst.capacity, ((select count(*) from borrows b, resources r, rooms ro
-	where b.rid = r.rid
-	and r.rtype_id = ro.rtype_id
-	and ro.CAPACITY = qrst.capacity) + 
+	select qrst.capacity, (
 	(select count(*) from waitlist w, rooms ro where w.rtype_id = ro.rtype_id and ro.capacity=qrst.capacity)) AS capfrequency
 	from (
 	select distinct capacity from rooms ro
 ) qrst
-);                        
+);    

@@ -348,7 +348,7 @@ PROCEDURE createNotification(
 							p_attribute0 => l_first_name,
 							p_name0 => 'FIRST_NAME',
 							p_attribute1 => l_description,
-							p_name1 => 'DESCRIPION',
+							p_name1 => 'DESCRIPTION',
 							p_attr_count => 2);
 		COMMIT;
 	END waitListNotification;	
@@ -496,7 +496,7 @@ PROCEDURE createNotification(
 		CURSOR findPatrons IS
 			select p.patron_id, p.first_name, p.last_name, p.username, c.model, c.memory, c.make, c.lens_config 
 			from waitlist w, cameras c, patrons p where w.rtype_id = c.rtype_id
-			and p.patron_id = w.patron_id and reservation_start = p_reservation_start and reservation_status <> 'CCancelled'
+			and p.patron_id = w.patron_id and reservation_start = p_reservation_start and nvl(reservation_status,'X') <> 'CCancelled'
 			and c.rtype_id = p_rtype_id;
 	BEGIN
 		SAVEPOINT beginProc;
@@ -520,6 +520,18 @@ PROCEDURE createNotification(
 		END LOOP;
 		COMMIT;
 	END cameraReservationCancelled;	
+
+	PROCEDURE daemonCalls IS
+	BEGIN
+		runFirstReminder;
+		runSecondReminder;
+		runFirstFeeReminder;
+		runSecondFeeReminder;
+		runLastFeeReminder;
+		suspendAccount;
+		R_checkout.Cancels_and_notifs;
+
+	END daemonCalls;
 
 END NOTIFICATION_MGMT;
 /

@@ -69,7 +69,7 @@ PROCEDURE getResourceDetailsCursor(
 					);	
 
 FUNCTION findAuthors(
-					p_rtype_id 		IN
+					p_rtype_id 		IN 		athoma12.resource_types.rtype_id%type
 					) RETURN VARCHAR2;															
 
 END RESOURCES_MGMT;

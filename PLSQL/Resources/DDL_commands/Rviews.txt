@@ -136,7 +136,7 @@ select B.borrow_id, B.patron_id, B.checkout_time, B.due_time, B.return_time, RT.
 
 
  create or replace view athoma12.book_rid_details as
- select B.rtype_id, B.ISBN, B.edition, B.reserved, B.publishers, P.year, P.title, R.rid, R.status, L.lib_name, L.lib_id, RT.type
+ select B.rtype_id, B.ISBN, B.edition, B.reserved, B.publishers, P.year, P.title, R.rid, R.status, L.lib_name, L.lib_id, RT.type, resources_mgmt.findAuthors(RT.rtype_id)
  from athoma12.books B, athoma12.publications P, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
  where B.rtype_id = P.rtype_id
  and R.rtype_id = RT.rtype_id
@@ -144,7 +144,7 @@ select B.borrow_id, B.patron_id, B.checkout_time, B.due_time, B.return_time, RT.
  and l.lib_id = R.lib_id;
 
  create or replace view athoma12.journal_rid_details as
- select J.rtype_id, J.ISSN, P.year, P.title, R.rid, R.status, L.lib_name, L.lib_id, RT.type
+ select J.rtype_id, J.ISSN, P.year, P.title, R.rid, R.status, L.lib_name, L.lib_id, RT.type, resources_mgmt.findAuthors(RT.rtype_id)
  from athoma12.journals J, athoma12.publications P, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
  where J.rtype_id = P.rtype_id
  and R.rtype_id = RT.rtype_id
@@ -152,7 +152,7 @@ select B.borrow_id, B.patron_id, B.checkout_time, B.due_time, B.return_time, RT.
  and l.lib_id = R.lib_id;	
 
  create or replace view athoma12.conf_proc_rid_details as
- select C.rtype_id, C.conf_no, C.conf_name, P.year, P.title, R.rid, R.status, L.lib_name, L.lib_id, RT.type
+ select C.rtype_id, C.conf_no, C.conf_name, P.year, P.title, R.rid, R.status, L.lib_name, L.lib_id, RT.type, resources_mgmt.findAuthors(RT.rtype_id)
  from athoma12.conf_proceedings C, athoma12.publications P, athoma12.resources R, athoma12.resource_types RT, athoma12.library L
  where C.rtype_id = P.rtype_id
  and R.rtype_id = RT.rtype_id
