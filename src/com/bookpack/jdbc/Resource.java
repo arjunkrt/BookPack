@@ -148,59 +148,62 @@ public class Resource {
 				System.out.println("Year: " + r_year);
 			}
 
-			if(r_action==3){
-				System.out.println("This publication is already present with you. Please follow the renew procedure to renew the book.");
-				System.out.println(" Enter 2 for soft copy. ");
-				type = stdin.nextInt();	
-			}
-			else if(r_action==4){
-				System.out.println("You have renewed this publication once. You Must return the publication.");
-				System.out.println(" Enter 2 for soft copy. ");
-				type = stdin.nextInt();	
-			}
-			else if(r_action==5){
-				System.out.println("You have already requested this book. You will be notified when available.");
-				System.out.println(" Enter 2 for soft copy. ");
-				type = stdin.nextInt();	
-			}
-			else if(r_action==6){
-				System.out.println("This publication is reserved. Cannot be checked out.");
-				System.out.println(" Enter 2 for soft copy. ");
-				type = stdin.nextInt();	
-			}
-			else{
-				System.out.println(" Enter 1 for hard copy, 2 for soft copy. ");
-				type = stdin.nextInt();
-
-			}
-
-			if(type == 1)
-			{
-				type_pub = "H";
-				if(r_action==1){
-					System.out.println("This publication is available for issue. Press 1 to issue. ");
-					choice = stdin.nextInt();
-
-					System.out.println("Enter choice of Lib. 1: D.H. Hill. 2: James B. Hunt Library.");
-					lib_choice = stdin.nextDouble();
-				}
-				else if(r_action==2){
-					System.out.println("This publication is not currently available. Press 1 to be added to wait list. ");
-					choice = stdin.nextInt();
-				}				
-			}
-			else if(type == 2)
-			{
+			System.out.println(" 1. Borrow Hard Copy.");
+			System.out.println(" 2. Borrow Soft Copy.");
+			type = stdin.nextInt();
+			
+		
+			if(type == 2){
 				type_pub = "E";
 				r_action = 1;
-				choice = 1;
-
+				pub_checkout(rtype_id, r_action, type_pub, lib_choice);	
 			}
-			if(choice == 1)
-				pub_checkout(rtype_id, r_action, type_pub, lib_choice);
-			else
-				System.out.println("Invalid Choice.");
-
+			
+			else if(type == 1){
+				if(r_action==3){
+					System.out.println("This publication is already present with you. Please follow the renew procedure to renew the book.");
+				}
+				else if(r_action==4){
+					System.out.println("You have renewed this publication once. You Must return the publication.");
+				}
+				else if(r_action==5){
+					System.out.println("You have already requested this book. You will be notified when available.");
+					System.out.println("Enter 2 for soft copy. Else, press any key.");
+					type = stdin.nextInt();
+					if(type==2){
+						type_pub = "E";
+						pub_checkout(rtype_id, r_action, type_pub, lib_choice);
+					}
+				}
+				else if(r_action==6){
+					System.out.println("This publication is reserved. Cannot be checked out.");
+					System.out.println("Enter 2 for soft copy. Else, press any key.");
+					type = stdin.nextInt();	
+					if(type==2){
+						type_pub = "E";
+						pub_checkout(rtype_id, r_action, type_pub, lib_choice);
+					}
+				}
+				else if(r_action == 1){
+					System.out.println("Enter choice of Lib. 1: D.H. Hill. 2: James B. Hunt Library.");
+					lib_choice = stdin.nextDouble();
+					type_pub = "H";
+					pub_checkout(rtype_id, r_action, type_pub, lib_choice);
+				}
+				else if(r_action == 2){
+					System.out.println("This publication is not currently available. Press 1 to be added to wait list. Press 2 to opt for Soft Copy Instead. ");
+					choice = stdin.nextInt();
+					if(choice == 1){
+						type_pub = "H";
+						pub_checkout(rtype_id, r_action, type_pub, lib_choice);
+					}
+					else if(choice == 2){
+						type_pub = "E";
+						pub_checkout(rtype_id, r_action, type_pub, lib_choice);
+					}
+				}
+			}
+			
 
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -258,19 +261,28 @@ public class Resource {
 			borrow_id = cstmt.getDouble(11);
 			
 			ret = ts2.toString();
-			if(r_action == 1){
-				if(ts2 != null && type_pub!="E"){			
-					System.out.println("Congrats, you have checked it out. Return Date is : " + ret);
+			
+			if(type_pub.equalsIgnoreCase("H")){
+				if(r_action == 1){
+					if(ts2 != null){			
+						System.out.println("Congrats, you have checked it out. Return Date is : " + ret);
+					}
 				}
-				else if(type_pub == "E" && borrow_id == 0){
-					System.out.println("You already have the Soft copy of this publication. ");
-				}
-				else if(type_pub == "E" && borrow_id > 0){
-					System.out.println("Congrats, you have checked it out. ");
+				else if(r_action == 2){
+					System.out.println(" Your wait list number is: " + wait_list_no);	
 				}
 			}
-			else if(r_action == 2){
-				System.out.println(" Your wait list number is: " + wait_list_no);
+			
+			else if(type_pub.equalsIgnoreCase("E")){
+				if(borrow_id == 0){
+					System.out.println("You already have the Soft copy of this publication. ");
+				}
+				else if(borrow_id == -1){
+					System.out.println("Soft copy is not present for this publication. ");
+				}
+				else if(borrow_id > 0){
+					System.out.println("Congrats, you have checked it out. ");
+				}
 			}
 
 		}catch (SQLException e) {
@@ -294,7 +306,8 @@ public class Resource {
 	public void show_study_rooms(){
 
 		int choice;
-		double r_no_occupants, r_libid, room_id, rtype_id, floor;
+		double r_no_occupants, r_libid, room_id, rtype_id;
+		String floor = null;
 		java.sql.Timestamp ts2, ts3;
 
 		List<Double> rtype_ids = new ArrayList<Double>();
@@ -302,7 +315,7 @@ public class Resource {
 
 		String sql = "";
 		CallableStatement cstmt = null;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 		ResultSet rs;
 		String room_type = "Study Room";
 		int option=0;
@@ -318,43 +331,64 @@ public class Resource {
 		checkout_time = "2005-04-06 09:01:10";//stdin.nextLine();
 		
 		System.out.print("Enter Return Time");		//Correct format required
-		return_time = "2005-04-06 09:01:10";//stdin.nextLine();
+		return_time = "2005-04-06 10:01:10";//stdin.nextLine();
 
 		ts2 = java.sql.Timestamp.valueOf(checkout_time);
 		ts3 = java.sql.Timestamp.valueOf(return_time);
+		sql = "SELECT RO.rtype_id, RO.room_id, RO.position"+
+				" FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R"+
+				" WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id"+
+				"        AND RO.capacity = ? AND RO.roomtype = ? AND L.lib_id = ?"+
+				"        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist"+
+				"                        WHERE (reservation_start BETWEEN ? AND ?)"+
+				"                        AND (reservation_end BETWEEN ? AND ?))"+
+				"UNION"+
+				"  SELECT RO.rtype_id, RO.room_id, RO.position"+
+				" FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R"+
+				" WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id"+
+				"        AND RO.capacity >= ? AND RO.roomtype = ? AND L.lib_id = ?"+
+				"        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist"+
+				"                        WHERE (reservation_start BETWEEN ? AND ?)"+
+				"                        AND (reservation_end BETWEEN ? AND ?))"+
+				"		AND NOT EXISTS (  SELECT RO.rtype_id, RO.room_id, RO.position"+
+				" 		FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R"+
+				" 		WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id"+
+				"        AND RO.capacity = ? AND RO.roomtype = ? AND L.lib_id = ?"+
+				"        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist"+
+				"                        WHERE (reservation_start BETWEEN ? AND ?)"+
+				"                        AND (reservation_end BETWEEN ? AND ?)))";
 		
-		sql = "SELECT RO.rtype_id, RO.room_id, RO.position" +
-		" FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R" +
-		" WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id" +
-		"        AND RO.capacity = "+ r_no_occupants +" AND RO.roomtype = "+ room_type +" AND L.lib_id = "+ r_libid +"" +
-		"        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist" +
-		"                        WHERE (reservation_start BETWEEN "+ ts2 +" AND "+ ts3 +")" +
-		"                        AND (reservation_end BETWEEN "+ ts2 +" AND "+ ts3 +"))" +
-		" UNION " +
-		"  SELECT RO.rtype_id, RO.room_id, RO.position" +
-		" FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R" +
-		" WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id" +
-		"        AND RO.capacity >= "+ r_no_occupants +" AND RO.roomtype = "+ room_type +" AND L.lib_id = "+ r_libid +"" +
-		"        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist" +
-		"                        WHERE (reservation_start BETWEEN "+ ts2 +" AND "+ ts3 +")" +
-		"                        AND (reservation_end BETWEEN "+ ts2 +" AND "+ ts3 +"))" +
-		"		AND NOT EXISTS (  SELECT  RO.rtype_id, RO.room_id, RO.position" +
-		" 		FROM athoma12.rooms RO, athoma12.library L, athoma12.Resources R" +
-		" 		WHERE RO.rtype_id = R.rtype_id AND R.lib_id = L.lib_id" +
-		"        AND RO.capacity = "+ r_no_occupants +" AND RO.roomtype = "+ room_type +" AND L.lib_id = "+ r_libid +"" +
-		"        AND NOT EXISTS (SELECT reservation_start , reservation_end FROM athoma12.waitlist" +
-		"                        WHERE (reservation_start BETWEEN "+ ts2 +" AND "+ ts3 +")" +
-		"                        AND (reservation_end BETWEEN "+ ts2 +" AND "+ ts3 +")));";		
-			
-		try{
-			stmt = DBConnection.conn.createStatement();
 
-			rs = stmt.executeQuery(sql);
+		try{
+			stmt = DBConnection.conn.prepareStatement(sql);
+			stmt.setDouble(1, r_no_occupants);
+			stmt.setString(2, room_type);
+			stmt.setDouble(3, r_libid);
+			stmt.setTimestamp(4, ts2);
+			stmt.setTimestamp(5, ts3);
+			stmt.setTimestamp(6, ts2);
+			stmt.setTimestamp(7, ts3);
+			stmt.setDouble(8, r_no_occupants);
+			stmt.setString(9, room_type);
+			stmt.setDouble(10, r_libid);
+			stmt.setTimestamp(11, ts2);
+			stmt.setTimestamp(12, ts3);
+			stmt.setTimestamp(13, ts2);
+			stmt.setTimestamp(14, ts3);
+			stmt.setDouble(15, r_no_occupants);
+			stmt.setString(16, room_type);
+			stmt.setDouble(17, r_libid);
+			stmt.setTimestamp(18, ts2);
+			stmt.setTimestamp(19, ts3);
+			stmt.setTimestamp(20, ts2);
+			stmt.setTimestamp(21, ts3);	
+		
+			rs = stmt.executeQuery();
 			
 			while(rs.next()){
 				rtype_id = rs.getDouble("rtype_id");
 				rtype_ids.add(rtype_id);
-				floor = rs.getDouble("position");
+				floor = rs.getString("position");
 				System.out.println( ++option + ". Floor: " + floor);
 			}
 			
@@ -588,10 +622,10 @@ public class Resource {
 					System.out.println(" Description: " + description);
 				}
 				
-				System.out.println(" Press 1 to Reserve for upcoming friday. 2 for cancel. 3. Checkout the Camera. ");
+				System.out.println(" Press 1 to Reserve for upcoming friday. 2. Go Back. ");
 				choice = stdin.nextInt();
 				
-				if(choice == 1 || choice == 3)
+				if(choice == 1)
 					cam_checkout(rtype_id, choice);
 				
 			}catch (SQLException e) {
@@ -659,7 +693,7 @@ public class Resource {
 					}
 				}
 				
-				else if(choice == 3){
+/*				else if(choice == 3){
 					cstmt.setDouble(3, 1);
 					cstmt.registerOutParameter(11, java.sql.Types.DOUBLE);
 					
@@ -670,7 +704,7 @@ public class Resource {
 						System.out.println(" You have checked out the camera. ");
 					else
 						System.out.println(" The camera could not be checked out. ");
-				}
+				}*/
 				
 			}catch(SQLException e){
 				e.printStackTrace();
