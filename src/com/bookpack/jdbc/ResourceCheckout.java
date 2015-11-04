@@ -89,8 +89,8 @@ public class ResourceCheckout {
 			System.out.print("LIB_NAME		");
 			System.out.print("CONF NO		");
 			System.out.print("CONF NAME		");
-			System.out.print("STATUS		");
-			System.out.print("YEAR		");
+			System.out.print("STATUS				");
+			System.out.print("YEAR			");
 			System.out.println("TITLE		");
 
 			while(rs.next())
