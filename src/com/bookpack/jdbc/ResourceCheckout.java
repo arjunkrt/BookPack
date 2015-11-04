@@ -23,7 +23,7 @@ public class ResourceCheckout {
 	public void display_pub_books(Login login,double rid)
 	{
 		String sql = "SELECT * FROM athoma12.book_rid_details where rid = ?";
-		PreparedStatement cstmt = null;
+		PreparedStatement cstmt= null;
 		ResultSet rs = null;
 
 		try
@@ -302,8 +302,8 @@ public class ResourceCheckout {
 		List<Double> rids = new ArrayList<Double>();
 		List<String> rtypes = new ArrayList<String>();
 
-		
-		double sl_no=0, rid=0, rtype_id=0, borrow_id=0;
+		int sl_no = 0;
+		double rid=0, rtype_id=0, borrow_id=0;
 		String r_type = "";
 		int func = 0;
 		
@@ -320,6 +320,7 @@ public class ResourceCheckout {
 
 			while(rs.next())
 			{
+				sl_no++;
 				borrow_id = rs.getDouble("BORROW_ID");
 				r_type = rs.getString("TYPE");
 				rid = rs.getDouble("RID");
@@ -340,24 +341,22 @@ public class ResourceCheckout {
 			}
 		}
 
-		System.out.println("<Menu>");	
-		System.out.println("Enter the serial no to view the details");
-		System.out.print("Enter your Choice >> ");
-
-
-		func = stdin.nextInt();
-		stdin.nextLine();
-
-		rid = rids.get(func-1);
-		r_type = rtypes.get(func-1);
-
-		System.out.println(rid);
-		if(rid == 0)
+		if(sl_no == 0)
 		{
-			System.out.print("You dont have any resource to view the details");
+			System.out.println("You dont have any resource to view the details");
 		}
 		else
 		{
+			System.out.println("<Menu>");	
+			System.out.println("Enter the serial no to view the details");
+			System.out.print("Enter your Choice >> ");
+
+
+			func = stdin.nextInt();
+			stdin.nextLine();
+
+			rid = rids.get(func-1);
+			r_type = rtypes.get(func-1);
 			if(r_type.equals("PB"))
 			{
 				display_pub_books(login,rid);
@@ -480,9 +479,10 @@ public class ResourceCheckout {
 		List<Double> borrowids = new ArrayList<Double>();
 		List<String> rtypes = new ArrayList<String>();
 		
-		double sl_no=0, rid=0, rtype_id=0, borrow_id=0;
+		double rid=0, rtype_id=0, borrow_id=0;
 		String r_type = "";
 		int func = 0;
+		int sl_no=0;
 		
 		String sql = "select BORROW_ID,rid, rtype_id, E_OR_H, TYPE, ATHOMA12.resource_due_balance.get_due_balance(BORROW_ID) as due_balance, DESCRIPTION, due_time, checkout_time from athoma12.user_checkout_summary where patron_id = ?";
 
@@ -497,6 +497,7 @@ public class ResourceCheckout {
 
 			while(rs.next())
 			{
+				sl_no++;
 				borrow_id = rs.getDouble("BORROW_ID");
 				r_type = rs.getString("TYPE");
 				rid = rs.getDouble("RID");
@@ -519,24 +520,24 @@ public class ResourceCheckout {
 			}
 		}
 
-		System.out.println("<Menu>");	
-		System.out.println("Enter the serial no to renew the resource");
-		System.out.print("Enter your Choice >> ");
 
-		func = stdin.nextInt();
-		stdin.nextLine();
-
-		borrow_id = borrowids.get(func-1);
-		rid = rids.get(func-1);
-		r_type = rtypes.get(func-1);
-		rtype_id = rtypeids.get(func-1);
-
-		if(borrow_id == 0)
+		if(sl_no == 0)
 		{
-			System.out.print("You dont have any resource to renew");
+			System.out.println("You dont have any resource to renew");
 		}
 		else
 		{
+			System.out.println("<Menu>");	
+			System.out.println("Enter the serial no to renew the resource");
+			System.out.print("Enter your Choice >> ");
+
+			func = stdin.nextInt();
+			stdin.nextLine();
+
+			borrow_id = borrowids.get(func-1);
+			rid = rids.get(func-1);
+			r_type = rtypes.get(func-1);
+			rtype_id = rtypeids.get(func-1);
 
 			if(r_type.equals("PB") || r_type.equals("PC") || r_type.equals("PJ")){
 
@@ -583,6 +584,7 @@ public class ResourceCheckout {
 		PreparedStatement pstmt=null;
 		ResultSet rs = null;
 		double r_id,rtype_id,borrow_id = 0;
+		int sl_no = 0;
 
 		try {
 			pstmt = DBConnection.conn.prepareStatement(sql);
@@ -592,6 +594,7 @@ public class ResourceCheckout {
 
 			while(rs.next())
 			{
+				sl_no++;
 				borrow_id = rs.getDouble("BORROW_ID");
 				String r_type = rs.getString("TYPE");
 				r_id = rs.getDouble("RID");
@@ -614,17 +617,8 @@ public class ResourceCheckout {
 			}
 		}
 
-		System.out.println("<Menu>");	
-		System.out.println("Enter the serial no to return the resource");
-		System.out.print("Enter your Choice >> ");
 
-		borrow_id = 0;
-		func = stdin.nextInt();
-		stdin.nextLine();
-
-		borrow_id = borrowids.get(func-1);
-
-		if(borrow_id == 0)
+		if(sl_no == 0)
 		{
 			System.out.println("Currently you dont have any resource to return");
 
@@ -632,6 +626,17 @@ public class ResourceCheckout {
 
 		else
 		{
+			
+			System.out.println("<Menu>");	
+			System.out.println("Enter the serial no to return the resource");
+			System.out.print("Enter your Choice >> ");
+
+			borrow_id = 0;
+			func = stdin.nextInt();
+			stdin.nextLine();
+
+			borrow_id = borrowids.get(func-1);
+			
 			sql = "{call athoma12.resource_due_balance.return_resource(?)}";
 			CallableStatement cstmt=null;
 
