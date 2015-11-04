@@ -20,16 +20,16 @@ public class ResourceCheckout {
 	public static ResourceCheckout getObject( ) {
 		return resource_check_out;
 	}
-	public void display_pub_books(Login login,double rid)
+	public void display_pub_books(Login login,double rtype_id)
 	{
-		String sql = "SELECT * FROM athoma12.book_rid_details where rid = ?";
+		String sql = "SELECT * FROM athoma12.book_rid_details where rtype_id = ? and rownum<2";
 		PreparedStatement cstmt= null;
 		ResultSet rs = null;
 
 		try
 		{
 			cstmt = DBConnection.conn.prepareStatement(sql);
-			cstmt.setDouble(1, rid);
+			cstmt.setDouble(1, rtype_id);
 
 			rs = cstmt.executeQuery();
 
@@ -42,7 +42,7 @@ public class ResourceCheckout {
 
 			while(rs.next())
 			{	
-				System.out.print(rid);
+				System.out.print(rtype_id);
 				System.out.print("		");
 				String lib_name = rs.getString("LIB_NAME");
 				System.out.print(lib_name);
@@ -72,16 +72,16 @@ public class ResourceCheckout {
 		}
 	}
 
-	public void display_pub_conf(Login login,double rid)
+	public void display_pub_conf(Login login,double rtype_id)
 	{
-		String sql = "SELECT * FROM athoma12.conf_proc_rid_details where rid = ?";
+		String sql = "SELECT * FROM athoma12.conf_proc_rid_details where rtype_id = ? and rownum<2";
 		PreparedStatement cstmt = null;
 		ResultSet rs = null;
 
 		try
 		{
 			cstmt = DBConnection.conn.prepareStatement(sql);
-			cstmt.setDouble(1, rid);
+			cstmt.setDouble(1, rtype_id);
 
 			rs = cstmt.executeQuery();
 
@@ -95,7 +95,7 @@ public class ResourceCheckout {
 
 			while(rs.next())
 			{	
-				System.out.print(rid);
+				System.out.print(rtype_id);
 				System.out.print("		");
 				String lib_name = rs.getString("LIB_NAME");
 				System.out.print(lib_name);
@@ -128,16 +128,16 @@ public class ResourceCheckout {
 		}
 	}
 
-	public void display_pub_journal(Login login,double rid)
+	public void display_pub_journal(Login login,double rtype_id)
 	{
-		String sql = "SELECT * FROM athoma12.journal_rid_details where rid = ?";
+		String sql = "SELECT * FROM athoma12.journal_rid_details where rtype_id = ? and rownum<2";
 		PreparedStatement cstmt = null;
 		ResultSet rs = null;
 
 		try
 		{
 			cstmt = DBConnection.conn.prepareStatement(sql);
-			cstmt.setDouble(1, rid);
+			cstmt.setDouble(1, rtype_id);
 
 			rs = cstmt.executeQuery();
 
@@ -150,7 +150,7 @@ public class ResourceCheckout {
 
 			while(rs.next())
 			{	
-				System.out.print(rid);
+				System.out.print(rtype_id);
 				System.out.print("		");
 				String lib_name = rs.getString("LIB_NAME");
 				System.out.print(lib_name);
@@ -300,6 +300,7 @@ public class ResourceCheckout {
 	{	
 
 		List<Double> rids = new ArrayList<Double>();
+		List<Double> rtypeids = new ArrayList<Double>();
 		List<String> rtypes = new ArrayList<String>();
 
 		int sl_no = 0;
@@ -327,6 +328,7 @@ public class ResourceCheckout {
 				rtype_id = rs.getDouble("RTYPE_ID");
 				rids.add(rid);
 				rtypes.add(r_type);
+				rtypeids.add(rtype_id);
 
 			}
 		}
@@ -356,18 +358,19 @@ public class ResourceCheckout {
 			stdin.nextLine();
 
 			rid = rids.get(func-1);
+			rtype_id = rtypeids.get(func-1);
 			r_type = rtypes.get(func-1);
 			if(r_type.equals("PB"))
 			{
-				display_pub_books(login,rid);
+				display_pub_books(login,rtype_id);
 			}
 			else if(r_type.equals("PC"))
 			{
-				display_pub_conf(login,rid);
+				display_pub_conf(login,rtype_id);
 			}
 			else if(r_type.equals("PJ"))
 			{
-				display_pub_journal(login,rid);
+				display_pub_journal(login,rtype_id);
 			}
 			else if(r_type.equals("C"))
 			{
