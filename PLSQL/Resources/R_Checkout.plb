@@ -15,12 +15,11 @@
 	5 - already requested, will be notified when available
 	6 - Reserved, cannnot checkout
 
-	Once we calculate the libraries at which the current r_rtype_id
-	is available the r_lib_num will be coded as follows --
-	0 - not available
-	1 - available only in DH Hill
-	2 - available only in Hunt
-	3 - available in both libraries
+	Checkout_or_waitlist different borrow_id_nextval for Camera checkout fail -
+		 -1 - reservation not available
+		 -2 - camera not available
+		 -3 - time to checkout has passed
+		  0 - camera could not be checked out
 
 	Actual checkout is performed by Checkout_or_waitlist
 	*/
@@ -44,6 +43,10 @@
 	is_he_faculty NUMBER(10):= 0;
 	
 	BEGIN	
+
+	-------------------------
+	--Handling ePublications
+
 
 					--Check if the same user has already checked out the same pub
 					SELECT COUNT(*) INTO he_already_has_it FROM athoma12.borrows B, athoma12.Resources R
@@ -512,6 +515,8 @@ ELSIF r_type LIKE 'P_' THEN
 				--NEW: putting due_date as infinity.
 				--putting due_date as NULL for epubs. This is imp to note and will be used in future calculations
 				END IF;
+			ELSE
+				borrow_id_nextval := -1;
 			END IF;
 
 	END IF;
