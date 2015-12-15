@@ -86,6 +86,7 @@ PROCEDURE cameraReservationCancelled(
 							p_rtype_id 		IN 		athoma12.resource_types.rtype_id%type,						
 							p_reservation_start IN 	athoma12.waitlist.reservation_start%type
 	);
+PROCEDURE daemonCalls;
 
 END NOTIFICATION_MGMT;
 /

@@ -17,7 +17,7 @@ CREATE OR REPLACE PACKAGE BODY USER_AUTH AS
 	BEGIN
 		p_success:= 0;
 		BEGIN
-			SELECT patron_id, patron_type, 1 INTO p_patron_id, p_patron_type, p_success
+			SELECT patron_id, patron_type INTO p_patron_id, p_patron_type
 			FROM athoma12.patrons p
 			WHERE p.username = p_username
 			AND   p.password_hash = p_password
